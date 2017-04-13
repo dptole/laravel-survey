@@ -8,9 +8,9 @@
     <div class="container">
       @include('partials.messages')
       @yield('content')
-      @include('partials.footer')
     </div>
     @include('partials.javascript')
+    @include('partials.footer')
   </body>
 </html>
 
