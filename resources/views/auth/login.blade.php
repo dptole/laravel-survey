@@ -3,21 +3,33 @@
 @section('title', '/ Login')
 
 @section('content')
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <h1>Login</h1>
+  <h1 class="title m-b-md text-center">
+    Log into your account
+  </h1>
 
-        {!! Form::open() !!}
-
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      {!! Form::open(['url' => URL::to('/laravel/login', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+        <div class="form-group">
           {{ Form::label('email', 'Email:') }}
-          {{ Form::email('email', null, ['class' => 'form-control']) }}
+          {{ Form::email('email', null, ['class' => 'form-control', 'autofocus' => '']) }}
+        </div>
 
+        <div class="form-group">
           {{ Form::label('password', 'Password:') }}
           {{ Form::password('password', ['class' => 'form-control']) }}
+        </div>
 
-        {!! Form::close() !!}
-      </div>
+        <div class="form-group">
+          <label>
+            {{ Form::checkbox('remember') }} Remember me
+          </label>
+        </div>
+
+        <div class="form-group">
+          {{ Form::submit('Login', ['class' => 'btn btn-success btn-block']) }}
+        </div>
+      {!! Form::close() !!}
     </div>
   </div>
 @endsection

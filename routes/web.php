@@ -12,8 +12,7 @@
 */
 
 Route::group(['prefix' => 'laravel'], function() {
-  Route::get('/', function() { return view('home'); });
-  Route::resource('register', 'RegisterController');
-  Route::resource('login', 'LoginController');
+  Route::get('/', 'HomeController@index');
+  Auth::routes();
 });
 

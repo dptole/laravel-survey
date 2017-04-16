@@ -17,9 +17,34 @@
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
         <li><a href="/">Home</a></li>
-        <li><a href="{{ route('register.index') }}">Register</a></li>
-        <li><a href="{{ route('login.index') }}">Login</a></li>
+
+        @if(!Auth::check())
+          <li><a href="{{ route('register') }}">Register</a></li>
+          <li><a href="{{ route('login') }}">Login</a></li>
+        @endif
       </ul>
+
+      @if(Auth::check())
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Hello {{ Auth::user()->email }}! <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+<!--
+              <li><a href="#">Action</a></li>
+              <li role="separator" class="divider"></li>
+-->
+              <li>
+                <a href="#" onclick="logout_form.submit()">Logout</a>
+                {!! Form::open(['id' => 'logout_form', 'url' => URL::to('/laravel/logout', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+                {!! Form::close() !!}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      @endif
+
     </div>
   </div>
 </nav>

@@ -25,7 +25,7 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/laravel/';
 
     /**
      * Create a new controller instance.
@@ -36,4 +36,7 @@ class ResetPasswordController extends Controller
     {
         $this->middleware('guest');
     }
+
+    public function reset() { return redirect($this->redirectTo); }
+    public function showResetForm() { return redirect($this->redirectTo); }
 }
