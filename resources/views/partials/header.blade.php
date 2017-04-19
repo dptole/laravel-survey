@@ -14,4 +14,5 @@
 <![endif]-->
 
 <style>* { font-family: courier !important; }</style>
+<style>@yield('stylesheet')</style>
 

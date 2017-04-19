@@ -9,7 +9,8 @@
         "guzzlehttp/guzzle": "5.3.*|6.0.*",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
-        "laravelcollective/html": "5.4.*"
+        "laravelcollective/html": "5.4.*",
+        "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

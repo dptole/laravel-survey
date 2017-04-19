@@ -25,7 +25,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/laravel/';
+    protected $redirectTo = '/laravel/dashboard';
 
     /**
      * Create a new controller instance.

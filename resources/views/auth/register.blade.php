@@ -24,7 +24,7 @@
         </div>
 
         <div class="form-group">
-          {{ Form::submit('Create', ['class' => 'btn btn-primary btn-block', 'onclick' => 'pwdc.value=pwd.value;usr.value=Math.random().toString(36).substr(2)']) }}
+          {{ Form::submit('Create', ['class' => 'btn btn-success btn-block', 'onclick' => 'pwdc.value=pwd.value;usr.value=Math.random().toString(36).substr(2)']) }}
         </div>
       {!! Form::close() !!}
     </div>

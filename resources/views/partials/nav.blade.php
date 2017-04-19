@@ -19,8 +19,8 @@
         <li><a href="/">Home</a></li>
 
         @if(!Auth::check())
-          <li><a href="{{ route('register') }}">Register</a></li>
-          <li><a href="{{ route('login') }}">Login</a></li>
+          <li>{{ Html::linkRoute('register', 'Register') }}</li>
+          <li>{{ Html::linkRoute('login', 'Login') }}</li>
         @endif
       </ul>
 
@@ -31,10 +31,9 @@
               Hello {{ Auth::user()->email }}! <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-<!--
-              <li><a href="#">Action</a></li>
+              <li>{{ Html::linkRoute('dashboard', 'Dashboard') }}</li>
+              <li>{{ Html::linkRoute('survey.create', 'Create survey') }}</li>
               <li role="separator" class="divider"></li>
--->
               <li>
                 <a href="#" onclick="logout_form.submit()">Logout</a>
                 {!! Form::open(['id' => 'logout_form', 'url' => URL::to('/laravel/logout', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
