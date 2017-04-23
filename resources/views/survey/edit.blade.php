@@ -21,6 +21,32 @@
         </div>
 
         <div class="form-group">
+          <h1 class="title text-center">Questions</h1>
+        </div>
+
+        <div class="form-group">
+          <table class="table table-bordered{{ count($questions) > 0 ? ' table-hover' : ''}}">
+            <thead>
+              <tr>
+                <th class="hidden-xs">UUID</th>
+                <th>Question</th>
+                <th class="hidden-xs">Last edited</th>
+                <th class="hidden-xs"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="4">
+                  <h3 class="text-center">
+                    {{ Html::link('javascript:0', 'Create', ['class' => 'survey-btn-first-question btn btn-primary']) }} your first question.
+                  </h3>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-group">
           <div class="row">
             <div class="col-xs-6">
               {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}

@@ -7,11 +7,13 @@
 
   <table class="table table-bordered{{ count($surveys) > 0 ? ' table-hover' : ''}}">
     <thead>
-      <th class="hidden-xs">UUID</th>
-      <th>Name</th>
-      <th>Status</th>
-      <th class="hidden-xs">Last edited</th>
-      <th class="hidden-xs"></th>
+      <tr>
+        <th class="hidden-xs">UUID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th class="hidden-xs">Last edited</th>
+        <th class="hidden-xs"></th>
+      </tr>
     </thead>
     <tbody>
 

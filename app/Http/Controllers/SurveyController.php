@@ -33,7 +33,7 @@ class SurveyController extends Controller {
     $survey->description = $request->input('description');
     $survey->save();
     $request->session()->flash('success', 'Survey ' . $survey->uuid . ' successfully created!');
-    return redirect()->route('dashboard');
+    return redirect()->route('survey.edit', $survey->uuid);
   }
 
   /**
@@ -53,7 +53,10 @@ class SurveyController extends Controller {
       return redirect()->route('dashboard');
     endif;
 
-    return view('survey.edit')->withSurvey($survey[0]);
+    return view('survey.edit')->with([
+      'survey' => $survey[0],
+      'questions' => []
+    ]);
   }
 
   /**
