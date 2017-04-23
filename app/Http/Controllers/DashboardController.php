@@ -14,7 +14,7 @@ class DashboardController extends Controller {
   public function getDashboard(Request $request) {
     $surveys = Surveys::where('user_id', '=', $request->user()->id)
       ->orderBy('updated_at', 'desc')
-      ->paginate(10)
+      ->paginate(5)
     ;
     return view('dashboard')->withSurveys($surveys);
   }
