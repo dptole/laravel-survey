@@ -1,6 +1,6 @@
 @extends('main')
 
-@section('title', '/ Dashboard')
+@section('title', '/ Create survey')
 
 @section('content')
   <h1 class="title m-b-md text-center">

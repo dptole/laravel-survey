@@ -25,7 +25,7 @@
         </div>
 
         <div class="form-group">
-          <table class="table table-bordered{{ count($questions) > 0 ? ' table-hover' : ''}}">
+          <table class="table table-bordered{{ count($questions) > 0 ? ' table-hover' : '' }}">
             <thead>
               <tr>
                 <th class="hidden-xs">UUID</th>
@@ -35,13 +35,26 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colspan="4">
-                  <h3 class="text-center">
-                    {{ Html::link('javascript:0', 'Create', ['class' => 'survey-btn-first-question btn btn-primary']) }} your first question.
-                  </h3>
-                </td>
-              </tr>
+              @if(count($questions) === 0)
+                <tr>
+                  <td colspan="4" class="survey-first-question-line">
+                    <h3 class="text-center">
+                      {{ Html::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-first-question btn btn-primary']) }} your first question.
+                    </h3>
+                  </td>
+                </tr>
+              @else
+                @foreach($questions as $question)
+
+                @endforeach
+                <tr>
+                  <td colspan="4" class="survey-first-question-line">
+                    <h3 class="text-center">
+                      {{ Html::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-another-question btn btn-primary']) }} another question.
+                    </h3>
+                  </td>
+                </tr>
+              @endif
             </tbody>
           </table>
         </div>

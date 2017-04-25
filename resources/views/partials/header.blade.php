@@ -5,7 +5,7 @@
 
 <title>Laravel @yield('title')</title>
 
-<link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+<script>window.Laravel = {csrfToken: '{{ csrf_token() }}'};</script>
 <link href="https://getbootstrap.com/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
@@ -13,6 +13,5 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico?1">
-<style>* { font-family: courier !important; }</style>
-<style>@yield('stylesheet')</style>
+<link href="{{ route('css') }}" rel="stylesheet">
 
