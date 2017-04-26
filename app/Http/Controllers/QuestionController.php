@@ -36,7 +36,10 @@ class QuestionController extends Controller {
    */
   public function store($uuid, Request $request) {
     $this->validate($request, [
-      'description' => 'required|max:1023|min:4'
+      'description' => 'required|max:1023|min:4',
+      'answers' => 'array',
+      'answers.*.value' => 'required|distinct|min:1',
+      'answers.*.type' => 'in:option,free'
     ]);
 
     return redirect()->route('dashboard');

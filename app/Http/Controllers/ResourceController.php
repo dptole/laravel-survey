@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 class ResourceController extends Controller {
-  protected function getJs($filename) {
-    return response()->file(public_path() . '/js/' . $filename);
-  }
-
   public function js() {
-    return $this->getJs('app.js');
+    return response()->file(public_path() . '/js/app.js', [
+      'content-type' => 'text/javascript'
+    ]);
   }
 
   public function css() {
