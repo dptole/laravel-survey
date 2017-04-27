@@ -5,13 +5,12 @@
 /public/mix-manifest.json
 /storage/*.key
 /vendor
-/resources/assets/js/*
-/resources/assets/sass/*
 /.idea
 Homestead.json
 Homestead.yaml
 .env
 *.sw*
-webpack.mix.js
 *.js
 *.css
+*.sass
+*.scss
