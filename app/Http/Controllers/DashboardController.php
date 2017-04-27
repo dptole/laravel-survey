@@ -12,11 +12,7 @@ class DashboardController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function getDashboard(Request $request) {
-    $surveys = Surveys::where('user_id', '=', $request->user()->id)
-      ->orderBy('updated_at', 'desc')
-      ->paginate(5)
-    ;
-    return view('dashboard')->withSurveys($surveys);
+    return view('dashboard')->withSurveys(Surveys::getAllByOwner($request->user()->id));
   }
 }
 

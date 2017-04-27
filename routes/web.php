@@ -27,13 +27,18 @@ Route::group(['prefix' => 'laravel'], function() {
       Route::get('/create', ['uses' => 'SurveyController@create', 'as' => 'survey.create']);
       Route::post('/create', ['uses' => 'SurveyController@store', 'as' => 'survey.store']);
 
-      Route::get('/{uuid}/delete', ['uses' => 'SurveyController@destroy', 'as' => 'survey.destroy']);
+      Route::get('/{s_uuid}/delete', ['uses' => 'SurveyController@destroy', 'as' => 'survey.destroy']);
 
-      Route::get('/{uuid}/edit', ['uses' => 'SurveyController@edit', 'as' => 'survey.edit']);
-      Route::post('/{uuid}/edit', ['uses' => 'SurveyController@update', 'as' => 'survey.update']);
+      Route::get('/{s_uuid}/edit', ['uses' => 'SurveyController@edit', 'as' => 'survey.edit']);
+      Route::post('/{s_uuid}/edit', ['uses' => 'SurveyController@update', 'as' => 'survey.update']);
 
-      Route::get('/{uuid}/question/create', ['uses' => 'QuestionController@create', 'as' => 'question.create']);
-      Route::post('/{uuid}/question/create', ['uses' => 'QuestionController@store', 'as' => 'question.store']);
+      Route::get('/{s_uuid}/question/create', ['uses' => 'QuestionController@create', 'as' => 'question.create']);
+      Route::post('/{s_uuid}/question/create', ['uses' => 'QuestionController@store', 'as' => 'question.store']);
+
+      Route::get('/{s_uuid}/question/{q_uuid}/delete', ['uses' => 'QuestionController@delete', 'as' => 'question.delete']);
+
+      Route::get('/{s_uuid}/question/{q_uuid}/edit', ['uses' => 'QuestionController@edit', 'as' => 'question.edit']);
+      Route::post('/{s_uuid}/question/{q_uuid}/edit', ['uses' => 'QuestionController@update', 'as' => 'question.update']);
     });
   });
 });

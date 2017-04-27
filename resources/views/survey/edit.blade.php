@@ -30,7 +30,7 @@
               <tr>
                 <th class="hidden-xs">UUID</th>
                 <th>Question</th>
-                <th class="hidden-xs">Last edited</th>
+                <th>Last edited</th>
                 <th class="hidden-xs"></th>
               </tr>
             </thead>
@@ -44,8 +44,22 @@
                   </td>
                 </tr>
               @else
-                @foreach($questions as $question)
-
+                @foreach($questions as $index => $question)
+                  <tr>
+                    <td class="hidden-xs">{{ $question->uuid }}</td>
+                    <td>
+                      {{ $question->description }}
+                      <div class="visible-xs">
+                        {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
+                        {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
+                      </div>
+                    </td>
+                    <td>{{ date('c', strtotime($question->updated_at)) }}</td>
+                    <td class="hidden-xs">
+                      {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
+                      {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
+                    </td>
+                  </tr>
                 @endforeach
                 <tr>
                   <td colspan="4" class="survey-first-question-line">
@@ -57,6 +71,10 @@
               @endif
             </tbody>
           </table>
+        </div>
+
+        <div class="text-center">
+          {!! $questions->links() !!}
         </div>
 
         <div class="form-group">

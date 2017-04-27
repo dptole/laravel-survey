@@ -228,7 +228,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Form' => Collective\Html\FormFacade::class,
-        'Uuid' => Webpatser\Uuid\Uuid::class
+        'Uuid' => Webpatser\Uuid\Uuid::class,
     ],
 
 ];

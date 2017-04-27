@@ -1,18 +1,18 @@
 @extends('main')
 
-@section('title', '/ Create question')
+@section('title', '/ Edit question')
 
 @section('content')
   <h1 class="title m-b-md text-center">
-    Create your question
+    Edit your question
   </h1>
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      {!! Form::open(['data-survey-uuid' => $survey->uuid, 'id' => 'survey-form-question', 'url' => URL::to('/laravel/dashboard/survey/' . $survey->uuid . '/question/create', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+      {!! Form::open(['data-survey-uuid' => $survey->uuid, 'data-question-options' => json_encode($question_options), 'id' => 'survey-form-question', 'url' => URL::to('/laravel/dashboard/survey/' . $survey->uuid . '/question/' . $question->uuid . '/edit', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
         <div class="form-group">
           {{ Form::label('description', 'Description:') }}
-          {{ Form::textarea('description', null, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
+          {{ Form::textarea('description', $question->description, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
         </div>
 
         <div class="form-group">
@@ -34,7 +34,7 @@
         <div class="form-group">
           <div class="row">
             <div class="col-xs-6">
-              {{ Form::submit('Create', ['class' => 'btn btn-success btn-block']) }}
+              {{ Form::submit('Save', ['class' => 'btn btn-success btn-block']) }}
             </div>
 
             <div class="col-xs-6">

@@ -103,6 +103,8 @@ return [
         ],
     ],
 
+    'valid_question_options' => 'There must be at least 2 static answers or 1 free text answer.',
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes

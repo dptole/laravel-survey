@@ -4,9 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Surveys;
+use App\Questions;
 use Webpatser\Uuid\Uuid;
 
 class SurveyController extends Controller {
+  /**
+   * Validate the survey.
+   */
+  public function validateSurvey(Request $request) {
+    $this->validate($request, [
+      'name' => 'required|max:127|min:3'
+    ]);
+  }
+
   /**
    * Show the survey creation page.
    *
@@ -22,9 +32,7 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request) {
-    $this->validate($request, [
-      'name' => 'required|max:127|min:3'
-    ]);
+    $this->validateSurvey($request);
 
     $survey = new Surveys;
     $survey->user_id = $request->user()->id;
@@ -42,20 +50,16 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function edit($uuid, Request $request) {
-    $survey = Surveys::where('user_id', '=', $request->user()->id)
-      ->where('uuid', '=', $uuid)
-      ->limit(1)
-      ->get()
-    ;
+    $survey = Surveys::getByOwner($uuid, $request->user()->id);
 
-    if(count($survey) !== 1):
+    if(!$survey):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
       return redirect()->route('dashboard');
     endif;
 
     return view('survey.edit')->with([
-      'survey' => $survey[0],
-      'questions' => []
+      'survey' => $survey,
+      'questions' => Questions::getAllByOwner($survey->id)
     ]);
   }
 
@@ -65,22 +69,15 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function update($uuid, Request $request) {
-    $this->validate($request, [
-      'name' => 'required|max:127|min:3'
-    ]);
+    $this->validateSurvey($request);
 
-    $survey = Surveys::where('user_id', '=', $request->user()->id)
-      ->where('uuid', '=', $uuid)
-      ->limit(1)
-      ->get()
-    ;
+    $survey = Surveys::getByOwner($uuid, $request->user()->id);
 
-    if(count($survey) !== 1):
+    if(!$survey):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
       return redirect()->route('dashboard');
     endif;
 
-    $survey = $survey[0];
     $survey->name = $request->input('name');
     $survey->description = $request->input('description');
     $survey->save();
@@ -94,10 +91,7 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function destroy($uuid, Request $request) {
-    $deleted = Surveys::where([
-      'user_id' => $request->user()->id,
-      'uuid' => $uuid
-    ])->delete();
+    $deleted = Surveys::deleteByOwner($uuid, $request->user()->id);
 
     if($deleted):
       $request->session()->flash('success', 'Survey "' . $uuid . '" successfully removed!');
