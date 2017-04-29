@@ -13,5 +13,5 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico?1">
-<link href="{{ route('css') }}" rel="stylesheet">
+<link href="https://dptole.ngrok.io/laravel/r/css.css" rel="stylesheet">
 
