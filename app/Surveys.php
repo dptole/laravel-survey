@@ -31,5 +31,47 @@ class Surveys extends Model {
       'uuid' => $uuid
     ])->delete();
   }
+
+  const ERR_RUN_SURVEY_OK = 0;
+  const ERR_RUN_SURVEY_NOT_FOUND = 1;
+  const ERR_RUN_SURVEY_INVALID_STATUS = 2;
+  const ERR_RUN_SURVEY_ALREADY_RUNNING = 3;
+  public static function run($uuid, $user_id) {
+    $survey = Surveys::getByOwner($uuid, $user_id);
+
+    if(!$survey):
+      return Surveys::ERR_RUN_SURVEY_NOT_FOUND;
+    elseif($survey->status !== 'draft'):
+      return Surveys::ERR_RUN_SURVEY_INVALID_STATUS;
+    elseif($survey->status === 'ready'):
+      return Surveys::ERR_RUN_SURVEY_ALREADY_RUNNING;
+    endif;
+
+    $survey->status = 'ready';
+    $survey->save();
+
+    return Surveys::ERR_RUN_SURVEY_OK;
+  }
+
+  const ERR_PAUSE_SURVEY_OK = 0;
+  const ERR_PAUSE_SURVEY_NOT_FOUND = 1;
+  const ERR_PAUSE_SURVEY_INVALID_STATUS = 2;
+  const ERR_PAUSE_SURVEY_ALREADY_PAUSED = 3;
+  public static function pause($uuid, $user_id) {
+    $survey = Surveys::getByOwner($uuid, $user_id);
+
+    if(!$survey):
+      return Surveys::ERR_PAUSE_SURVEY_NOT_FOUND;
+    elseif($survey->status !== 'ready'):
+      return Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS;
+    elseif($survey->status === 'draft'):
+      return Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED;
+    endif;
+
+    $survey->status = 'draft';
+    $survey->save();
+
+    return Surveys::ERR_PAUSE_SURVEY_OK;
+  }
 }
 

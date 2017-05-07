@@ -79,10 +79,17 @@
 
         <div class="form-group">
           <div class="row">
-            <div class="col-xs-6">
+            <div class="col-sm-4 col-xs-12">
               {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}
             </div>
-            <div class="col-xs-6">
+            <div class="col-sm-4 col-xs-12">
+              @if($survey->status === 'draft')
+                {{ Html::linkRoute('survey.run', 'Run', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
+              @elseif($survey->status === 'ready')
+                {{ Html::linkRoute('survey.pause', 'Pause', [$survey->uuid], ['class' => 'btn btn-block btn-danger']) }}
+              @endif
+            </div>
+            <div class="col-sm-4 col-xs-12">
               {{ Html::linkRoute('dashboard', 'Back', [], ['class' => 'btn-block btn btn-default']) }}
             </div>
           </div>

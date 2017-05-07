@@ -101,5 +101,51 @@ class SurveyController extends Controller {
 
     return redirect()->route('dashboard');
   }
+
+  /**
+   * Run the survey.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function run($uuid, Request $request) {
+    $status = Surveys::run($uuid, $request->user()->id);
+
+    if($status === Surveys::ERR_RUN_SURVEY_NOT_FOUND):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
+      return redirect()->route('dashboard');
+    elseif($status === Surveys::ERR_RUN_SURVEY_INVALID_STATUS):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" invalid status, it should be "draft".');
+      return redirect()->route('survey.edit', $uuid);
+    elseif($status === Surveys::ERR_RUN_SURVEY_ALREADY_RUNNING):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" already running.');
+      return redirect()->route('survey.edit', $uuid);
+    endif;
+
+    $request->session()->flash('success', 'Survey "' . $uuid . '" is now running.');
+    return redirect()->route('survey.edit', $uuid);
+  }
+
+  /**
+   * Pause the survey.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function pause($uuid, Request $request) {
+    $status = Surveys::pause($uuid, $request->user()->id);
+
+    if($status === Surveys::ERR_PAUSE_SURVEY_NOT_FOUND):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
+      return redirect()->route('dashboard');
+    elseif($status === Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" invalid status, it should be "ready".');
+      return redirect()->route('survey.edit', $uuid);
+    elseif($status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" already paused.');
+      return redirect()->route('survey.edit', $uuid);
+    endif;
+
+    $request->session()->flash('success', 'Survey "' . $uuid . '" is now paused.');
+    return redirect()->route('survey.edit', $uuid);
+  }
 }
 
