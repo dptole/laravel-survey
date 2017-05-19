@@ -19,10 +19,9 @@ class QuestionController extends Controller {
     });
     $this->validate($request, [
       'description' => 'required|max:1023|min:4',
-      'questions_options' => 'array',
+      'questions_options' => 'required|array|valid_question_options',
       'questions_options.*.value' => 'required|distinct|min:1|max:1023',
-      'questions_options.*.type' => 'in:check,free',
-      'questions_options' => 'valid_question_options'
+      'questions_options.*.type' => 'in:check,free'
     ]);
   }
 
