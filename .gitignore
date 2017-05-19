@@ -10,7 +10,3 @@ Homestead.json
 Homestead.yaml
 .env
 *.sw*
-*.js
-*.css
-*.sass
-*.scss
