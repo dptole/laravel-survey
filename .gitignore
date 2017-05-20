@@ -12,3 +12,4 @@ Homestead.json
 Homestead.yaml
 .env
 *.sw*
+composer-setup.php
