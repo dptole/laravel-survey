@@ -35,14 +35,17 @@ export default class AnswersTable {
 
   /************************************************/
 
+  removeRow(index) {
+    return isFinite(index) && index >= 0 && !!this[tccs].find('tbody tr:eq(' + index + ')').remove()
+  }
+
   createRowActions(row) {
     const instance = this
     row.find('td:eq(2) > div > button:eq(0)').on('click', function(event) {
       event.preventDefault()
-      if(instance.countRows() > 1) {
-        $(this).parents('tr:eq(0)').remove()
+      if(instance.countRows() > 1)
+        instance.removeRow($(this).parents('tr:eq(0)').index()),
         instance.normalizeRows()
-      }
     })
     return row
   }
