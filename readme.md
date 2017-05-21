@@ -41,7 +41,7 @@ Generate the new `APP_KEY` value on the `.env` file.
 $ php artisan key:generate
 ```
 
-Copy and edit your own `.env` file out of `.env.example`, essential:
+Copy and edit your own `.env` file out of `.env.example`, it is essential.
 
 ```
 $ cp .env.example .env
