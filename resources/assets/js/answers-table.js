@@ -36,17 +36,30 @@ export default class AnswersTable {
   /************************************************/
 
   removeRow(index) {
-    return isFinite(index) && index >= 0 && !!this[tccs].find('tbody tr:eq(' + index + ')').remove()
+    return this.countRows() > 1 && isFinite(index) && index >= 0 && !!this[tccs].find('tbody tr:eq(' + index + ')').remove()
   }
 
   createRowActions(row) {
     const instance = this
+
     row.find('td:eq(2) > div > button:eq(0)').on('click', function(event) {
       event.preventDefault()
-      if(instance.countRows() > 1)
-        instance.removeRow($(this).parents('tr:eq(0)').index()),
-        instance.normalizeRows()
+      instance.removeRow($(this).parents('tr:eq(0)').index())
+      instance.normalizeRows()
     })
+
+    row.find('td:eq(2) > div > button:eq(1)').on('click', function(event) {
+      event.preventDefault()
+      const $row = $(this).parents('tr:eq(0)');
+      $row.after(
+        instance.createRowActions(
+          instance.createFreeAnswer()
+        )
+      )
+      $row.remove();
+      instance.normalizeRows()
+    })
+
     return row
   }
 
@@ -57,6 +70,17 @@ export default class AnswersTable {
   }
 
   createFreeAnswer() {
+    return $('<tr>').append(
+      $('<td>'),
+      $('<td>').append(
+        'Free text'
+      ),
+      $('<td>').append(
+        $('<div>').addClass('pull-right').append(
+          $('<button>').addClass('btn btn-danger').text('Remove')
+        )
+      )
+    )
   }
 
   createCheckAnswer() {
@@ -75,6 +99,9 @@ export default class AnswersTable {
   }
 
   normalizeRows() {
+    this[tccs].find('tbody tr').each(function(index, tr) {
+      $(tr).find('td:eq(0)').text(index);
+    });
   }
 }
 
