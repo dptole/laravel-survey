@@ -10,9 +10,7 @@ const has_errors = $('.survey-errors').length === 1
 const form_survey_question = $('form#survey-form-question')
 const question_options = form_survey_question.data('questionOptions')
 
-form_survey_question.on('submit', function(event) {
-  answers_table.store(form_survey_question.data('surveyUuid'))
-})
+form_survey_question.on('submit', _ => answers_table.store(form_survey_question.data('surveyUuid')))
 
 if(_.isArray(question_options)) // editing
   answers_table.addAnswers(question_options)
