@@ -151,7 +151,7 @@ export default class AnswersTable {
           , $value = $tr.find('[data-type="value"]')
           , $type = $tr.find('[data-type="type"]')
 
-      $tr.find('td:eq(0)').text(index)
+      $tr.find('td:eq(0)').text(index + 1)
 
       if($value.attr('name'))
         $value.attr('name', $value.attr('name').replace(/\[\d*\]/, `[${index}]`))

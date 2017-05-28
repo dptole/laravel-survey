@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 class ResourceController extends Controller {
+  private function fromPublicPath($file_path, $headers = []) {
+    return response()->file(public_path() . $file_path, $headers);
+  }
+
+  public function questions() {
+    return $this->fromPublicPath('/js/questions.js');
+  }
+
   public function js() {
-    return response()->file(public_path() . '/js/app.js', [
-      'content-type' => 'text/javascript'
-    ]);
+    return $this->fromPublicPath('/js/app.js');
   }
 
   public function css() {
-    return response()->file(public_path() . '/css/app.css', [
+    return $this->fromPublicPath('/css/app.css', [
       'content-type' => 'text/css'
     ]);
   }

@@ -8,7 +8,7 @@
   </h1>
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-xs-12">
       {!! Form::model($survey, ['url' => URL::to('/laravel/dashboard/survey/' . $survey->uuid . '/edit', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
