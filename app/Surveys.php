@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Surveys extends Model {
   public static function getAllByOwner($user_id) {
@@ -72,6 +73,20 @@ class Surveys extends Model {
     $survey->save();
 
     return Surveys::ERR_PAUSE_SURVEY_OK;
+  }
+
+  public static function getAvailables() {
+    return DB::table('surveys')
+      ->join('users', 'users.id', '=', 'surveys.user_id')
+      ->select('surveys.*', 'users.name as author_name')
+      ->where('surveys.status', '=', 'ready')
+      ->get()
+    ;
+
+    return Surveys::where('status', '=', 'ready')
+      ->orderBy('updated_at', 'desc')
+      ->paginate(5)
+    ;
   }
 }
 

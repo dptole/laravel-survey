@@ -10,12 +10,16 @@
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
       {!! Form::open(['url' => URL::to('/laravel/register', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
-        {{ Form::hidden('name', null, ['id' => 'usr']) }}
         {{ Form::hidden('password_confirmation', null, ['id' => 'pwdc']) }}
 
         <div class="form-group">
+          {{ Form::label('name', 'Name:') }}
+          {{ Form::text('name', null, ['class' => 'form-control', 'autofocus' => '']) }}
+        </div>
+
+        <div class="form-group">
           {{ Form::label('email', 'Email:') }}
-          {{ Form::email('email', null, ['class' => 'form-control', 'autofocus' => '']) }}
+          {{ Form::email('email', null, ['class' => 'form-control']) }}
         </div>
 
         <div class="form-group">
