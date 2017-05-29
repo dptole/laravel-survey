@@ -13,6 +13,8 @@ class Surveys extends Model {
     ;
   }
 
+  /************************************************/
+
   public static function getByOwner($uuid, $user_id) {
     return (
         $surveys = Surveys::where('user_id', '=', $user_id)
@@ -26,12 +28,16 @@ class Surveys extends Model {
     ;
   }
 
+  /************************************************/
+
   public static function deleteByOwner($uuid, $user_id) {
     return Surveys::where([
       'user_id' => $user_id,
       'uuid' => $uuid
     ])->delete();
   }
+
+  /************************************************/
 
   const ERR_RUN_SURVEY_OK = 0;
   const ERR_RUN_SURVEY_NOT_FOUND = 1;
@@ -54,6 +60,8 @@ class Surveys extends Model {
     return Surveys::ERR_RUN_SURVEY_OK;
   }
 
+  /************************************************/
+
   const ERR_PAUSE_SURVEY_OK = 0;
   const ERR_PAUSE_SURVEY_NOT_FOUND = 1;
   const ERR_PAUSE_SURVEY_INVALID_STATUS = 2;
@@ -75,6 +83,8 @@ class Surveys extends Model {
     return Surveys::ERR_PAUSE_SURVEY_OK;
   }
 
+  /************************************************/
+
   public static function getAvailables() {
     return DB::table('surveys')
       ->join('users', 'users.id', '=', 'surveys.user_id')
@@ -86,6 +96,24 @@ class Surveys extends Model {
     return Surveys::where('status', '=', 'ready')
       ->orderBy('updated_at', 'desc')
       ->paginate(5)
+    ;
+  }
+
+  /************************************************/
+
+  const ERR_IS_RUNNING_SURVEY_OK = 0;
+  const ERR_IS_RUNNING_SURVEY_NOT_FOUND = 1;
+  const ERR_IS_RUNNING_SURVEY_NOT_RUNNING = 2;
+  public static function isRunning($uuid, $user_id) {
+    $survey = Surveys::getByOwner($uuid, $user_id);
+
+    if(!$survey):
+      return Surveys::ERR_IS_RUNNING_SURVEY_NOT_FOUND;
+    endif;
+
+    return $survey->status === 'ready'
+      ? Surveys::ERR_IS_RUNNING_SURVEY_OK
+      : Surveys::ERR_IS_RUNNING_SURVEY_NOT_RUNNING
     ;
   }
 }

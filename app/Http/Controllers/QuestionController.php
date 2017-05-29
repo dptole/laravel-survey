@@ -53,6 +53,11 @@ class QuestionController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function store($uuid, Request $request) {
+    if(Surveys::isRunning($uuid, $request->user()->id) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" cannot be updated because it is being run.');
+      return redirect()->route('dashboard');
+    endif;
+
     $this->validateQuestion($request);
 
     $survey = Surveys::getByOwner($uuid, $request->user()->id);
@@ -79,6 +84,11 @@ class QuestionController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function delete($s_uuid, $q_uuid, Request $request) {
+    if(Surveys::isRunning($s_uuid, $request->user()->id) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" cannot be updated because it is being run.');
+      return redirect()->route('dashboard');
+    endif;
+
     if(Questions::deleteByOwner($s_uuid, $q_uuid, $request->user()->id)):
       $request->session()->flash('success', 'Question "' . $q_uuid . '" successfully removed!');
       return redirect()->route('survey.edit', $s_uuid);
@@ -125,6 +135,11 @@ class QuestionController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function update($s_uuid, $q_uuid, Request $request) {
+    if(Surveys::isRunning($s_uuid, $request->user()->id) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" cannot be updated because it is being run.');
+      return redirect()->route('dashboard');
+    endif;
+
     $this->validateQuestion($request);
 
     $survey = Surveys::getByOwner($s_uuid, $request->user()->id);
