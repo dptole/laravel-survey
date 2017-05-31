@@ -20,7 +20,7 @@
           <td>{{ $available_survey->author_name }}</td>
           <td>
             <div class="pull-right">
-              <button class="btn btn-xs btn-primary">Take this survey</button>
+              {{ Html::linkRoute('public_survey', 'Take this survey', [$available_survey->uuid], ['class' => 'btn btn-xs btn-primary']) }}
             </div>
           </td>
         </tr>

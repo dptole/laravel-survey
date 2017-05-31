@@ -116,5 +116,19 @@ class Surveys extends Model {
       : Surveys::ERR_IS_RUNNING_SURVEY_NOT_RUNNING
     ;
   }
+
+  /************************************************/
+
+  public static function getByUuid($uuid) {
+    return (
+        $surveys = Surveys::where('uuid', '=', $uuid)
+            ->limit(1)
+            ->get()
+        ) &&
+          count($surveys) === 1
+        ? $surveys[0]
+        : null
+    ;
+  }
 }
 

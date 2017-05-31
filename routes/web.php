@@ -21,6 +21,10 @@ Route::group(['prefix' => 'laravel'], function() {
     Route::get('/css.css', ['uses' => 'ResourceController@css', 'as' => 'css']);
   });
 
+  Route::group(['prefix' => 'survey'], function() {
+    Route::get('/{uuid}', ['uses' => 'PublicSurveyController@show', 'as' => 'public_survey']);
+  });
+
   Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {
     Route::get('/', ['uses' => 'DashboardController@getDashboard', 'as' => 'dashboard']);
 
