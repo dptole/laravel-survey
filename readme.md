@@ -35,16 +35,16 @@ Install [composer][composer-url]'s dependencies.
 $ php composer.phar install
 ```
 
-Generate the new `APP_KEY` value on the `.env` file.
-
-```
-$ php artisan key:generate
-```
-
 Copy and edit your own `.env` file out of `.env.example`, it is essential.
 
 ```
 $ cp .env.example .env
+```
+
+Generate the new `APP_KEY` value on the `.env` file.
+
+```
+$ php artisan key:generate
 ```
 
 You have to configure MySQL yourself.
