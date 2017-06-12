@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      {!! Form::open(['url' => URL::to('/laravel/login', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+      {!! Helper::openForm('login') !!}
         <div class="form-group">
           {{ Form::label('email', 'Email:') }}
           {{ Form::email('email', null, ['class' => 'form-control', 'autofocus' => '']) }}
@@ -29,7 +29,7 @@
         <div class="form-group">
           {{ Form::submit('Login', ['class' => 'btn btn-success btn-block']) }}
         </div>
-      {!! Form::close() !!}
+      {!! Helper::closeForm() !!}
     </div>
   </div>
 @endsection

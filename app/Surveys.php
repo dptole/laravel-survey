@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 
 class Surveys extends Model {
+  public function getUpdatedAtAttribute($value) {
+    return date('c', strtotime($value));
+  }
+
+  /************************************************/
+
   public static function getAllByOwner($user_id) {
     return Surveys::where('user_id', '=', $user_id)
       ->orderBy('updated_at', 'desc')

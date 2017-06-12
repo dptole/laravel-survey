@@ -229,6 +229,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Form' => Collective\Html\FormFacade::class,
         'Uuid' => Webpatser\Uuid\Uuid::class,
+        'Helper' => App\Helper::class
     ],
 
 ];

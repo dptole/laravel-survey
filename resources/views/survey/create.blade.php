@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Form::open(['url' => URL::to('/laravel/dashboard/survey/create', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+      {!! Helper::openForm('survey.create') !!}
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
           {{ Form::text('name', null, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-      {!! Form::close() !!}
+      {!! Helper::closeForm() !!}
     </div>
   </div>
 @endsection

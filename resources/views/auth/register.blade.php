@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      {!! Form::open(['url' => URL::to('/laravel/register', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+      {!! Helper::openForm('register') !!}
         {{ Form::hidden('password_confirmation', null, ['id' => 'pwdc']) }}
 
         <div class="form-group">
@@ -30,7 +30,7 @@
         <div class="form-group">
           {{ Form::submit('Create', ['class' => 'btn btn-success btn-block', 'onclick' => 'pwdc.value=pwd.value;usr.value=Math.random().toString(36).substr(2)']) }}
         </div>
-      {!! Form::close() !!}
+      {!! Helper::closeForm() !!}
     </div>
   </div>
 @endsection

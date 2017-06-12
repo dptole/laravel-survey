@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Form::open(['data-survey-uuid' => $survey->uuid, 'data-question-options' => json_encode($question_options), 'id' => 'survey-form-question', 'url' => URL::to('/laravel/dashboard/survey/' . $survey->uuid . '/question/' . $question->uuid . '/edit', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+      {!! Helper::openForm('question.edit', [$survey->uuid, $question->uuid], ['data-survey-uuid' => $survey->uuid, 'data-question-options' => json_encode($question_options), 'id' => 'survey-form-question']) !!}
         <div class="form-group">
           {{ Form::label('description', 'Description:') }}
           {{ Form::textarea('description', $question->description, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
@@ -42,7 +42,7 @@
             </div>
           </div>
         </div>
-      {!! Form::close() !!}
+      {!! Helper::closeForm() !!}
     </div>
   </div>
 

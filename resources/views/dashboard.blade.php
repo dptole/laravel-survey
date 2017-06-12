@@ -38,7 +38,7 @@
           </div>
         </td>
         <td>{{ $survey->status }}</td>
-        <td class="hidden-xs">{{ date('c', strtotime($survey->updated_at)) }}</td>
+        <td class="hidden-xs">{{ $survey->updated_at }}</td>
         <td class="hidden-xs">
           {{ Html::linkRoute('survey.edit', 'Edit', [$survey->uuid], ['class' => 'btn btn-warning btn-xs']) }}
           {{ Html::linkRoute('survey.destroy', 'Delete', [$survey->uuid], ['class' => 'btn btn-danger btn-xs']) }}
