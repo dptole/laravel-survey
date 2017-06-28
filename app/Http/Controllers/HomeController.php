@@ -16,4 +16,13 @@ class HomeController extends Controller {
       'available_surveys' => Surveys::getAvailables()
     ]);
   }
+
+  /**
+   * Go to the main page.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function root() {
+    return redirect('/');
+  }
 }

@@ -11,6 +11,8 @@
 |
 */
 
+Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
+
 Route::group(['prefix' => 'laravel'], function() {
   Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
   Auth::routes();
