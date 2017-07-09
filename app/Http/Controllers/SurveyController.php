@@ -69,9 +69,9 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function update($uuid, Request $request) {
-    if(Surveys::isRunning($uuid, $request->user()->id) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
+    if(Surveys::isRunning($uuid) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" cannot be updated because it is being run.');
-      return redirect()->route('dashboard');
+      return redirect()->route('survey.edit', $uuid);
     endif;
 
     $this->validateSurvey($request);
@@ -96,9 +96,9 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function destroy($uuid, Request $request) {
-    if(Surveys::isRunning($uuid, $request->user()->id) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
+    if(Surveys::isRunning($uuid) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" cannot be deleted because it is being run.');
-      return redirect()->route('dashboard');
+      return redirect()->route('survey.edit', $uuid);
     endif;
 
     $deleted = Surveys::deleteByOwner($uuid, $request->user()->id);

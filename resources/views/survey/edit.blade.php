@@ -56,11 +56,15 @@
                     </td>
                     <td>{{ date('c', strtotime($question->updated_at)) }}</td>
                     <td class="hidden-xs">
+                      @if(!$survey->is_running)
                       {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
                       {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
+                      @endif
                     </td>
                   </tr>
                 @endforeach
+
+                @if(!$survey->is_running)
                 <tr>
                   <td colspan="4" class="survey-first-question-line">
                     <h3 class="text-center">
@@ -68,6 +72,7 @@
                     </h3>
                   </td>
                 </tr>
+                @endif
               @endif
             </tbody>
           </table>
@@ -80,7 +85,9 @@
         <div class="form-group">
           <div class="row">
             <div class="col-sm-4 col-xs-12">
+              @if(!$survey->is_running)
               {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}
+              @endif
             </div>
             <div class="col-sm-4 col-xs-12">
               @if($survey->status === 'draft')

@@ -6,8 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 
 class Surveys extends Model {
+  // https://laravel.com/docs/5.4/eloquent-mutators
   public function getUpdatedAtAttribute($value) {
     return date('c', strtotime($value));
+  }
+
+  public function getIsRunningAttribute() {
+    return $this->status === 'ready';
   }
 
   /************************************************/
@@ -110,8 +115,8 @@ class Surveys extends Model {
   const ERR_IS_RUNNING_SURVEY_OK = 0;
   const ERR_IS_RUNNING_SURVEY_NOT_FOUND = 1;
   const ERR_IS_RUNNING_SURVEY_NOT_RUNNING = 2;
-  public static function isRunning($uuid, $user_id) {
-    $survey = Surveys::getByOwner($uuid, $user_id);
+  public static function isRunning($uuid) {
+    $survey = Surveys::getByUuid($uuid);
 
     if(!$survey):
       return Surveys::ERR_IS_RUNNING_SURVEY_NOT_FOUND;
