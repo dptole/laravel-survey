@@ -46,6 +46,6 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="{{ route('questions') }}"></script>
+  <script type="text/javascript" src="{{ Helper::route('questions') }}"></script>
 @endsection
 
