@@ -24,7 +24,8 @@ Route::group(['prefix' => 'laravel'], function() {
   });
 
   Route::group(['prefix' => 'survey'], function() {
-    Route::get('/{uuid}', ['uses' => 'PublicSurveyController@show', 'as' => 'public_survey']);
+    Route::get('/{uuid}', ['uses' => 'PublicSurveyController@show', 'as' => 'public_survey.show']);
+    Route::get('/{uuid}/start', ['uses' => 'PublicSurveyController@start', 'as' => 'public_survey.start']);
   });
 
   Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {

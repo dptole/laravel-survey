@@ -95,7 +95,7 @@ class QuestionController extends Controller {
     endif;
 
     $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found.');
-    return redirect()->route('dashboard');
+    return redirect()->route('survey.edit', $s_uuid);
   }
 
   /**
@@ -117,14 +117,14 @@ class QuestionController extends Controller {
 
     $question = Questions::getBySurvey($q_uuid, $survey->id);
     if(!$question):
-      $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found (1).');
-      return redirect()->route('dashboard');
+      $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found.');
+      return redirect()->route('survey.edit', $s_uuid);
     endif;
 
     $question_options = QuestionsOptions::getAllByQuestionIdAsJSON($question->id);
     if(!is_array($question_options)):
-      $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found (2).');
-      return redirect()->route('dashboard');
+      $request->session()->flash('warning', 'Question "' . $q_uuid . '" is bad formatted, delete it and start over again.');
+      return redirect()->route('survey.edit', $s_uuid);
     endif;
 
     return view('question.edit')->with([
@@ -140,11 +140,6 @@ class QuestionController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function update($s_uuid, $q_uuid, Request $request) {
-    if(Surveys::isRunning($s_uuid) === Surveys::ERR_IS_RUNNING_SURVEY_OK):
-      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" cannot be updated because it is being run.');
-      return redirect()->route('survey.edit', $s_uuid);
-    endif;
-
     $this->validateQuestion($request);
 
     $survey = Surveys::getByOwner($s_uuid, $request->user()->id);
@@ -153,10 +148,15 @@ class QuestionController extends Controller {
       return redirect()->route('dashboard');
     endif;
 
+    if($survey->is_running):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" cannot be updated because it is running.');
+      return redirect()->route('survey.edit', $s_uuid);
+    endif;
+
     $question = Questions::getBySurvey($q_uuid, $survey->id);
     if(!$question):
-      $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found (1).');
-      return redirect()->route('dashboard');
+      $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found.');
+      return redirect()->route('survey.edit', $s_uuid);
     endif;
 
     $question->description = $request->input('description');

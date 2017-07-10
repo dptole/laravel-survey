@@ -88,7 +88,7 @@
               @if(!$survey->is_running)
               {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}
               @else
-              {{ Html::linkRoute('public_survey', 'Start this survey', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
+              {{ Html::linkRoute('public_survey.show', 'Start this survey', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
               @endif
             </div>
             <div class="col-sm-4 col-xs-12">
