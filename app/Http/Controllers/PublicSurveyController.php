@@ -12,6 +12,9 @@ class PublicSurveyController extends Controller {
     if(!$survey):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
       return redirect()->route('home');
+    elseif($survey->is_running !== true):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" is not running.');
+      return redirect()->route('home');
     endif;
 
     return view('public_survey.show')->withSurvey($survey);
