@@ -87,7 +87,7 @@ class SurveyController extends Controller {
     $survey->description = $request->input('description');
     $survey->save();
     $request->session()->flash('success', 'Survey ' . $survey->uuid . ' successfully updated!');
-    return redirect()->route('dashboard');
+    return redirect()->route('survey.edit', $uuid);
   }
 
   /**

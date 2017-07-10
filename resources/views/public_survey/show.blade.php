@@ -14,7 +14,7 @@
     <tbody>
       <tr>
         <td>
-          {{ $survey->description }}
+          {!! nl2br(e($survey->description)) !!}
         </td>
       </tr>
       <tr>
