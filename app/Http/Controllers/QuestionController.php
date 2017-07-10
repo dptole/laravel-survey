@@ -110,6 +110,11 @@ class QuestionController extends Controller {
       return redirect()->route('dashboard');
     endif;
 
+    if($survey->is_running):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" is running.');
+      return redirect()->route('survey.edit', $s_uuid);
+    endif;
+
     $question = Questions::getBySurvey($q_uuid, $survey->id);
     if(!$question):
       $request->session()->flash('warning', 'Question "' . $q_uuid . '" not found (1).');
