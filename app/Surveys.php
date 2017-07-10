@@ -98,15 +98,10 @@ class Surveys extends Model {
 
   public static function getAvailables() {
     return DB::table('surveys')
-      ->join('users', 'users.id', '=', 'surveys.user_id')
       ->select('surveys.*', 'users.name as author_name')
+      ->join('users', 'users.id', '=', 'surveys.user_id')
       ->where('surveys.status', '=', 'ready')
       ->get()
-    ;
-
-    return Surveys::where('status', '=', 'ready')
-      ->orderBy('updated_at', 'desc')
-      ->paginate(5)
     ;
   }
 
