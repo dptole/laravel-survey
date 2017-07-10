@@ -41,37 +41,52 @@ class Questions extends Model {
   }
 
   public static function getNextQuestionBySurveyId($s_id, $q_uuid) {
-    return DB::select('
-      SELECT
-        questions.*
-      FROM
-        surveys
-      JOIN
-        (
-          SELECT
-            *
-          FROM
-            questions,
-            (
-              SELECT id AS sub_id
-              FROM questions
-              WHERE uuid = ?
-            ) AS sub_questions
-          WHERE
-            sub_questions.sub_id < questions.id
-          LIMIT
-            1
-        ) AS questions
-      ON
-        surveys.id = questions.survey_id
-      WHERE
-        surveys.id = ?
-      ',
-      [
-        $q_uuid,
-        $s_id
-      ]
-    );
+    return (
+      $next_question = DB::select(
+        'SELECT
+          questions.*
+        FROM
+          surveys
+        JOIN
+          (
+            SELECT
+              *
+            FROM
+              questions,
+              (
+                SELECT
+                  id AS sub_id
+                FROM
+                  questions
+                WHERE
+                  uuid = ?
+                AND
+                  active = 1
+              ) AS sub_questions
+            WHERE
+              sub_questions.sub_id < questions.id
+            AND
+              questions.active = 1
+            LIMIT
+              1
+          ) AS questions
+        ON
+          surveys.id = questions.survey_id
+        WHERE
+          surveys.id = ?
+        AND
+          questions.active = 1
+        ',
+        [
+          $q_uuid,
+          $s_id
+        ]
+      )
+    ) &&
+      count($next_question) === 1
+      ? $next_question[0]
+      : null
+    ;
   }
 
   public static function deleteByOwner($s_uuid, $q_uuid, $user_id) {
@@ -80,6 +95,16 @@ class Questions extends Model {
         'survey_id' => $survey->id,
         'uuid' => $q_uuid
       ])->delete()
+    ;
+  }
+
+  public static function getByUuid($uuid) {
+    return (
+      $questions = Questions::where('uuid', '=', $uuid)->get()
+    ) &&
+      count($questions) === 1
+      ? $questions[0]
+      : null
     ;
   }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Surveys;
 use App\Questions;
+use App\QuestionsOptions;
 
 class PublicSurveyController extends Controller {
   /**
@@ -43,15 +44,27 @@ class PublicSurveyController extends Controller {
     $survey = Surveys::getByUuid($s_uuid);
 
     if(!$survey):
-      $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" not found.');
       return redirect()->route('home');
     elseif($survey->is_running !== true):
-      $request->session()->flash('warning', 'Survey "' . $uuid . '" is not running.');
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" is not running.');
+      return redirect()->route('home');
+    endif;
+
+    $survey->current_question = Questions::getByUuid($q_uuid);
+    if(!$survey->current_question):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" does not have questions.');
+      return redirect()->route('home');
+    endif;
+
+    $survey->current_question->answers = QuestionsOptions::getAllByQuestionId($survey->current_question->id);
+    if(!(is_array($survey->current_question->answers) && count($survey->current_question->answers) > 0)):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" was malformatted, try again later.');
       return redirect()->route('home');
     endif;
 
     $next_question = Questions::getNextQuestionBySurveyId($survey->id, $q_uuid);
-    $survey->next_question = is_array($next_question) ? $next_question[0] : null;
+    $survey->next_question = $next_question ? $next_question->uuid : $next_question;
 
     return view('public_survey.start')->withSurvey($survey);
   }
