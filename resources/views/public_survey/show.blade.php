@@ -19,7 +19,7 @@
       </tr>
       <tr>
         <td>
-          {{ Html::linkRoute('public_survey.start', 'Start', [$survey->uuid, $survey->first_question->uuid], ['class' => 'btn btn-success btn-block']) }}
+          <button class="btn btn-success btn-block">Start</button>
         </td>
       </tr>
     </tbody>
