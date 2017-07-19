@@ -92,10 +92,12 @@
               @endif
             </div>
             <div class="col-sm-4 col-xs-12">
-              @if($survey->status === 'draft')
-                {{ Html::linkRoute('survey.run', 'Run', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
-              @elseif($survey->status === 'ready')
-                {{ Html::linkRoute('survey.pause', 'Pause', [$survey->uuid], ['class' => 'btn btn-block btn-danger']) }}
+              @if(count($questions) > 0)
+                @if($survey->status === 'draft')
+                  {{ Html::linkRoute('survey.run', 'Run', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
+                @elseif($survey->status === 'ready')
+                  {{ Html::linkRoute('survey.pause', 'Pause', [$survey->uuid], ['class' => 'btn btn-block btn-danger']) }}
+                @endif
               @endif
             </div>
             <div class="col-sm-4 col-xs-12">

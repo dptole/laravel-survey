@@ -118,6 +118,18 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function run($uuid, Request $request) {
+    $survey = Surveys::getByOwner($uuid, $request->user()->id);
+    if(!$survey):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" does not exist.');
+      return redirect()->route('dashboard');
+    endif;
+
+    $questions = Questions::getAllBySurveyId($survey->id);
+    if(!($questions && count($questions) > 0)):
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" must have at least one question.');
+      return redirect()->route('survey.edit', $uuid);
+    endif;
+
     $status = Surveys::run($uuid, $request->user()->id);
 
     if($status === Surveys::ERR_RUN_SURVEY_NOT_FOUND):
