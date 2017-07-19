@@ -20,6 +20,7 @@ Route::group(['prefix' => 'laravel'], function() {
   Route::group(['prefix' => 'r'], function() {
     Route::get('/js.js', ['uses' => 'ResourceController@js', 'as' => 'js']);
     Route::get('/questions.js', ['uses' => 'ResourceController@questions', 'as' => 'questions']);
+    Route::get('/start-survey.js', ['uses' => 'ResourceController@startSurvey', 'as' => 'start-survey']);
     Route::get('/css.css', ['uses' => 'ResourceController@css', 'as' => 'css']);
   });
 

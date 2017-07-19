@@ -30,6 +30,14 @@ class PublicSurveyController extends Controller {
       return redirect()->route('home');
     endif;
 
+    foreach($survey->all_questions as &$question):
+      $question->answers = QuestionsOptions::getAllByQuestionId($question->id);
+      if(!($question->answers && count($question->answers) > 0)):
+        $request->session()->flash('warning', 'There are some incomplete questions.');
+        return redirect()->route('dashboard');
+      endif;
+    endforeach;
+
     return view('public_survey.show')->withSurvey($survey);
   }
 }

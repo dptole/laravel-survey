@@ -19,10 +19,12 @@
       </tr>
       <tr>
         <td>
-          <button class="btn btn-success btn-block">Start</button>
+          <button data-questions="{{ json_encode($survey->all_questions) }}" class="survey-questions btn btn-success btn-block">Start</button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <script type="text/javascript" src="{{ Helper::route('start-survey') }}"></script>
 @endsection
 

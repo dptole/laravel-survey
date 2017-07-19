@@ -28,7 +28,10 @@ class Questions extends Model {
   }
 
   public static function getAllBySurveyId($s_id, $start_from = 0) {
-    return Questions::where('survey_id', '=', $s_id)->get();
+    return Questions::where('survey_id', '=', $s_id)
+      ->orderBy('id', 'asc')
+      ->get()
+    ;
   }
 
   public static function deleteByOwner($s_uuid, $q_uuid, $user_id) {

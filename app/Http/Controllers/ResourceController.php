@@ -13,6 +13,10 @@ class ResourceController extends Controller {
     return $this->fromPublicPath('/js/questions.js');
   }
 
+  public function startSurvey() {
+    return $this->fromPublicPath('/js/start-survey.js');
+  }
+
   public function js() {
     return $this->fromPublicPath('/js/app.js');
   }
