@@ -13,3 +13,4 @@ Homestead.yaml
 .env
 *.sw*
 composer-setup.php
+package-lock.json
