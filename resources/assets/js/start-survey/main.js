@@ -1,9 +1,5 @@
 import $ from 'jquery'
+import QuestionsTable from './questions-table'
 
-console.log(
-  JSON.stringify(
-    $('.survey-questions').data('questions'),
-    0,
-    2
-  )
-)
+const start_survey_button = $('.survey-questions')
+    , questions_table = new QuestionsTable(start_survey_button)

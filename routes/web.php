@@ -28,6 +28,10 @@ Route::group(['prefix' => 'laravel'], function() {
     Route::get('/{uuid}', ['uses' => 'PublicSurveyController@show', 'as' => 'public_survey.show']);
   });
 
+  Route::group(['prefix' => 'api'], function() {
+    Route::get('/{s_uuid}/session_id', ['uses' => 'APIController@getSessionId']);
+  });
+
   Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {
     Route::get('/', ['uses' => 'DashboardController@getDashboard', 'as' => 'dashboard']);
 

@@ -19,7 +19,7 @@
       </tr>
       <tr>
         <td>
-          <button data-questions="{{ json_encode($survey->all_questions) }}" class="survey-questions btn btn-success btn-block">Start</button>
+          <button data-survey-uuid="{{ $survey->uuid }}" data-questions="{{ json_encode($survey->all_questions) }}" class="survey-questions btn btn-success btn-block">Start</button>
         </td>
       </tr>
     </tbody>
