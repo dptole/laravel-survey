@@ -77,6 +77,8 @@ export default class QuestionsTable {
 
   viewRenderQuestion(number) {
     this.dom_start_button.addClass('disabled')
+    this.dom_start_button.off()
+
     this.fxFade(_ => {
       const current_question = this.data_survey.all_questions[number]
 
@@ -97,13 +99,12 @@ export default class QuestionsTable {
                 .on('click', event => {
                   this.dom_start_button.removeClass('disabled')
                   this.selectedAnswer(number, answer_index)
+                  this.dom_start_button.on('click', event => this.viewRenderQuestion(number + 1))
                 })
             )
           )
         )
       })
-
-      this.dom_start_button.off().on('click', event => this.viewRenderQuestion(number + 1))
     })
   }
 
