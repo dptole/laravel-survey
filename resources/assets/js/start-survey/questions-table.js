@@ -13,6 +13,7 @@ export default class QuestionsTable {
 
   async start() {
     this.data_survey = this.dom_survey_container.data('survey')
+    this.data_survey.all_answers = []
 
     try {
       await this.generateSessionId(this.data_survey.uuid)
@@ -51,6 +52,7 @@ export default class QuestionsTable {
     return button.addClass('btn btn-block btn-success')
       .text('Start')
       .on('click', event => {
+        this.dom_survey_table.addClass('table-hover')
         this.viewRenderQuestion(0)
         button.text('Next')
       }
@@ -74,6 +76,7 @@ export default class QuestionsTable {
   }
 
   viewRenderQuestion(number) {
+    this.dom_start_button.addClass('disabled')
     this.fxFade(_ => {
       const current_question = this.data_survey.all_questions[number]
 
@@ -82,10 +85,33 @@ export default class QuestionsTable {
 
       this.dom_survey_title.text(`Question ${number + 1}`)
       this.dom_survey_table.find('thead tr th').text(current_question.description)
-      this.dom_survey_table.find('tbody tr td').text('')
-      this.dom_start_button.off().on('click', event => this.viewRenderQuestion(number + 1))
+      this.dom_survey_table.find('tbody tr').remove()
 
+      current_question.answers.forEach((answer, answer_index) => {
+        this.dom_survey_table.find('tbody').append(
+          $('<tr>').addClass('public-survey-answer-row').append(
+            $('<td>').append(
+              $('<button>')
+                .addClass('btn')
+                .text(answer.description)
+                .on('click', event => {
+                  this.dom_start_button.removeClass('disabled')
+                  this.selectedAnswer(number, answer_index)
+                })
+            )
+          )
+        )
+      })
+
+      this.dom_start_button.off().on('click', event => this.viewRenderQuestion(number + 1))
     })
+  }
+
+  selectedAnswer(question_index, answer_index) {
+    this.data_survey.all_answers[question_index] = {
+      question: this.data_survey.all_questions[question_index],
+      answer: this.data_survey.all_questions[question_index].answers[answer_index]
+    }
   }
 
   fxFade(callback) {
@@ -99,5 +125,6 @@ export default class QuestionsTable {
     this.dom_start_button.remove()
     this.dom_survey_table.remove()
     this.dom_survey_title.text('Uploading answers...')
+    console.log(this.data_survey.all_answers)
   }
 }
