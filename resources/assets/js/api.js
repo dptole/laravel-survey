@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const http_request = axios.create({
-  baseURL: `${location.protocol}//${location.hostname}/laravel/api`,
+  baseURL: `${location.protocol}//${location.host}/laravel/api`,
   timeout: 16e3,
   headers: {
     'content-type': 'application/json'

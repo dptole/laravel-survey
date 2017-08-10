@@ -5,7 +5,7 @@
 
 <title>Laravel @yield('title')</title>
 
-<script>window.Laravel = {csrfToken: '{{ csrf_token() }}'};</script>
+<script type="text/javascript">window.Laravel = {csrfToken: '{{ csrf_token() }}'};</script>
 <link href="https://getbootstrap.com/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
@@ -13,5 +13,4 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico?1">
-<link href="https://dptole.ngrok.io/laravel/r/css.css" rel="stylesheet">
-
+<link href="{{ Helper::route('css') }}" rel="stylesheet">
