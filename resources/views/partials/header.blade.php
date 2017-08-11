@@ -6,7 +6,7 @@
 <title>Laravel @yield('title')</title>
 
 <script type="text/javascript">window.Laravel = {csrfToken: '{{ csrf_token() }}'};</script>
-<link href="https://getbootstrap.com/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+<link href="https://getbootstrap.com/docs/3.3/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
