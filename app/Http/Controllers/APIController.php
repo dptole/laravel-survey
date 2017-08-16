@@ -5,18 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
 use App\Surveys;
+use App\ApiErrors;
 
 class APIController extends Controller {
   /**
    * Generates a session id so that the users are tracked when answering the questions.
    * 
-   * @return {"session_id":"82e55c09-54e1-4628-bb7e-92a7580c4273"}
+   * @return {"success":{"session_id":"82e55c09-54e1-4628-bb7e-92a7580c4273"}}
    */
   public function getSessionId($s_uuid, Request $request) {
     if(!Surveys::getByUuid($s_uuid)):
-      return response()->json([
-        'error' => 'Invalid survey.'
-      ], 400);
+      return response(new ApiErrors('INVALID_SURVEY', $s_uuid));
     endif;
 
     //@TODO save this session id along with the survey id to another database

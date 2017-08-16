@@ -28,7 +28,7 @@ Route::group(['prefix' => 'laravel'], function() {
     Route::get('/{uuid}', ['uses' => 'PublicSurveyController@show', 'as' => 'public_survey.show']);
   });
 
-  Route::group(['prefix' => 'api'], function() {
+  Route::group(['prefix' => 'api', 'middleware' => ['api']], function() {
     Route::get('/{s_uuid}/session_id', ['uses' => 'APIController@getSessionId']);
   });
 

@@ -9,9 +9,9 @@ const http_request = axios.create({
 })
 
 export default {
-  async getSessionId(survey_uuid) {
+  async generateSessionId(survey_uuid) {
     return await http_request.get(`${survey_uuid}/session_id`).then(response =>
-      response.data.session_id
+      response && response.data && response.data.success || response.data.error
     )
   }
 }

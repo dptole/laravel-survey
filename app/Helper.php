@@ -35,4 +35,12 @@ class Helper {
   public static function isSecureRequest() {
     return Request::secure() || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO']);
   }
+
+  public static function isValidHTTPStatus($status) {
+    return is_integer($status) && $status > 99 && $status < 600;
+  }
+
+  public static function isSuccessHTTPStatus($status) {
+    return Helper::isValidHTTPStatus($status) && $status > 199 && $status < 300;
+  }
 }

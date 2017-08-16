@@ -27,7 +27,7 @@ export default class QuestionsTable {
   }
 
   async generateSessionId(survey_uuid) {
-    this._session_id = await API.getSessionId(survey_uuid)
+    this._session_id = await API.generateSessionId(survey_uuid)
   }
 
   getSessionId() {
@@ -126,6 +126,9 @@ export default class QuestionsTable {
     this.dom_start_button.remove()
     this.dom_survey_table.remove()
     this.dom_survey_title.text('Uploading answers...')
-    console.log(this.data_survey.all_answers)
+    console.log({
+      user_info: this._session_id,
+      answers: this.data_survey.all_answers
+    })
   }
 }
