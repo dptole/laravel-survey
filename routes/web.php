@@ -30,6 +30,7 @@ Route::group(['prefix' => 'laravel'], function() {
 
   Route::group(['prefix' => 'api', 'middleware' => ['api']], function() {
     Route::get('/{s_uuid}/session_id', ['uses' => 'APIController@getSessionId']);
+    Route::post('/save_answer', ['uses' => 'APIController@saveSurveyAnswer']);
   });
 
   Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {

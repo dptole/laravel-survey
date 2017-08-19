@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
 use App\Surveys;
+use App\Answers;
 use App\ApiErrors;
 
 class APIController extends Controller {
@@ -25,6 +26,32 @@ class APIController extends Controller {
     return response()->json([
       'session_id' => Uuid::generate(4)->string
     ]);
+  }
+
+  /**
+   * Saves which answer to which question on which survey the given user have chosen.
+   * 
+   * @return {"success":true}
+   */
+  public function saveSurveyAnswer(Request $request) {
+    list(
+      $session_id,
+      $survey_id,
+      $question_id,
+      $question_option_id
+    ) = array(
+      null,
+      $request->input('survey_id'),
+      $request->input('question_id'),
+      $request->input('question_option_id')
+    );
+
+    $answer = new Answers;
+    $answer->survey_id = $survey_id;
+    $answer->question_id = $question_id;
+    $answer->question_option_id = $question_option_id;
+    $answer->save();
+    return response()->json(true);
   }
 }
 
