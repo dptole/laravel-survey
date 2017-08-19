@@ -99,7 +99,15 @@ export default class QuestionsTable {
                 .on('click', event => {
                   this.dom_start_button.removeClass('disabled')
                   this.selectedAnswer(number, answer_index)
-                  this.dom_start_button.on('click', event => this.viewRenderQuestion(number + 1))
+                  this.dom_start_button.on('click', event => {
+                    API.saveAnswer(
+                      this.getSessionId(),
+                      this.data_survey.all_answers[number].question.survey_id,
+                      this.data_survey.all_answers[number].question.id,
+                      this.data_survey.all_answers[number].answer.id
+                    )
+                    this.viewRenderQuestion(number + 1)
+                  })
                 })
             )
           )
@@ -125,10 +133,7 @@ export default class QuestionsTable {
   sendResults() {
     this.dom_start_button.remove()
     this.dom_survey_table.remove()
-    this.dom_survey_title.text('Uploading answers...')
-    console.log({
-      user_info: this._session_id,
-      answers: this.data_survey.all_answers
-    })
+    this.dom_survey_title.text('Thanks for participating!')
+    setTimeout(_ => location = '/laravel', 2000)
   }
 }
