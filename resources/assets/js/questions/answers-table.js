@@ -66,6 +66,35 @@ export default class AnswersTable {
   createRowActions(row) {
     const instance = this
 
+    row.find('td:eq(1) > input[type="text"]').on('keydown', (function() {
+      function lookupInputText(current_row, lookup_function) {
+        let i = 0, next_input_text
+        do {
+          if(i++ > 100) break
+          current_row = current_row[lookup_function]()
+          next_input_text = current_row.find('input[type="text"]')
+          if(next_input_text.length) {
+            next_input_text.focus()
+            break
+          }
+        } while(current_row.length)
+      }
+
+      return function(event) {
+        const $this_row = $(this).parents('tr:eq(0)')
+        const lookup_function = event.keyCode === 38 // Up arrow.
+          ? 'prev'
+          : event.keyCode === 40 // Down arrow.
+          ? 'next'
+          : void 0
+
+        if(lookup_function) {
+          lookupInputText($this_row, lookup_function)
+          event.preventDefault()
+        }
+      }
+    }()))
+
     row.find('td:eq(2) > div > button:eq(0)').on('click', function(event) {
       event.preventDefault()
       const $button = $(this)
@@ -102,7 +131,7 @@ export default class AnswersTable {
     return $('<tr>').append(
       $('<td>'),
       $('<td>').append(
-        $('<input data-type="value">').attr({
+        $('<input type="text" data-type="value">').attr({
           type: 'hidden',
           name: 'questions_options[][value]',
           value: 'free'
@@ -126,7 +155,7 @@ export default class AnswersTable {
     return $('<tr>').append(
       $('<td>'),
       $('<td>').append(
-        $('<input data-type="value">').attr({
+        $('<input type="text" data-type="value">').attr({
           name: 'questions_options[][value]',
           value
         }).addClass('form-control'),
