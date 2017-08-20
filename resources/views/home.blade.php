@@ -5,7 +5,6 @@
 @section('content')
   <h1 class="text-center">Create your own surveys with Laravel!</h1>
 
-  <!--
   @if(count($available_surveys) > 0)
   <table class="table table-hover table-bordered">
     <thead>
@@ -30,6 +29,5 @@
     </tbody>
   </table>
   @endif
-  -->
 @endsection
 
