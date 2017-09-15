@@ -35,6 +35,7 @@
           <div class="visible-xs">
             {{ Html::linkRoute('survey.edit', 'Edit', [$survey->uuid], ['class' => 'btn btn-warning btn-xs']) }}
             {{ Html::linkRoute('survey.destroy', 'Delete', [$survey->uuid], ['class' => 'btn btn-danger btn-xs']) }}
+            {{ Html::linkRoute('survey.stats', 'Stats', [$survey->uuid], ['class' => 'btn btn-info btn-xs']) }}
           </div>
         </td>
         <td>{{ $survey->status }}</td>
@@ -42,6 +43,7 @@
         <td class="hidden-xs">
           {{ Html::linkRoute('survey.edit', 'Edit', [$survey->uuid], ['class' => 'btn btn-warning btn-xs']) }}
           {{ Html::linkRoute('survey.destroy', 'Delete', [$survey->uuid], ['class' => 'btn btn-danger btn-xs']) }}
+          {{ Html::linkRoute('survey.stats', 'Stats', [$survey->uuid], ['class' => 'btn btn-info btn-xs']) }}
         </td>
       </tr>
     @endforeach

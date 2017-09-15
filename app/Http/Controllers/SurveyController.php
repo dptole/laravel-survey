@@ -169,5 +169,21 @@ class SurveyController extends Controller {
     $request->session()->flash('success', 'Survey "' . $uuid . '" is now paused.');
     return redirect()->route('survey.edit', $uuid);
   }
+
+  /**
+   * Shows the statistics page of a given survey.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function stats($s_uuid, Request $request) {
+    $survey = Surveys::getByOwner($s_uuid, $request->user()->id);
+
+    if(!$survey):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" not found.');
+      return redirect()->route('dashboard');
+    endif;
+
+    return view('survey.stats');
+  }
 }
 

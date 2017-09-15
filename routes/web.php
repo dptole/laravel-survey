@@ -40,6 +40,7 @@ Route::group(['prefix' => 'laravel'], function() {
       Route::get('/create', ['uses' => 'SurveyController@create', 'as' => 'survey.create']);
       Route::post('/create', ['uses' => 'SurveyController@store', 'as' => 'survey.store']);
 
+      Route::get('/{s_uuid}/stats', ['uses' => 'SurveyController@stats', 'as' => 'survey.stats']);
       Route::get('/{s_uuid}/delete', ['uses' => 'SurveyController@destroy', 'as' => 'survey.destroy']);
 
       Route::get('/{s_uuid}/edit', ['uses' => 'SurveyController@edit', 'as' => 'survey.edit']);
