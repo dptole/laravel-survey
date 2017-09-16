@@ -75,6 +75,96 @@ export default class QuestionsTable {
     this.dom_survey_container.append(this.dom_start_button)
   }
 
+  viewRenderAnswer(number, answer, answer_index) {
+    if(answer.type === 'check')
+      return this.viewRenderAnswerCheck(number, answer, answer_index)
+    else if(answer.type === 'free')
+      return this.viewRenderAnswerFree(number, answer, answer_index)
+    return false
+  }
+
+  viewRenderAnswerFree(number, answer, answer_index) {
+    function getInput(input) {
+      return input.val().trim()
+    }
+
+    function validInput(input) {
+      return !!getInput(input)
+    }
+
+    function nextButtonClick(event) {
+      if(disableButton(validInput(input)))
+        return false
+
+      instance.selectedAnswer(number, answer_index)
+      API.saveAnswer(
+        instance.getSessionId(),
+        instance.data_survey.all_answers[number].question.survey_id,
+        instance.data_survey.all_answers[number].question.id,
+        instance.data_survey.all_answers[number].answer.id,
+        getInput(input)
+      )
+      instance.viewRenderQuestion(number + 1)
+      instance.dom_start_button.off('click', nextButtonClick)
+      return true
+    }
+
+    function disableButton(cond) {
+      const func_name = cond ? 'removeClass' : 'addClass'
+      instance.dom_start_button[func_name]('disabled')
+      return func_name === 'addClass'
+    }
+
+    const input = $('<input>')
+          .addClass('form-control')
+          .attr('type', 'text')
+          .attr('placeholder', 'Answer here...')
+          .on('click focus keypress keyup keydown', event => {
+            disableButton(validInput(input))
+          })
+        , instance = this
+    this.dom_start_button.on('click', nextButtonClick)
+
+    this.dom_survey_table.find('tbody').append(
+      $('<tr>').addClass('public-survey-answer-row').append(
+        $('<td>').append(
+          input
+        )
+      )
+    )
+
+    return input
+  }
+
+  viewRenderAnswerCheck(number, answer, answer_index) {
+    const button = $('<button>')
+      .addClass('btn')
+      .text(answer.description)
+      .on('click', event => {
+        this.dom_start_button.removeClass('disabled')
+        this.selectedAnswer(number, answer_index)
+        this.dom_start_button.on('click', event => {
+          API.saveAnswer(
+            this.getSessionId(),
+            this.data_survey.all_answers[number].question.survey_id,
+            this.data_survey.all_answers[number].question.id,
+            this.data_survey.all_answers[number].answer.id
+          )
+          this.viewRenderQuestion(number + 1)
+        })
+      })
+
+    this.dom_survey_table.find('tbody').append(
+      $('<tr>').addClass('public-survey-answer-row').append(
+        $('<td>').append(
+          button
+        )
+      )
+    )
+
+    return button
+  }
+
   viewRenderQuestion(number) {
     this.dom_start_button.addClass('disabled')
     this.dom_start_button.off()
@@ -90,28 +180,7 @@ export default class QuestionsTable {
       this.dom_survey_table.find('tbody tr').remove()
 
       current_question.answers.forEach((answer, answer_index) => {
-        this.dom_survey_table.find('tbody').append(
-          $('<tr>').addClass('public-survey-answer-row').append(
-            $('<td>').append(
-              $('<button>')
-                .addClass('btn')
-                .text(answer.description)
-                .on('click', event => {
-                  this.dom_start_button.removeClass('disabled')
-                  this.selectedAnswer(number, answer_index)
-                  this.dom_start_button.on('click', event => {
-                    API.saveAnswer(
-                      this.getSessionId(),
-                      this.data_survey.all_answers[number].question.survey_id,
-                      this.data_survey.all_answers[number].question.id,
-                      this.data_survey.all_answers[number].answer.id
-                    )
-                    this.viewRenderQuestion(number + 1)
-                  })
-                })
-            )
-          )
-        )
+        this.viewRenderAnswer(number, answer, answer_index)
       })
     })
   }

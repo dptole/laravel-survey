@@ -38,18 +38,21 @@ class APIController extends Controller {
       $session_id,
       $survey_id,
       $question_id,
-      $question_option_id
+      $question_option_id,
+      $free_text
     ) = array(
       null,
       $request->input('survey_id'),
       $request->input('question_id'),
-      $request->input('question_option_id')
+      $request->input('question_option_id'),
+      $request->input('free_text')
     );
 
     $answer = new Answers;
     $answer->survey_id = $survey_id;
     $answer->question_id = $question_id;
     $answer->question_option_id = $question_option_id;
+    $answer->free_text = is_string($free_text) ? $free_text : '';
     $answer->save();
     return response()->json(true);
   }
