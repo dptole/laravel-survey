@@ -4,10 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Webpatser\Uuid\Uuid;
+use App\QuestionsOptionsView;
 
 class QuestionsOptions extends Model {
   public static function getAllByQuestionId($id) {
-    return QuestionsOptions::where('question_id', '=', $id)->get()->all();
+    $last_version = QuestionsOptionsView::where('question_id', '=', $id)->limit(1)->get();
+    return QuestionsOptions::where([
+      'question_id' => $id,
+      'version' => $last_version[0]->last_version
+    ])->get()->all();
   }
 
   public static function getAllByQuestionIdAsJSON($id) {
