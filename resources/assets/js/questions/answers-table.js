@@ -7,11 +7,52 @@ const tccs = Symbol()
 // Add answer css class symbol
 const aaccs = Symbol()
 
+// Change order css class symbol
+const coccs = Symbol()
+
+// Changing order symbol
+const cos = Symbol()
+
+// Changing order selected line symbol
+const cosls = Symbol()
+
+// Changing order up button symbol
+const coubs = Symbol()
+
+// Changing order down button symbol
+const codbs = Symbol()
+
+// Changing order move symbol
+const coms = Symbol()
+
+const log = console.log
+
 export default class AnswersTable {
-  constructor(table_css_class, add_answer_css_class) {
+  constructor({table_css_class, add_answer_css_class, change_order_css_class, change_order_up_css_class, change_order_down_css_class}) {
     this[tccs] = $(table_css_class)
     this[aaccs] = $(add_answer_css_class)
-    this[aaccs].on('click', _ => this.addAnswer())
+    this[coccs] = $(change_order_css_class)
+    this[coubs] = $(change_order_up_css_class)
+    this[codbs] = $(change_order_down_css_class)
+    this[cos] = false
+    this[coms] = $('<div>').text('Move row up / down').addClass('pull-right')
+    this[aaccs].on('click', event => {
+      event.preventDefault()
+      this.addAnswer()
+    })
+    this[coccs].on('click', event => {
+      event.preventDefault()
+      this.changeOrder()
+    })
+    this[coubs].on('click', event => {
+      event.preventDefault()
+      this.moveRow('up', this[cosls])
+    })
+    this[codbs].on('click', event => {
+      event.preventDefault()
+      this.moveRow('down', this[cosls])
+    })
+    this.removeSelectedRow()
   }
 
   store(key) {
@@ -187,6 +228,80 @@ export default class AnswersTable {
 
       if($type.attr('name'))
         $type.attr('name', $type.attr('name').replace(/\[\d*\]/, `[${index}]`))
+    })
+  }
+
+  upDownToggleButtons(show_function) {
+    this[coubs][show_function]()
+    this[codbs][show_function]()
+  }
+
+  changeOrder() {
+    if(this[cos]) {
+      this[cos] = false
+      this[tccs].find('input, button').attr('disabled', false)
+      this[tccs].find('button').show()
+      this[aaccs].show()
+      this[coccs].text('Change order')
+
+      const rows = this[tccs].find('tr:gt(0)')
+      rows.css({
+        cursor: 'initial'
+      }).off()
+
+      this.removeSelectedRow()
+    } else {
+      this[cos] = true
+      this[tccs].find('input, button').attr('disabled', true)
+      this[tccs].find('button').hide()
+      this[aaccs].hide()
+      this[coccs].text('Done')
+
+      const rows = this[tccs].find('tr:gt(0)')
+      rows.css({
+        cursor: 'pointer'
+      }).each((index, tr) => {
+        const row = $(tr)
+        row.on('click', event => {
+          event.preventDefault()
+          this.selectRow(row)
+        })
+      })
+    }
+
+    this[coccs].attr('disabled', false)
+  }
+
+  removeSelectedRow() {
+    delete this[cosls]
+    this.upDownToggleButtons('hide')
+    this[coms].remove()
+  }
+
+  selectRow(row) {
+    if(this[cosls] === row) {
+      this.removeSelectedRow()
+    } else {
+      this[cosls] = row
+      this.upDownToggleButtons('show')
+      row.find('td:last-child').append(this[coms])
+    }
+  }
+
+  moveRow(direction, row) {
+    if(direction === 'up' && row.prev())
+      row.prev().before(row)
+    else if(direction === 'down' && row.next())
+      row.next().after(row)
+    row.parent().children().each((index, row) => {
+      row = $(row)
+      row.find('td:nth-child(1)').text(index + 1)
+      row.find('[name]').each((_, input) => {
+        input = $(input)
+        input.attr({
+          name: input.attr('name').replace(/(\[)\d+(\])/, '$1' + index + '$2')
+        })
+      })
     })
   }
 }

@@ -22,7 +22,11 @@
                 <th>#</th>
                 <th>Possible answers</th>
                 <th>
-                  {{ Html::link('#', 'Add answer', ['class' => 'btn btn-success pull-right survey-add-answer btn-xs']) }}
+                  <div class="pull-right">
+                    {{ Html::link('#', 'Up', ['class' => 'btn btn-default survey-order-up-answer btn-xs']) }}
+                    {{ Html::link('#', 'Down', ['class' => 'btn btn-default survey-order-down-answer btn-xs']) }}
+                    {{ Html::link('#', 'Change order', ['class' => 'btn btn-default survey-order-answer btn-xs']) }}
+                  </div>
                 </th>
               </tr>
             </thead>

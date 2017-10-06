@@ -1,6 +1,12 @@
 import AnswersTable from './answers-table'
 
-const answers_table = new AnswersTable('.survey-answers-table', '.survey-add-answer')
+const answers_table = new AnswersTable({
+  table_css_class: '.survey-answers-table',
+  add_answer_css_class: '.survey-add-answer',
+  change_order_css_class: '.survey-order-answer',
+  change_order_up_css_class: '.survey-order-up-answer',
+  change_order_down_css_class: '.survey-order-down-answer'
+})
 const has_errors = $('.survey-errors').length === 1
 const form_survey_question = $('form#survey-form-question')
 const question_options = form_survey_question.data('questionOptions')
