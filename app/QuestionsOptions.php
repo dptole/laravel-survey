@@ -33,8 +33,9 @@ class QuestionsOptions extends Model {
     endif;
 
     $last_version = QuestionsOptionsView::where('question_id', '=', $question_id)->limit(1)->get()->all();
-    if(!(is_array($last_version) && count($last_version) === 1)):
-      return false;
+    $lv = 0;
+    if(is_array($last_version) && count($last_version) === 1):
+      $lv = $last_version[0]->last_version;
     endif;
 
     foreach($questions_options as $question_option):
@@ -43,7 +44,7 @@ class QuestionsOptions extends Model {
       $questions_options->description = $question_option['type'] !== 'check' ? '' : $question_option['value'];
       $questions_options->type = $question_option['type'];
       $questions_options->uuid = Uuid::generate(4);
-      $questions_options->version = $last_version[0]->last_version + 1;
+      $questions_options->version = $lv + 1;
       $questions_options->save();
     endforeach;
 

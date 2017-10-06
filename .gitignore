@@ -14,3 +14,4 @@ Homestead.yaml
 *.sw*
 composer-setup.php
 package-lock.json
+composer.phar
