@@ -25,8 +25,6 @@ const codbs = Symbol()
 // Changing order move symbol
 const coms = Symbol()
 
-const log = console.log
-
 export default class AnswersTable {
   constructor({table_css_class, add_answer_css_class, change_order_css_class, change_order_up_css_class, change_order_down_css_class}) {
     this[tccs] = $(table_css_class)
@@ -172,7 +170,7 @@ export default class AnswersTable {
     return $('<tr>').append(
       $('<td>'),
       $('<td>').append(
-        $('<input type="text" data-type="value">').attr({
+        $('<input data-type="value">').attr({
           type: 'hidden',
           name: 'questions_options[][value]',
           value: 'free'
@@ -208,11 +206,18 @@ export default class AnswersTable {
       ),
       $('<td>').append(
         $('<div>').addClass('pull-right').append(
-          $('<button>').addClass('btn btn-danger').text('Remove'),
-          $('<button>').addClass('btn btn-primary').text('Free')
+          $('<button>').addClass('btn btn-danger survey-answer-remove').text('Remove'),
+          $('<button>').addClass('btn btn-primary survey-answer-free').text('Free')
         )
       )
     )
+  }
+
+  normalizeFreeAnswers() {
+    if(this[tccs].find('[value=free]:nth-child(1)').length)
+      $('.survey-answer-free').hide()
+    else
+      $('.survey-answer-free').show()
   }
 
   normalizeRows() {
@@ -229,6 +234,7 @@ export default class AnswersTable {
       if($type.attr('name'))
         $type.attr('name', $type.attr('name').replace(/\[\d*\]/, `[${index}]`))
     })
+    this.normalizeFreeAnswers()
   }
 
   upDownToggleButtons(show_function) {
@@ -237,39 +243,45 @@ export default class AnswersTable {
   }
 
   changeOrder() {
-    if(this[cos]) {
-      this[cos] = false
-      this[tccs].find('input, button').attr('disabled', false)
-      this[tccs].find('button').show()
-      this[aaccs].show()
-      this[coccs].text('Change order')
-
-      const rows = this[tccs].find('tr:gt(0)')
-      rows.css({
-        cursor: 'initial'
-      }).off()
-
-      this.removeSelectedRow()
-    } else {
-      this[cos] = true
-      this[tccs].find('input, button').attr('disabled', true)
-      this[tccs].find('button').hide()
-      this[aaccs].hide()
-      this[coccs].text('Done')
-
-      const rows = this[tccs].find('tr:gt(0)')
-      rows.css({
-        cursor: 'pointer'
-      }).each((index, tr) => {
-        const row = $(tr)
-        row.on('click', event => {
-          event.preventDefault()
-          this.selectRow(row)
-        })
-      })
-    }
-
+    if(this[cos])
+      this.changeOrderEnd()
+    else
+      this.changeOrderStart()
     this[coccs].attr('disabled', false)
+  }
+
+  changeOrderEnd() {
+    this[cos] = false
+    this[tccs].find('input, button').attr('disabled', false)
+    this[tccs].find('button').show()
+    this[aaccs].show()
+    this[coccs].text('Change order')
+
+    const rows = this[tccs].find('tr:gt(0)')
+    rows.css({
+      cursor: 'initial'
+    }).off()
+
+    this.removeSelectedRow()
+  }
+
+  changeOrderStart() {
+    this[cos] = true
+    this[tccs].find('input, button').attr('disabled', true)
+    this[tccs].find('button').hide()
+    this[aaccs].hide()
+    this[coccs].text('Done')
+
+    const rows = this[tccs].find('tr:gt(0)')
+    rows.css({
+      cursor: 'pointer'
+    }).each((index, tr) => {
+      const row = $(tr)
+      row.on('click', event => {
+        event.preventDefault()
+        this.selectRow(row)
+      })
+    })
   }
 
   removeSelectedRow() {
@@ -296,12 +308,7 @@ export default class AnswersTable {
     row.parent().children().each((index, row) => {
       row = $(row)
       row.find('td:nth-child(1)').text(index + 1)
-      row.find('[name]').each((_, input) => {
-        input = $(input)
-        input.attr({
-          name: input.attr('name').replace(/(\[)\d+(\])/, '$1' + index + '$2')
-        })
-      })
+      this.normalizeRows()
     })
   }
 }
