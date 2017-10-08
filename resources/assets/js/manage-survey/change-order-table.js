@@ -22,33 +22,12 @@ export default class ChangeOrderTable {
     })
   }
 
-  changeOrder() {
-    if(this.changing_order)
-      this.changeOrderEnd()
-    else
-      this.changeOrderStart()
-  }
-
-  changeOrderEnd() {
-    this[cos] = false
-    this[tccs].find('input, button').attr('disabled', false)
-    this[tccs].find('button').show()
-    this[aaccs].show()
-    this[coccs].text('Change order')
-
-    const rows = this[tccs].find('tr:gt(0)')
-    rows.css({
-      cursor: 'initial'
-    }).off()
-
-    this.removeSelectedRow()
-  }
-
   changeOrderStart() {
     this.changing_order = true
     this.upDownToggleButtons('hide')
 
-    this.dom_changing_order.find('tr:gt(0)').css({
+    const rows = this.dom_changing_order.find('tr:gt(0)')
+    rows.css({
       cursor: 'pointer'
     }).each((index, tr) => {
       const row = $(tr)
@@ -57,6 +36,8 @@ export default class ChangeOrderTable {
         this.selectRow(row)
       })
     })
+
+    this.selectRow(rows.eq(0))
   }
 
   selectRow(row) {

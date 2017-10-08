@@ -27,8 +27,9 @@ class Questions extends Model {
     ;
   }
 
-  public static function getAllByOwnerUnpaginated($s_id) {
+  public static function getAllBySurveyIdUnpaginated($s_id) {
     return Questions::where('survey_id', '=', $s_id)
+      ->orderBy('order', 'asc')
       ->get()
       ->all()
     ;
@@ -37,6 +38,13 @@ class Questions extends Model {
   public static function getAllBySurveyId($s_id, $start_from = 0) {
     return Questions::where('survey_id', '=', $s_id)
       ->orderBy('id', 'asc')
+      ->get()
+    ;
+  }
+
+  public static function getAllBySurveyIdOrdered($s_id, $start_from = 0) {
+    return Questions::where('survey_id', '=', $s_id)
+      ->orderBy('order', 'asc')
       ->get()
     ;
   }
@@ -58,6 +66,31 @@ class Questions extends Model {
       ? $questions[0]
       : null
     ;
+  }
+
+  public static function getNextInOrder($s_id) {
+    return (
+      $question = Questions::where('survey_id', '=', $s_id)
+      ->orderBy('order', 'desc')
+      ->limit(1)
+      ->get()
+      ->all()
+    ) &&
+      is_array($question) &&
+      count($question) === 1
+      ? $question[0]->order + 1
+      : 1
+    ;
+  }
+
+  public static function updateOrder($id, $order) {
+    $question = Questions::find($id);
+    if(!$question):
+      return false;
+    endif;
+    $question->order = $order;
+    $question->save();
+    return true;
   }
 }
 

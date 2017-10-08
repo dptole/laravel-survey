@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Helper::openForm('survey.edit', [$survey->uuid]) !!}
+      {!! Helper::openForm('survey.edit', [$survey->uuid], ['autocomplete' => 'off']) !!}
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
           {{ Form::text('name', $survey->name, ['class' => 'form-control', 'requried' => '', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true', 'autofocus' => '']) }}
@@ -31,13 +31,18 @@
                 <th class="hidden-xs">UUID</th>
                 <th>Question</th>
                 <th>
-                  <div class="col-xs-6">Last edited</div>
-                  <div class="col-xs-6">
-                    {{ Html::linkRoute('question.change_order', 'Change order', [$survey->uuid], ['class' => 'visible-xs btn btn-default btn-xs']) }}
+                  <div class="col-sm-6 col-xs-12">Last edited</div>
+                  <div class="col-sm-6 col-xs-12">
+                    @if(count($questions) > 1 && !$survey->is_running)
+                      {{ Html::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'visible-xs btn btn-default btn-xs']) }}
+                    @endif
                   </div>
                 </th>
+                <th>#</th>
                 <th class="hidden-xs">
-                  {{ Html::linkRoute('question.change_order', 'Change order', [$survey->uuid], ['class' => 'btn btn-default btn-xs']) }}
+                    @if(count($questions) > 1 && !$survey->is_running)
+                      {{ Html::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'btn btn-default btn-xs']) }}
+                    @endif
                 </th>
               </tr>
             </thead>
@@ -62,6 +67,7 @@
                         {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
                       </div>
                     </td>
+                    <td>{{ $question->order }}</td>
                     <td class="hidden-xs">
                       @if(!$survey->is_running)
                       {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
@@ -73,7 +79,7 @@
 
                 @if(!$survey->is_running)
                 <tr>
-                  <td colspan="4" class="survey-first-question-line">
+                  <td colspan="5" class="survey-first-question-line">
                     <h3 class="text-center">
                       {{ Html::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-another-question btn btn-primary']) }} another question.
                     </h3>

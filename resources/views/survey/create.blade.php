@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Helper::openForm('survey.create') !!}
+      {!! Helper::openForm('survey.create', [], ['autocomplete' => 'off']) !!}
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
           {{ Form::text('name', null, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
@@ -33,7 +33,5 @@
       {!! Helper::closeForm() !!}
     </div>
   </div>
-
-  <script type="text/javascript" src="{{ Helper::route('manage-survey') }}"></script>
 @endsection
 

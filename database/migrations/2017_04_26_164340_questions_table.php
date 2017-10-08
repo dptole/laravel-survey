@@ -19,6 +19,7 @@ class QuestionsTable extends Migration
 
             $table->increments('id')->unsigned();
             $table->unsignedInteger('survey_id');
+            $table->unsignedInteger('order')->default('1');
             $table->string('description', 1023);
             $table->string('uuid')->unique();
             $table->enum('active', ['1', '0'])->default('1');

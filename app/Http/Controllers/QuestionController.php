@@ -70,6 +70,7 @@ class QuestionController extends Controller {
     $question->description = $request->input('description');
     $question->uuid = Uuid::generate(4);
     $question->survey_id = $survey->id;
+    $question->order = Questions::getNextInOrder($survey->id);
     $question->save();
 
     QuestionsOptions::saveArray($question->id, $request->input('questions_options'));
@@ -185,9 +186,9 @@ class QuestionController extends Controller {
       return redirect()->route('survey.edit', $s_uuid);
     endif;
 
-    $questions = Questions::getAllByOwnerUnpaginated($survey->id);
+    $questions = Questions::getAllBySurveyIdUnpaginated($survey->id);
     if(!(is_array($questions) && count($questions) > 0)):
-      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" questions not found.');
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" questions were not found.');
       return redirect()->route('survey.edit', $s_uuid);
     endif;
 
@@ -195,6 +196,32 @@ class QuestionController extends Controller {
       'survey' => $survey,
       'questions' => $questions
     ]);
+  }
+
+  /**
+   * Update the questions' order.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function storeChangeOrder($s_uuid, Request $request) {
+    $survey = Surveys::getByOwner($s_uuid, $request->user()->id);
+    if(!$survey):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" not found.');
+      return redirect()->route('dashboard');
+    endif;
+
+    if($survey->is_running):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" is running.');
+      return redirect()->route('survey.edit', $s_uuid);
+    endif;
+
+    $questions = $request->input('questions');
+    foreach($questions as $order => $question):
+      Questions::updateOrder($question['id'], $order + 1);
+    endforeach;
+
+    $request->session()->flash('success', 'Questions order updated!');
+    return redirect()->route('survey.edit', $s_uuid);
   }
 }
 

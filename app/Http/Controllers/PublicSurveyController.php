@@ -24,7 +24,7 @@ class PublicSurveyController extends Controller {
       return redirect()->route('home');
     endif;
 
-    $survey->all_questions = Questions::getAllBySurveyId($survey->id);
+    $survey->all_questions = Questions::getAllBySurveyIdOrdered($survey->id);
     if(!($survey->all_questions && count($survey->all_questions) > 0)):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" does not have questions.');
       return redirect()->route('home');

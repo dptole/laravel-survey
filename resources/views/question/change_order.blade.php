@@ -8,6 +8,7 @@
   </h1>
 
   <div class="row">
+    {!! Helper::openForm('question.store_change_order', [$survey->uuid]) !!}
     <div class="col-xs-12">
       <table class="table table-bordered table-hover survey-change-order-table">
         <thead>
@@ -25,8 +26,11 @@
         <tbody>
           @foreach($questions as $index => $question)
             <tr>
-              <td>{{ $index + 1 }}</td>
-              <td>{{ $question->description }}</td>
+              <td>{{ $question->order }}</td>
+              <td>
+                {{ $question->description }}
+                {{ Form::hidden('questions[][id]', $question->id) }}
+              </td>
               <td></td>
             </tr>
           @endforeach
@@ -36,7 +40,7 @@
       <div class="form-group">
         <div class="row">
           <div class="col-xs-6">
-            {{ Html::link('#', 'Update', ['class' => 'btn-block btn btn-success']) }}
+            {{ Form::submit('Update', ['class' => 'btn-block btn btn-success']) }}
           </div>
           <div class="col-xs-6">
             {{ Html::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
@@ -44,6 +48,7 @@
         </div>
       </div>
     </div>
+    {!! Helper::closeForm() !!}
   </div>
 
   <script type="text/javascript" src="{{ Helper::route('manage-survey') }}"></script>
