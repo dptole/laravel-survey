@@ -22,6 +22,7 @@ class AnswersTable extends Migration
             $table->unsignedInteger('question_id');
             $table->unsignedInteger('question_option_id');
             $table->text('free_text');
+            $table->text('request_info');
             $table->timestamps();
         });
 

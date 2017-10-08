@@ -39,13 +39,18 @@ class APIController extends Controller {
       $survey_id,
       $question_id,
       $question_option_id,
-      $free_text
+      $free_text,
+      $request_info
     ) = array(
       null,
       $request->input('survey_id'),
       $request->input('question_id'),
       $request->input('question_option_id'),
-      $request->input('free_text')
+      $request->input('free_text'),
+      json_encode([
+        'headers' => $request->header(),
+        'ips' => $request->ips()
+      ])
     );
 
     $answer = new Answers;
@@ -53,6 +58,7 @@ class APIController extends Controller {
     $answer->question_id = $question_id;
     $answer->question_option_id = $question_option_id;
     $answer->free_text = is_string($free_text) ? $free_text : '';
+    $answer->request_info = $request_info;
     $answer->save();
     return response()->json(true);
   }
