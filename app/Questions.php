@@ -27,6 +27,13 @@ class Questions extends Model {
     ;
   }
 
+  public static function getAllByOwnerUnpaginated($s_id) {
+    return Questions::where('survey_id', '=', $s_id)
+      ->get()
+      ->all()
+    ;
+  }
+
   public static function getAllBySurveyId($s_id, $start_from = 0) {
     return Questions::where('survey_id', '=', $s_id)
       ->orderBy('id', 'asc')

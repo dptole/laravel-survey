@@ -21,6 +21,7 @@ Route::group(['prefix' => 'laravel'], function() {
     Route::get('/js.js', ['uses' => 'ResourceController@js', 'as' => 'js']);
     Route::get('/questions.js', ['uses' => 'ResourceController@questions', 'as' => 'questions']);
     Route::get('/start-survey.js', ['uses' => 'ResourceController@startSurvey', 'as' => 'start-survey']);
+    Route::get('/manage-survey.js', ['uses' => 'ResourceController@manageSurvey', 'as' => 'manage-survey']);
     Route::get('/css.css', ['uses' => 'ResourceController@css', 'as' => 'css']);
   });
 
@@ -56,6 +57,8 @@ Route::group(['prefix' => 'laravel'], function() {
 
       Route::get('/{s_uuid}/question/{q_uuid}/edit', ['uses' => 'QuestionController@edit', 'as' => 'question.edit']);
       Route::post('/{s_uuid}/question/{q_uuid}/edit', ['uses' => 'QuestionController@update', 'as' => 'question.update']);
+
+      Route::get('/{s_uuid}/change_order', ['uses' => 'QuestionController@showChangeOrder', 'as' => 'question.change_order']);
     });
   });
 });

@@ -53,6 +53,6 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="https://dptole.ngrok.io/laravel/r/questions.js"></script>
+  <script type="text/javascript" src="{{ Helper::route('questions') }}"></script>
 @endsection
 

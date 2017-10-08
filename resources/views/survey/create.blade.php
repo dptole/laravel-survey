@@ -33,5 +33,7 @@
       {!! Helper::closeForm() !!}
     </div>
   </div>
+
+  <script type="text/javascript" src="{{ Helper::route('manage-survey') }}"></script>
 @endsection
 

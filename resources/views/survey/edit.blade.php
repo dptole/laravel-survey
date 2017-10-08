@@ -12,12 +12,12 @@
       {!! Helper::openForm('survey.edit', [$survey->uuid]) !!}
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
-          {{ Form::text('name', $survey->name, ['class' => 'form-control', 'requried' => '', 'autofocus' => '']) }}
+          {{ Form::text('name', $survey->name, ['class' => 'form-control', 'requried' => '', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true', 'autofocus' => '']) }}
         </div>
 
         <div class="form-group">
           {{ Form::label('description', 'Description:') }}
-          {{ Form::textarea('description', $survey->description, ['class' => 'form-control']) }}
+          {{ Form::textarea('description', $survey->description, ['class' => 'form-control', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true']) }}
         </div>
 
         <div class="form-group">
@@ -30,8 +30,15 @@
               <tr>
                 <th class="hidden-xs">UUID</th>
                 <th>Question</th>
-                <th>Last edited</th>
-                <th class="hidden-xs"></th>
+                <th>
+                  <div class="col-xs-6">Last edited</div>
+                  <div class="col-xs-6">
+                    {{ Html::linkRoute('question.change_order', 'Change order', [$survey->uuid], ['class' => 'visible-xs btn btn-default btn-xs']) }}
+                  </div>
+                </th>
+                <th class="hidden-xs">
+                  {{ Html::linkRoute('question.change_order', 'Change order', [$survey->uuid], ['class' => 'btn btn-default btn-xs']) }}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -47,14 +54,14 @@
                 @foreach($questions as $index => $question)
                   <tr>
                     <td class="hidden-xs">{{ $question->uuid }}</td>
+                    <td>{{ $question->description }}</td>
                     <td>
-                      {{ $question->description }}
+                      {{ date('c', strtotime($question->updated_at)) }}
                       <div class="visible-xs">
                         {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
                         {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
                       </div>
                     </td>
-                    <td>{{ date('c', strtotime($question->updated_at)) }}</td>
                     <td class="hidden-xs">
                       @if(!$survey->is_running)
                       {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}

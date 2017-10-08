@@ -167,5 +167,34 @@ class QuestionController extends Controller {
     $request->session()->flash('success', 'Question ' . $question->uuid . ' successfully updated!');
     return redirect()->route('survey.edit', $survey->uuid);
   }
+
+  /**
+   * Display the change questions' order page.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function showChangeOrder($s_uuid, Request $request) {
+    $survey = Surveys::getByOwner($s_uuid, $request->user()->id);
+    if(!$survey):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" not found.');
+      return redirect()->route('dashboard');
+    endif;
+
+    if($survey->is_running):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" is running.');
+      return redirect()->route('survey.edit', $s_uuid);
+    endif;
+
+    $questions = Questions::getAllByOwnerUnpaginated($survey->id);
+    if(!(is_array($questions) && count($questions) > 0)):
+      $request->session()->flash('warning', 'Survey "' . $s_uuid . '" questions not found.');
+      return redirect()->route('survey.edit', $s_uuid);
+    endif;
+
+    return view('question.change_order')->with([
+      'survey' => $survey,
+      'questions' => $questions
+    ]);
+  }
 }
 
