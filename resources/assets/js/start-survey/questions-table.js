@@ -92,25 +92,27 @@ export default class QuestionsTable {
       return !!getInput(input)
     }
 
-    function nextButtonClick(event) {
-      if(disableButton(validInput(input)))
-        return false
+    function selectedAnotherAnswer() {
+      return instance.data_survey.all_answers[number] && instance.data_survey.all_answers[number].answer.id !== answer.id
+    }
 
-      instance.selectedAnswer(number, answer_index)
-      API.saveAnswer(
-        instance.getSessionId(),
-        instance.data_survey.all_answers[number].question.survey_id,
-        instance.data_survey.all_answers[number].question.id,
-        instance.data_survey.all_answers[number].answer.id,
-        getInput(input)
-      )
-      instance.viewRenderQuestion(number + 1)
+    function nextButtonClick(event) {
+      if(validInput(input) && instance.isSelectedAnswer(number, answer)) {
+        API.saveAnswer(
+          instance.getSessionId(),
+          instance.data_survey.all_answers[number].question.survey_id,
+          instance.data_survey.all_answers[number].question.id,
+          instance.data_survey.all_answers[number].answer.id,
+          getInput(input)
+        )
+        instance.viewRenderQuestion(number + 1)
+      }
+
       instance.dom_start_button.off('click', nextButtonClick)
-      return true
     }
 
     function disableButton(cond) {
-      const func_name = cond ? 'removeClass' : 'addClass'
+      const func_name = cond || selectedAnotherAnswer() ? 'removeClass' : 'addClass'
       instance.dom_start_button[func_name]('disabled')
       return func_name === 'addClass'
     }
@@ -120,7 +122,8 @@ export default class QuestionsTable {
           .attr('type', 'text')
           .attr('placeholder', 'Answer here...')
           .on('click focus keypress keyup keydown', event => {
-            disableButton(validInput(input))
+            if(!disableButton(validInput(input)))
+              instance.selectedAnswer(number, answer_index)
           })
         , instance = this
     this.dom_start_button.on('click', nextButtonClick)
@@ -144,13 +147,15 @@ export default class QuestionsTable {
         this.dom_start_button.removeClass('disabled')
         this.selectedAnswer(number, answer_index)
         this.dom_start_button.on('click', event => {
-          API.saveAnswer(
-            this.getSessionId(),
-            this.data_survey.all_answers[number].question.survey_id,
-            this.data_survey.all_answers[number].question.id,
-            this.data_survey.all_answers[number].answer.id
-          )
-          this.viewRenderQuestion(number + 1)
+          if(this.isSelectedAnswer(number, answer)) {
+            API.saveAnswer(
+              this.getSessionId(),
+              this.data_survey.all_answers[number].question.survey_id,
+              this.data_survey.all_answers[number].question.id,
+              this.data_survey.all_answers[number].answer.id
+            )
+            this.viewRenderQuestion(number + 1)
+          }
         })
       })
 
@@ -190,6 +195,10 @@ export default class QuestionsTable {
       question: this.data_survey.all_questions[question_index],
       answer: this.data_survey.all_questions[question_index].answers[answer_index]
     }
+  }
+
+  isSelectedAnswer(number, answer) {
+    return this.data_survey.all_answers[number] && this.data_survey.all_answers[number].answer.id === answer.id
   }
 
   fxFade(callback) {
