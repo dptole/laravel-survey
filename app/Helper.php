@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Request;
 class Helper {
   public static function openForm($route, array $route_arguments = [], array $form_arguments = []) {
     return Form::open(array_merge(
+      [
+        'autocomplete' => 'off'
+      ],
       is_array($form_arguments) ? $form_arguments : [],
       [
         'url' => URL::to(

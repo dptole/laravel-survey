@@ -13,7 +13,7 @@
 
 Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
 
-Route::group(['prefix' => 'laravel'], function() {
+Route::group(['prefix' => 'laravel', 'middleware' => 'google_recaptcha'], function() {
   Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
   Auth::routes();
 
@@ -29,7 +29,7 @@ Route::group(['prefix' => 'laravel'], function() {
     Route::get('/{uuid}', ['uses' => 'PublicSurveyController@show', 'as' => 'public_survey.show']);
   });
 
-  Route::group(['prefix' => 'api', 'middleware' => ['api']], function() {
+  Route::group(['prefix' => 'api', 'middleware' => 'api'], function() {
     Route::get('/{s_uuid}/session_id', ['uses' => 'APIController@getSessionId']);
     Route::post('/save_answer', ['uses' => 'APIController@saveSurveyAnswer']);
   });

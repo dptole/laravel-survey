@@ -41,6 +41,10 @@ class Kernel extends HttpKernel
             'bindings',
             \App\Http\Middleware\Api::class
         ],
+
+        'google_recaptcha' => [
+            \App\Http\Middleware\GoogleReCaptcha::class
+        ]
     ];
 
     /**

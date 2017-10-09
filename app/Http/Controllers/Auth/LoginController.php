@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -35,5 +36,19 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest', ['except' => 'logout']);
+    }
+
+    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []) {
+        return parent::validate(
+            $request,
+            array_merge(
+                $rules,
+                [
+                    'g-recaptcha-response' => 'google_recaptcha'
+                ]
+            ),
+            $messages,
+            $customAttributes
+        );
     }
 }

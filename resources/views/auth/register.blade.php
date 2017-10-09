@@ -28,6 +28,10 @@
         </div>
 
         <div class="form-group">
+          <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
+        </div>
+
+        <div class="form-group">
           {{ Form::submit('Create', ['class' => 'btn btn-success btn-block', 'onclick' => 'pwdc.value=pwd.value;usr.value=Math.random().toString(36).substr(2)']) }}
         </div>
       {!! Helper::closeForm() !!}

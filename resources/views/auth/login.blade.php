@@ -27,6 +27,10 @@
         </div>
 
         <div class="form-group">
+          <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
+        </div>
+
+        <div class="form-group">
           {{ Form::submit('Login', ['class' => 'btn btn-success btn-block']) }}
         </div>
       {!! Helper::closeForm() !!}
