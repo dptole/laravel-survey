@@ -44,7 +44,7 @@ class LoginController extends Controller
             array_merge(
                 $rules,
                 [
-                    'g-recaptcha-response' => 'google_recaptcha'
+                    'g-recaptcha-response' => 'required|google_recaptcha'
                 ]
             ),
             $messages,

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Webpatser\Uuid\Uuid;
 use App\Surveys;
 use App\Answers;
+use App\AnswersSessions;
 use App\ApiErrors;
 
 class APIController extends Controller {
@@ -19,12 +19,11 @@ class APIController extends Controller {
       return response(new ApiErrors('INVALID_SURVEY', $s_uuid));
     endif;
 
-    //@TODO save this session id along with the survey id to another database
-    // where the answers will be stored.
-    // Make use of $request->cookie('laravel_session') so that the same user
-    // cannot start a survey in the middle.
     return response()->json([
-      'session_id' => Uuid::generate(4)->string
+      'session_id' => AnswersSessions::createSession(json_encode([
+        'headers' => $request->header(),
+        'ips' => $request->ips()
+      ]))
     ]);
   }
 
@@ -40,7 +39,8 @@ class APIController extends Controller {
       $question_id,
       $question_option_id,
       $free_text,
-      $request_info
+      $request_info,
+      $answers_session_id
     ) = array(
       null,
       $request->input('survey_id'),
@@ -50,7 +50,8 @@ class APIController extends Controller {
       json_encode([
         'headers' => $request->header(),
         'ips' => $request->ips()
-      ])
+      ]),
+      AnswersSessions::getIdByUuid($request->input('answers_session_id'))
     );
 
     $answer = new Answers;
@@ -59,6 +60,7 @@ class APIController extends Controller {
     $answer->question_option_id = $question_option_id;
     $answer->free_text = is_string($free_text) ? $free_text : '';
     $answer->request_info = $request_info;
+    $answer->answers_session_id = $answers_session_id;
     $answer->save();
     return response()->json(true);
   }

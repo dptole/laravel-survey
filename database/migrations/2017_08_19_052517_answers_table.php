@@ -21,6 +21,7 @@ class AnswersTable extends Migration
             $table->unsignedInteger('survey_id');
             $table->unsignedInteger('question_id');
             $table->unsignedInteger('question_option_id');
+            $table->unsignedInteger('answers_session_id');
             $table->text('free_text');
             $table->text('request_info');
             $table->timestamps();
@@ -28,14 +29,9 @@ class AnswersTable extends Migration
 
         Schema::table('answers', function(Blueprint $table) {
             $table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
-        });
-
-        Schema::table('answers', function(Blueprint $table) {
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
-        });
-
-        Schema::table('answers', function(Blueprint $table) {
             $table->foreign('question_option_id')->references('id')->on('questions_options')->onDelete('cascade');
+            $table->foreign('answers_session_id')->references('id')->on('answers_sessions')->onDelete('cascade');
         });
     }
 
@@ -50,6 +46,7 @@ class AnswersTable extends Migration
             $table->dropForeign(['survey_id']);
             $table->dropForeign(['question_id']);
             $table->dropForeign(['question_option_id']);
+            $table->dropForeign(['answers_session_id']);
         });
         Schema::dropIfExists('answers');
     }

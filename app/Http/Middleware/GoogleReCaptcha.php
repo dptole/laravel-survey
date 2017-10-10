@@ -15,13 +15,10 @@ class GoogleReCaptcha
      */
     public function handle($request, Closure $next)
     {
-        if(isset($_POST['g-recaptcha-response'])):
-          \Validator::extend('google_recaptcha', function($attribute, $value, $parameters, $validator) {
-            return (new \ReCaptcha\ReCaptcha(env('GOOGLE_RECAPTCHA_SITE_SECRET')))->verify($value)->isSuccess();
-          }, 'ReCaptcha error.');
-        endif;
+        \Validator::extend('google_recaptcha', function($attribute, $value, $parameters, $validator) {
+          return (new \ReCaptcha\ReCaptcha(env('GOOGLE_RECAPTCHA_SITE_SECRET')))->verify($value)->isSuccess();
+        }, 'ReCaptcha error.');
 
-        $response = $next($request);
-        return $response;
+        return $next($request);
     }
 }
