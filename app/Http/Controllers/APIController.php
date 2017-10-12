@@ -21,6 +21,7 @@ class APIController extends Controller {
 
     return response()->json([
       'session_id' => AnswersSessions::createSession(json_encode([
+        'js' => $request->input(),
         'headers' => $request->header(),
         'ips' => $request->ips()
       ]))

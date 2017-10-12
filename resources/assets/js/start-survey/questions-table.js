@@ -16,18 +16,37 @@ export default class QuestionsTable {
     this.data_survey.all_answers = []
 
     try {
-      await this.generateSessionId(this.data_survey.uuid)
+      setTimeout(async _ => {
+        await this.generateSessionId(this.data_survey.uuid)
+      }, 2e3)
     } catch(error) {
       const error_message = utils.goToProperty(error, 'response.data.error')
       if(error_message) this.dom_survey_title.text(error_message)
-      return setTimeout(_ => location = '/laravel', 2000)
+      return setTimeout(_ => location = '/laravel', 2e3)
     }
 
     this.fxFade(_ => this.viewStart())
   }
 
   async generateSessionId(survey_uuid) {
-    this._session_id = await API.generateSessionId(survey_uuid)
+    this._session_id = await API.generateSessionId(survey_uuid, {
+      window: {
+        width: $(window).width(),
+        height: $(window).height()
+      },
+      screen: {
+        width: $(document.documentElement).width(),
+        height: $(document.documentElement).height()
+      },
+      date: {
+        json: (new Date).toJSON(),
+        gmt: (new Date).toGMTString(),
+        date_string: (new Date).toDateString(),
+        time_string: (new Date).toTimeString(),
+        timezone: (new Date).getTimezoneOffset()
+      },
+      battery: utils.getProperties(await utils.getBattery())
+    })
   }
 
   getSessionId() {
