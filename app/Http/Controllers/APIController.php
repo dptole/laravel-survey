@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Surveys;
 use App\Answers;
 use App\AnswersSessions;
+use App\AnswersBehavior;
 use App\ApiErrors;
 
 class APIController extends Controller {
@@ -63,6 +64,20 @@ class APIController extends Controller {
     $answer->request_info = $request_info;
     $answer->answers_session_id = $answers_session_id;
     $answer->save();
+    return response()->json(true);
+  }
+
+  /**
+   * Saves user behavior when answering the survey.
+   *
+   * @return {"success":true}
+   */
+  public function saveBehavior(Request $request) {
+    $answers_behavior = new AnswersBehavior;
+    $answers_behavior->answers_session_id = AnswersSessions::getIdByUuid($request->input('answers_session_id'));
+    $answers_behavior->behavior = json_encode($request->input('behavior'));
+    $answers_behavior->save();
+
     return response()->json(true);
   }
 }
