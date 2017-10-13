@@ -46,4 +46,14 @@ class Helper {
   public static function isSuccessHTTPStatus($status) {
     return Helper::isValidHTTPStatus($status) && $status > 199 && $status < 300;
   }
+
+  public static function generateRandomString($length = 10) {
+    $string = '';
+    $length = is_numeric($length) && $length > 0 && $length < 32 ? $length : 10;
+    while(strlen($string) < $length)
+      preg_match('/\w|[-$!@+=]/', chr(rand(32, 128)), $match) && (
+        $string .= $match[0]
+      );
+    return $string;
+  }
 }

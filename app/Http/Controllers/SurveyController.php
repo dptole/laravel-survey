@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Helper;
 use App\Surveys;
 use App\Questions;
 use Webpatser\Uuid\Uuid;
@@ -39,6 +40,7 @@ class SurveyController extends Controller {
     $survey->name = $request->input('name');
     $survey->uuid = Uuid::generate(4);
     $survey->description = $request->input('description');
+    $survey->shareable_link = Helper::generateRandomString(8);
     $survey->save();
     $request->session()->flash('success', 'Survey ' . $survey->uuid . ' successfully created!');
     return redirect()->route('survey.edit', $survey->uuid);

@@ -10,9 +10,22 @@
   <div class="row">
     <div class="col-xs-12">
       {!! Helper::openForm('survey.edit', [$survey->uuid], ['autocomplete' => 'off']) !!}
-        <div class="form-group">
-          {{ Form::label('name', 'Name:') }}
-          {{ Form::text('name', $survey->name, ['class' => 'form-control', 'requried' => '', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true', 'autofocus' => '']) }}
+        <div class="row">
+          <div class="form-group {{ $survey->is_running ? 'col-sm-6' : '' }} col-xs-12">
+            {{ Form::label('name', 'Name:') }}
+            {{ Form::text('name', $survey->name, ['class' => 'form-control', 'requried' => '', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true', 'autofocus' => '']) }}
+          </div>
+
+          @if($survey->is_running)
+            <div class="form-group col-sm-6 col-xs-12">
+              {{ Form::label('shareable_link', 'Shareable link:') }}
+              <div class="row shareable-link">
+                <div class="col-xs-12">
+                  {{ Html::link($survey->getShareableLink(), $survey->getShareableLink()) }}
+                </div>
+              </div>
+            </div>
+          @endif
         </div>
 
         <div class="form-group">
@@ -49,7 +62,7 @@
             <tbody>
               @if(count($questions) === 0)
                 <tr>
-                  <td colspan="4" class="survey-first-question-line">
+                  <td colspan="5" class="survey-first-question-line">
                     <h3 class="text-center">
                       {{ Html::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-first-question btn btn-primary']) }} your first question.
                     </h3>

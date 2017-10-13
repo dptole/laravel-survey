@@ -40,5 +40,21 @@ class PublicSurveyController extends Controller {
 
     return view('public_survey.show')->withSurvey($survey);
   }
+
+  /**
+   * Display the start survey main page.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function shareableLink($s_link, Request $request) {
+    $survey = Surveys::getSurveyByShareableLink($s_link);
+
+    if(!$survey):
+      $request->session()->flash('warning', 'Survey "' . $s_link . '" was not found.');
+      return redirect()->route('home');
+    endif;
+
+    return redirect()->route('public_survey.show', $survey->uuid);
+  }
 }
 

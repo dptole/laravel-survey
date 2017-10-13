@@ -15,6 +15,10 @@ class Surveys extends Model {
     return $this->status === 'ready';
   }
 
+  public function getShareableLink() {
+    return 'https://dptole.ngrok.io/laravel/s/' . $this->shareable_link;
+  }
+
   /************************************************/
 
   public static function getAllByOwner($user_id) {
@@ -127,13 +131,25 @@ class Surveys extends Model {
 
   public static function getByUuid($uuid) {
     return (
-        $surveys = Surveys::where('uuid', '=', $uuid)
-            ->limit(1)
-            ->get()
-        ) &&
-          count($surveys) === 1
-        ? $surveys[0]
-        : null
+      $surveys = Surveys::where('uuid', '=', $uuid)
+        ->limit(1)
+        ->get()
+      ) &&
+        count($surveys) === 1
+      ? $surveys[0]
+      : null
+    ;
+  }
+
+  /************************************************/
+
+  public static function getSurveyByShareableLink($s_link) {
+    return (
+        $survey = self::where('shareable_link', '=', $s_link)->limit(1)->get()
+      ) &&
+        count($survey) === 1
+      ? $survey[0]
+      : null
     ;
   }
 }

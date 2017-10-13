@@ -11,3 +11,15 @@
 .panel {
   margin-top: 50px;
 }
+
+.no-padding-left {
+  padding-left: 0px !important;
+}
+
+[readonly] {
+  background-color: inherit !important;
+}
+
+.shareable-link {
+  line-height: 30px;
+}

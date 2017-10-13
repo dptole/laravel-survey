@@ -25,6 +25,7 @@ class SurveysTable extends Migration
             $table->enum('status', ['draft', 'ready'])->default('draft');
             $table->dateTime('start_survey')->nullable();
             $table->dateTime('end_survey')->nullable();
+            $table->string('shareable_link')->unique();
             $table->timestamps();
         });
 
