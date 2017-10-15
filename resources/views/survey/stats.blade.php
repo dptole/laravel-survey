@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      <a href="http://www.urbandictionary.com/define.php?term=NYI" target="_blank">NYI</a>
+      Total answers: {{ $survey->total_answers }}
     </div>
   </div>
 

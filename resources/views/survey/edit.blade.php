@@ -115,9 +115,9 @@
         <div class="row">
           <div class="col-sm-4 col-xs-12 form-group">
             @if(!$survey->is_running)
-            {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}
+              {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}
             @else
-            {{ Html::linkRoute('public_survey.show', 'Start this survey', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
+              {{ Html::linkRoute('survey.stats', 'Stats', [$survey->uuid], ['class' => 'btn btn-info btn-block']) }}
             @endif
           </div>
           <div class="col-sm-4 col-xs-12 form-group">

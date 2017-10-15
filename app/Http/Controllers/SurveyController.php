@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Helper;
 use App\Surveys;
 use App\Questions;
+use App\AnswersSessions;
 use Webpatser\Uuid\Uuid;
 
 class SurveyController extends Controller {
@@ -185,7 +186,9 @@ class SurveyController extends Controller {
       return redirect()->route('dashboard');
     endif;
 
-    return view('survey.stats');
+    $survey->total_answers = AnswersSessions::countBySurveyId($survey->id);
+
+    return view('survey.stats')->withSurvey($survey);
   }
 }
 

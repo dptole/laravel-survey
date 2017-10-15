@@ -16,12 +16,14 @@ class APIController extends Controller {
    * @return {"success":{"session_id":"82e55c09-54e1-4628-bb7e-92a7580c4273"}}
    */
   public function getSessionId($s_uuid, Request $request) {
-    if(!Surveys::getByUuid($s_uuid)):
+    $survey = Surveys::getByUuid($s_uuid);
+
+    if(!$survey):
       return response(new ApiErrors('INVALID_SURVEY', $s_uuid));
     endif;
 
     return response()->json([
-      'session_id' => AnswersSessions::createSession(json_encode([
+      'session_id' => AnswersSessions::createSession($survey->id, json_encode([
         'js' => $request->input(),
         'headers' => $request->header(),
         'ips' => $request->ips()

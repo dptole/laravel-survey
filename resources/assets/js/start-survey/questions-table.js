@@ -11,25 +11,25 @@ export default class QuestionsTable {
     this.dom_survey_container.append(this.dom_survey_title)
 
     $(window).on('beforeunload', event => {
-      API.saveBehavior(this.getSessionId(), {
+      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
         reload: utils.getDate()
       })
     })
 
     $(window).on('blur', event =>
-      API.saveBehavior(this.getSessionId(), {
+      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
         blur: utils.getDate()
       })
     )
 
     $(window).on('focus', event =>
-      API.saveBehavior(this.getSessionId(), {
+      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
         focus: utils.getDate()
       })
     )
 
     $(window).on('click', event =>
-      API.saveBehavior(this.getSessionId(), {
+      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
         click: Object.assign(utils.getDate(), {
           altKey: event.originalEvent.altEvent,
           shiftKey: event.originalEvent.shiftKey,
@@ -52,9 +52,7 @@ export default class QuestionsTable {
     this.data_survey.all_answers = []
 
     try {
-      setTimeout(async _ => {
-        await this.generateSessionId(this.data_survey.uuid)
-      }, 2e3)
+      await this.generateSessionId(this.data_survey.uuid)
     } catch(error) {
       const error_message = utils.goToProperty(error, 'response.data.error')
       if(error_message) this.dom_survey_title.text(error_message)
