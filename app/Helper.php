@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Request;
 
 class Helper {
   static $pusher = null;
-  static $pusher_options = array(
-    'cluster' => 'us2',
-    'encrypted' => true
-  );
+
+  public static function getPusherOptions() {
+    return [
+      'cluster' => env('PUSHER_APP_CLUSTER'),
+      'encrypted' => true
+    ];
+  }
 
   public static function openForm($route, array $route_arguments = [], array $form_arguments = []) {
     return Form::open(array_merge(
@@ -20,7 +23,7 @@ class Helper {
       is_array($form_arguments) ? $form_arguments : [],
       [
         'url' => URL::to(
-          Helper::urlRemoveDomain(route($route, $route_arguments)),
+          self::urlRemoveDomain(route($route, $route_arguments)),
           [],
           isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io'
         )
@@ -38,7 +41,7 @@ class Helper {
 
   public static function route($route) {
     $url = route($route);
-    return Helper::isSecureRequest() ? preg_replace('#^http(://.*)$#', 'https$1', $url) : $url;
+    return self::isSecureRequest() ? preg_replace('#^http(://.*)$#', 'https$1', $url) : $url;
   }
 
   public static function isSecureRequest() {
@@ -50,7 +53,7 @@ class Helper {
   }
 
   public static function isSuccessHTTPStatus($status) {
-    return Helper::isValidHTTPStatus($status) && $status > 199 && $status < 300;
+    return self::isValidHTTPStatus($status) && $status > 199 && $status < 300;
   }
 
   public static function generateRandomString($length = 10) {
@@ -69,7 +72,7 @@ class Helper {
         env('PUSHER_APP_KEY'),
         env('PUSHER_APP_SECRET'),
         env('PUSHER_APP_ID'),
-        self::$pusher_options
+        self::getPusherOptions()
       );
 
     self::$pusher->trigger($channel, $event, $message);
