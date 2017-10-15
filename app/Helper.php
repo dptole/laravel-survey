@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 
 class Helper {
+  static $pusher = null;
+  static $pusher_options = array(
+    'cluster' => 'us2',
+    'encrypted' => true
+  );
+
   public static function openForm($route, array $route_arguments = [], array $form_arguments = []) {
     return Form::open(array_merge(
       [
@@ -55,5 +61,17 @@ class Helper {
         $string .= $match[0]
       );
     return $string;
+  }
+
+  public static function broadcast($channel, $event, $message) {
+    if(!self::$pusher)
+      self::$pusher = new \Pusher\Pusher(
+        env('PUSHER_APP_KEY'),
+        env('PUSHER_APP_SECRET'),
+        env('PUSHER_APP_ID'),
+        self::$pusher_options
+      );
+
+    self::$pusher->trigger($channel, $event, $message);
   }
 }

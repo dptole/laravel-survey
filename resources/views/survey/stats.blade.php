@@ -12,5 +12,7 @@
       <a href="http://www.urbandictionary.com/define.php?term=NYI" target="_blank">NYI</a>
     </div>
   </div>
+
+  <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection
 

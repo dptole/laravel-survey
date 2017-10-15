@@ -25,6 +25,10 @@ class ResourceController extends Controller {
     return $this->fromPublicPath('/js/manage-survey.js');
   }
 
+  public function stats() {
+    return $this->fromPublicPath('/js/stats.js');
+  }
+
   public function css() {
     return $this->fromPublicPath('/css/app.css', [
       'content-type' => 'text/css'

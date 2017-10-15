@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Helper;
 use App\Surveys;
 use App\Questions;
 use App\QuestionsOptions;
@@ -37,6 +38,13 @@ class PublicSurveyController extends Controller {
         return redirect()->route('dashboard');
       endif;
     endforeach;
+
+    Helper::broadcast('public-survey', 'new-user', [
+      'user' => [
+        'headers' => $request->header(),
+        'ips' => $request->ips()
+      ]
+    ]);
 
     return view('public_survey.show')->withSurvey($survey);
   }

@@ -23,6 +23,7 @@ Route::group(['prefix' => 'laravel', 'middleware' => 'google_recaptcha'], functi
     Route::get('/questions.js', ['uses' => 'ResourceController@questions', 'as' => 'questions']);
     Route::get('/start-survey.js', ['uses' => 'ResourceController@startSurvey', 'as' => 'start-survey']);
     Route::get('/manage-survey.js', ['uses' => 'ResourceController@manageSurvey', 'as' => 'manage-survey']);
+    Route::get('/stats.js', ['uses' => 'ResourceController@stats', 'as' => 'stats']);
     Route::get('/css.css', ['uses' => 'ResourceController@css', 'as' => 'css']);
   });
 

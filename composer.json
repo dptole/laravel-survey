@@ -11,6 +11,7 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "5.4.*",
+        "pusher/pusher-php-server": "~3.0",
         "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {

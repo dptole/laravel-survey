@@ -15,5 +15,6 @@ mix.js('resources/assets/js/app.js', 'public/js/app.js')
    .js('resources/assets/js/questions/main.js', 'public/js/questions.js')
    .js('resources/assets/js/start-survey/main.js', 'public/js/start-survey.js')
    .js('resources/assets/js/manage-survey/main.js', 'public/js/manage-survey.js')
+   .js('resources/assets/js/stats/main.js', 'public/js/stats.js')
    .sass('resources/assets/sass/app.scss', 'public/css')
 
