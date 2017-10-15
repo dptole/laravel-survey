@@ -23,3 +23,11 @@
 .shareable-link {
   line-height: 30px;
 }
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+}

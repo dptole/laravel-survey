@@ -75,6 +75,11 @@ export default class AnswersTable {
       )
     )
     this.normalizeRows()
+    this.showHideChangeOrderButton()
+  }
+
+  showHideChangeOrderButton() {
+    this[coccs][this.countRows() > 1 ? 'show' : 'hide']()
   }
 
   addAnswers(answers) {
@@ -99,7 +104,7 @@ export default class AnswersTable {
   /************************************************/
 
   removeRow(index) {
-    return this.countRows() > 1 && isFinite(index) && index >= 0 && !!this[tccs].find('tbody tr:eq(' + index + ')').remove()
+    return this.countRows() > 1 && isFinite(index) && index >= 0 && !!this[tccs].find('tbody tr:eq(' + index + ')').remove() && this.showHideChangeOrderButton()
   }
 
   createRowActions(row) {
