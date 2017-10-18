@@ -18,7 +18,7 @@ class AnswersSessionsTable extends Migration
             $table->engine = 'InnoDB';
 
             $table->increments('id')->unsigned();
-            $table->string('session_id');
+            $table->string('session_uuid');
             $table->unsignedInteger('survey_id');
             $table->text('request_info');
             $table->timestamps();

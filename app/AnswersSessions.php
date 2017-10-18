@@ -9,16 +9,16 @@ class AnswersSessions extends Model
 {
   public static function createSession($survey_id, $request_info = '') {
     $answers_sessions = new AnswersSessions;
-    $answers_sessions->session_id = Uuid::generate(4)->string;
+    $answers_sessions->session_uuid = Uuid::generate(4)->string;
     $answers_sessions->survey_id = $survey_id;
     $answers_sessions->request_info = $request_info;
     $answers_sessions->save();
-    return $answers_sessions->session_id;
+    return $answers_sessions->session_uuid;
   }
 
   public static function getIdByUuid($uuid) {
     return (
-      $answers_sessions = AnswersSessions::where('session_id', '=', $uuid)
+      $answers_sessions = AnswersSessions::where('session_uuid', '=', $uuid)
         ->limit(1)
         ->get()
         ->all()
