@@ -13,7 +13,6 @@ class AnswersBehaviorTable extends Migration
      */
     public function up()
     {
-        Schema::defaultStringLength(191);
         Schema::create('answers_behaviors', function(Blueprint $table) {
             $table->engine = 'InnoDB';
 

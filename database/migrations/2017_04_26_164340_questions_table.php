@@ -13,13 +13,13 @@ class QuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::defaultStringLength(191);
         Schema::create('questions', function(Blueprint $table) {
             $table->engine = 'InnoDB';
 
             $table->increments('id')->unsigned();
             $table->unsignedInteger('survey_id');
             $table->unsignedInteger('order')->default('1');
+            $table->unsignedInteger('version')->default('1');
             $table->string('description', 1023);
             $table->string('uuid')->unique();
             $table->enum('active', ['1', '0'])->default('1');

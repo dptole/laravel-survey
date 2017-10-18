@@ -13,7 +13,6 @@ class QuestionsOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::defaultStringLength(191);
         Schema::create('questions_options', function(Blueprint $table) {
             $table->engine = 'InnoDB';
 

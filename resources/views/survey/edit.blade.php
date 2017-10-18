@@ -18,7 +18,7 @@
         @if($survey->is_running)
         <div class="form-group">
           {{ Form::label('shareable_link', 'Shareable link:') }}
-          {{ Html::link($survey->getShareableLink(), $survey->getShareableLink(), ['class' => 'text-ellipsis']) }}
+          {{ Html::link($survey->shareable_url, $survey->shareable_url, ['class' => 'text-ellipsis']) }}
         </div>
         @endif
 

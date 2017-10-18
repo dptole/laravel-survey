@@ -15,7 +15,7 @@ class Surveys extends Model {
     return $this->status === 'ready';
   }
 
-  public function getShareableLink() {
+  public function getShareableUrlAttribute() {
     return 'https://dptole.ngrok.io/laravel/s/' . $this->shareable_link;
   }
 
