@@ -11,7 +11,8 @@ class Questions extends Model {
     return (
         $questions = Questions::where([
           'uuid' => $q_uuid,
-          'survey_id' => $s_id
+          'survey_id' => $s_id,
+          'active' => '1'
         ])->get()
       ) &&
         count($questions) === 1
@@ -21,14 +22,20 @@ class Questions extends Model {
   }
 
   public static function getAllByOwner($s_id) {
-    return Questions::where('survey_id', '=', $s_id)
+    return Questions::where([
+        'survey_id' => $s_id,
+        'active' => '1'
+      ])
       ->orderBy('updated_at', 'desc')
       ->paginate(5)
     ;
   }
 
   public static function getAllBySurveyIdUnpaginated($s_id) {
-    return Questions::where('survey_id', '=', $s_id)
+    return Questions::where([
+        'survey_id' => $s_id,
+        'active' => '1'
+      ])
       ->orderBy('order', 'asc')
       ->get()
       ->all()
@@ -36,31 +43,68 @@ class Questions extends Model {
   }
 
   public static function getAllBySurveyId($s_id, $start_from = 0) {
-    return Questions::where('survey_id', '=', $s_id)
+    return Questions::where([
+        'survey_id' => $s_id,
+        'active' => '1'
+      ])
       ->orderBy('id', 'asc')
       ->get()
     ;
   }
 
   public static function getAllBySurveyIdOrdered($s_id, $start_from = 0) {
-    return Questions::where('survey_id', '=', $s_id)
+    return Questions::where([
+        'survey_id' => $s_id,
+        'active' => '1'
+      ])
       ->orderBy('order', 'asc')
       ->get()
     ;
   }
 
   public static function deleteByOwner($s_uuid, $q_uuid, $user_id) {
-    return ($survey = Surveys::getByOwner($s_uuid, $user_id)) &&
-      Questions::where([
-        'survey_id' => $survey->id,
-        'uuid' => $q_uuid
-      ])->delete()
-    ;
+    $survey = Surveys::getByOwner($s_uuid, $user_id);
+    if(!$survey):
+      return false;
+    endif;
+
+    $query = Questions::where([
+      'survey_id' => $survey->id,
+      'uuid' => $q_uuid,
+      'active' => '1'
+    ])->limit(1);
+
+    $questions = $query->get()->all();
+    if(count($questions) !== 1):
+      return false;
+    endif;
+
+    $update_active = $query->update([
+      'active' => '0'
+    ]);
+
+    if(!$update_active):
+      return false;
+    endif;
+
+    Questions::where([
+      'survey_id' => $survey->id,
+      'active' => '1'
+    ])->where(
+      'order', '>', $questions[0]->order
+    )->decrement(
+      'order', $questions[0]->order - 1
+    );
+
+    return true;
   }
 
   public static function getByUuid($uuid) {
     return (
-      $questions = Questions::where('uuid', '=', $uuid)->get()
+      $questions = Questions::where([
+        'uuid' => $uuid,
+        'active' => '1'
+      ])->get()
     ) &&
       count($questions) === 1
       ? $questions[0]
@@ -70,7 +114,10 @@ class Questions extends Model {
 
   public static function getNextInOrder($s_id) {
     return (
-      $question = Questions::where('survey_id', '=', $s_id)
+      $question = Questions::where([
+        'survey_id' => $s_id,
+        'active' => '1'
+      ])
       ->orderBy('order', 'desc')
       ->limit(1)
       ->get()
