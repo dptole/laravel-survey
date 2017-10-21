@@ -66,14 +66,17 @@ class QuestionController extends Controller {
       return redirect()->route('dashboard');
     endif;
 
-    $question = new Questions;
-    $question->description = $request->input('description');
-    $question->uuid = Uuid::generate(4);
-    $question->survey_id = $survey->id;
-    $question->order = Questions::getNextInOrder($survey->id);
-    $question->save();
+    $question = Questions::createQuestion([
+      'description' => $request->input('description'),
+      'uuid' => Uuid::generate(4),
+      'survey_id' => $survey->id,
+      'order' => Questions::getNextInOrder($survey->id)
+    ]);
 
-    QuestionsOptions::saveArray($question->id, $request->input('questions_options'));
+    Questions::createQuestionOptions(
+      $question,
+      $request->input('questions_options')
+    );
 
     $request->session()->flash('success', 'Question ' . $question->uuid . ' successfully created!');
     return redirect()->route('survey.edit', $survey->uuid);

@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Surveys;
+use App\QuestionsOptions;
+use App\Helper;
 use DB;
 
 class Questions extends Model {
@@ -21,7 +23,7 @@ class Questions extends Model {
     ;
   }
 
-  public static function getAllByOwner($s_id) {
+  public static function getAllBySurveyIdPaginated($s_id) {
     return Questions::where([
         'survey_id' => $s_id,
         'active' => '1'
@@ -138,6 +140,26 @@ class Questions extends Model {
     $question->order = $order;
     $question->save();
     return true;
+  }
+
+  public static function createQuestion($options) {
+    $question = new Questions;
+    $question->description = $options['description'];
+    $question->uuid = $options['uuid'];
+    $question->survey_id = $options['survey_id'];
+
+    if(isset($options['version']) && Helper::isPositiveInteger($options['version'])):
+      $question->version = $options['version'];
+    endif;
+
+    $question->order = $options['order'];
+    $question->save();
+
+    return $question;
+  }
+
+  public static function createQuestionOptions($question, $question_options) {
+    return QuestionsOptions::saveArray($question->id, $question_options);
   }
 }
 

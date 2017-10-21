@@ -62,7 +62,7 @@ class SurveyController extends Controller {
 
     return view('survey.edit')->with([
       'survey' => $survey,
-      'questions' => Questions::getAllByOwner($survey->id)
+      'questions' => Questions::getAllBySurveyIdPaginated($survey->id)
     ]);
   }
 
@@ -165,7 +165,7 @@ class SurveyController extends Controller {
       $request->session()->flash('warning', 'Survey "' . $uuid . '" invalid status, it should be "ready".');
       return redirect()->route('survey.edit', $uuid);
     elseif($status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED):
-      $request->session()->flash('warning', 'Survey "' . $uuid . '" already paused.');
+      $request->session()->flash('warning', 'Survey "' . $uuid . '" is already paused.');
       return redirect()->route('survey.edit', $uuid);
     endif;
 

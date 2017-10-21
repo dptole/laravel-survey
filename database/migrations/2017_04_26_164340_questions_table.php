@@ -29,6 +29,8 @@ class QuestionsTable extends Migration
         Schema::table('questions', function(Blueprint $table) {
             $table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
         });
+
+        DB::statement('CREATE VIEW surveys_last_version_view AS SELECT survey_id, MAX(version) AS last_version FROM questions WHERE active = 1 GROUP BY survey_id;');
     }
 
     /**
@@ -42,6 +44,8 @@ class QuestionsTable extends Migration
             $table->dropForeign(['survey_id']);
         });
         Schema::dropIfExists('questions');
+
+        DB::statement('DROP VIEW surveys_last_version_view;');
     }
 }
 

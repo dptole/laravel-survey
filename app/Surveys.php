@@ -3,6 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\SurveysLastVersionsView;
+use App\QuestionsOptions;
+use App\Questions;
+use App\Surveys;
+use Webpatser\Uuid\Uuid;
 use DB;
 
 class Surveys extends Model {
@@ -139,6 +144,35 @@ class Surveys extends Model {
       ? $surveys[0]
       : null
     ;
+  }
+
+  /************************************************/
+
+  public static function getIdByUuid($uuid, $user_id) {
+    return ($survey = self::getByOwner($uuid, $user_id)) ? $survey->id : null;
+  }
+
+  /************************************************/
+
+  public static function generateQuestionsNextVersion(Surveys $survey) {
+    // If survey exists last_version will always exist
+    $last_version = SurveysLastVersionsView::getById($survey->id);
+
+    return array_map(function($question) use ($last_version) {
+      return [
+        'survey_id' => $question->survey_id,
+        'order' => $question->order,
+        'version' => $last_version->last_version + 1,
+        'description' => $question->description,
+        'uuid' => Uuid::generate(4)->string,
+        'questions_options' => array_map(function($question_option) {
+          return [
+            'description' => $question_option->description,
+            'type' => $question_option->type
+          ];
+        }, QuestionsOptions::getAllByQuestionId($question->id))
+      ];
+    }, Questions::getAllBySurveyIdUnpaginated($survey->id));
   }
 
   /************************************************/

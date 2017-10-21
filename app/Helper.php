@@ -77,4 +77,8 @@ class Helper {
 
     self::$pusher->trigger($channel, $event, $message);
   }
+
+  public static function isPositiveInteger($value) {
+    return is_numeric($value) && $value >= 0 && ~~$value === $value;
+  }
 }

@@ -29,7 +29,7 @@ class QuestionsOptionsTable extends Migration
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
 
-        DB::statement('CREATE VIEW questions_options_meta AS SELECT question_id, MAX(version) AS last_version FROM questions_options GROUP BY question_id;');
+        DB::statement('CREATE VIEW questions_options_view AS SELECT question_id, MAX(version) AS last_version FROM questions_options GROUP BY question_id;');
     }
 
     /**
@@ -44,6 +44,6 @@ class QuestionsOptionsTable extends Migration
         });
         Schema::dropIfExists('questions_options');
 
-        DB::statement('DROP VIEW questions_options_meta;');
+        DB::statement('DROP VIEW questions_options_view;');
     }
 }
