@@ -93,6 +93,6 @@ class Helper {
   }
 
   public static function createCarbonDate($date) {
-    return new Carbon($date, 'America/Sao_Paulo');
+    return new Carbon($date); //, 'America/Sao_Paulo');
   }
 }
