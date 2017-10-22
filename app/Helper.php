@@ -1,8 +1,10 @@
 <?php
 
 namespace App;
+
 use Collective\Html\FormFacade as Form;
 use Illuminate\Support\Facades\URL;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 
 class Helper {
@@ -80,5 +82,17 @@ class Helper {
 
   public static function isPositiveInteger($value) {
     return is_numeric($value) && $value >= 0 && ~~$value === $value;
+  }
+
+  public static function createCarbonRfc1123String($date) {
+    return self::createCarbonDate($date)->toRfc1123String();
+  }
+
+  public static function createCarbonDiffForHumans($date) {
+    return self::createCarbonDate($date)->diffForHumans();
+  }
+
+  public static function createCarbonDate($date) {
+    return new Carbon($date, 'America/Sao_Paulo');
   }
 }

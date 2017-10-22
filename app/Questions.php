@@ -9,6 +9,17 @@ use App\Helper;
 use DB;
 
 class Questions extends Model {
+  // https://laravel.com/docs/5.4/eloquent-mutators
+  public function getUpdatedAtDiffAttribute() {
+    return Helper::createCarbonDiffForHumans($this->updated_at);
+  }
+
+  public function getUpdatedAtRfc1123Attribute() {
+    return Helper::createCarbonRfc1123String($this->updated_at);
+  }
+
+  /************************************************/
+
   public static function getBySurvey($q_uuid, $s_id) {
     return (
         $questions = Questions::where([

@@ -82,7 +82,7 @@
                       </div>
                     </td>
                     <td class="hidden-xs">
-                      {{ date('c', strtotime($question->updated_at)) }}
+                      <span title="{{ $question->updated_at_rfc1123 }}">{{ $question->updated_at_diff }}</span>
                     </td>
 
                     @if(!$survey->is_running)

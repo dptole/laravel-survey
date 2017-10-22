@@ -11,6 +11,7 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "5.4.*",
+        "nesbot/carbon": "^1.22",
         "pusher/pusher-php-server": "~3.0",
         "webpatser/laravel-uuid": "2.*"
     },

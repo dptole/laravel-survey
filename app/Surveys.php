@@ -7,13 +7,18 @@ use App\SurveysLastVersionsView;
 use App\QuestionsOptions;
 use App\Questions;
 use App\Surveys;
+use App\Helper;
 use Webpatser\Uuid\Uuid;
 use DB;
 
 class Surveys extends Model {
   // https://laravel.com/docs/5.4/eloquent-mutators
-  public function getUpdatedAtAttribute($value) {
-    return date('c', strtotime($value));
+  public function getUpdatedAtDiffAttribute() {
+    return Helper::createCarbonDiffForHumans($this->updated_at);
+  }
+
+  public function getUpdatedAtRfc1123Attribute() {
+    return Helper::createCarbonRfc1123String($this->updated_at);
   }
 
   public function getIsRunningAttribute() {
