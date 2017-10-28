@@ -50,7 +50,7 @@
 
                 @if(!$survey->is_running && count($questions) > 0)
                 <th class="hidden-xs">
-                  @if(count($questions) > 1)
+                  @if(count($questions) > 1 || $questions->currentPage() > 1)
                     {{ Html::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'btn btn-default btn-xs']) }}
                   @endif
                 </th>
