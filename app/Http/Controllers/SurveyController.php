@@ -156,12 +156,22 @@ class SurveyController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function pause($uuid, Request $request) {
-    $status = Surveys::pause($uuid, $request->user()->id);
-
-    if($status === Surveys::ERR_PAUSE_SURVEY_NOT_FOUND):
+    $survey = Surveys::getByOwner($uuid, $request->user()->id);
+    if(!$survey):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
       return redirect()->route('dashboard');
-    elseif($status === Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS):
+    endif;
+
+    $questions_next_version = Surveys::generateQuestionsNextVersion($survey);
+    foreach($questions_next_version as $question_next_version):
+      Questions::createQuestionOptions(
+        Questions::createQuestion($question_next_version),
+        $question_next_version['questions_options']
+      );
+    endforeach;
+
+    $status = Surveys::pause($uuid, $request->user()->id);
+    if($status === Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS):
       $request->session()->flash('warning', 'Survey "' . $uuid . '" invalid status, it should be "ready".');
       return redirect()->route('survey.edit', $uuid);
     elseif($status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED):

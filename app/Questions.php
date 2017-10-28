@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Surveys;
 use App\QuestionsOptions;
 use App\Helper;
+use App\SurveysLastVersionsView;
 use DB;
 
 class Questions extends Model {
@@ -25,7 +26,8 @@ class Questions extends Model {
         $questions = Questions::where([
           'uuid' => $q_uuid,
           'survey_id' => $s_id,
-          'active' => '1'
+          'active' => '1',
+          'version' => Questions::getLastVersion($s_id)
         ])->get()
       ) &&
         count($questions) === 1
@@ -37,7 +39,8 @@ class Questions extends Model {
   public static function getAllBySurveyIdPaginated($s_id) {
     return Questions::where([
         'survey_id' => $s_id,
-        'active' => '1'
+        'active' => '1',
+        'version' => Questions::getLastVersion($s_id)
       ])
       ->orderBy('updated_at', 'desc')
       ->paginate(5)
@@ -47,7 +50,8 @@ class Questions extends Model {
   public static function getAllBySurveyIdUnpaginated($s_id) {
     return Questions::where([
         'survey_id' => $s_id,
-        'active' => '1'
+        'active' => '1',
+        'version' => Questions::getLastVersion($s_id)
       ])
       ->orderBy('order', 'asc')
       ->get()
@@ -58,7 +62,8 @@ class Questions extends Model {
   public static function getAllBySurveyId($s_id, $start_from = 0) {
     return Questions::where([
         'survey_id' => $s_id,
-        'active' => '1'
+        'active' => '1',
+        'version' => Questions::getLastVersion($s_id)
       ])
       ->orderBy('id', 'asc')
       ->get()
@@ -68,7 +73,8 @@ class Questions extends Model {
   public static function getAllBySurveyIdOrdered($s_id, $start_from = 0) {
     return Questions::where([
         'survey_id' => $s_id,
-        'active' => '1'
+        'active' => '1',
+        'version' => Questions::getLastVersion($s_id)
       ])
       ->orderBy('order', 'asc')
       ->get()
@@ -81,10 +87,12 @@ class Questions extends Model {
       return false;
     endif;
 
+    $version = Questions::getLastVersion($survey->id);
     $query = Questions::where([
       'survey_id' => $survey->id,
       'uuid' => $q_uuid,
-      'active' => '1'
+      'active' => '1',
+      'version' => $version
     ])->limit(1);
 
     $questions = $query->get()->all();
@@ -102,7 +110,8 @@ class Questions extends Model {
 
     Questions::where([
       'survey_id' => $survey->id,
-      'active' => '1'
+      'active' => '1',
+      'version' => $version
     ])->where(
       'order', '>', $questions[0]->order
     )->decrement(
@@ -129,7 +138,8 @@ class Questions extends Model {
     return (
       $question = Questions::where([
         'survey_id' => $s_id,
-        'active' => '1'
+        'active' => '1',
+        'version' => Questions::getLastVersion($s_id)
       ])
       ->orderBy('order', 'desc')
       ->limit(1)
@@ -161,6 +171,8 @@ class Questions extends Model {
 
     if(isset($options['version']) && Helper::isPositiveInteger($options['version'])):
       $question->version = $options['version'];
+    else:
+      $question->version = self::getLastVersion($question->survey_id);
     endif;
 
     $question->order = $options['order'];
@@ -171,6 +183,11 @@ class Questions extends Model {
 
   public static function createQuestionOptions($question, $question_options) {
     return QuestionsOptions::saveArray($question->id, $question_options);
+  }
+
+  public static function getLastVersion($survey_id) {
+    $last_version = SurveysLastVersionsView::getById($survey_id);
+    return $last_version ? $last_version->last_version : 1;
   }
 }
 

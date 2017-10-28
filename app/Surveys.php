@@ -172,8 +172,8 @@ class Surveys extends Model {
         'uuid' => Uuid::generate(4)->string,
         'questions_options' => array_map(function($question_option) {
           return [
-            'description' => $question_option->description,
-            'type' => $question_option->type
+            'type' => $question_option->type,
+            'value' => $question_option->description
           ];
         }, QuestionsOptions::getAllByQuestionId($question->id))
       ];
