@@ -73,7 +73,7 @@ export default class QuestionsTable {
         height: $(document.documentElement).height()
       },
       date: utils.getDate(),
-      battery: utils.getProperties(await utils.getBattery())
+      battery: await utils.getBattery()
     })
   }
 

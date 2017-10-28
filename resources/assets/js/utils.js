@@ -33,9 +33,15 @@ const utils = {
 
   async getBattery() {
     try {
-      return await navigator.getBattery()
+      return {
+        success: true,
+        result: utils.getProperties(await navigator.getBattery())
+      }
     } catch(error) {
-      return error
+      return {
+        success: false,
+        result: utils.getProperties(error)
+      }
     }
   },
 
