@@ -41,7 +41,7 @@
                 <th>
                   Question
                   <div class="pull-right">
-                    @if(count($questions) > 1 && !$survey->is_running)
+                    @if((count($questions) > 1 || $questions->currentPage() > 1) && !$survey->is_running)
                       {{ Html::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'visible-xs btn btn-default btn-xs']) }}
                     @endif
                   </div>
