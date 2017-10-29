@@ -10,9 +10,16 @@
   <div class="row">
     <div class="col-xs-12">
       {!! Helper::openForm('survey.edit', [$survey->uuid], ['autocomplete' => 'off']) !!}
+        @if($survey->is_running)
+        <div class="form-group">
+          {{ Form::label('version', 'Version:') }}
+          {{ $survey->version->last_version }}
+        </div>
+        @endif
+
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
-          {{ Form::text('name', $survey->name, ['class' => 'form-control', 'requried' => '', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true', 'autofocus' => '']) }}
+          {{ Form::text('name', $survey->name, ['class' => 'form-control', 'required' => '', ($survey->is_running ? 'disabled' : 'non-disabled') => 'true', 'autofocus' => '']) }}
         </div>
 
         @if($survey->is_running)

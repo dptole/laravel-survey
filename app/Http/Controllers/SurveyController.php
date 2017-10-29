@@ -7,6 +7,7 @@ use App\Helper;
 use App\Surveys;
 use App\Questions;
 use App\AnswersSessions;
+use App\SurveysLastVersionsView;
 use Webpatser\Uuid\Uuid;
 
 class SurveyController extends Controller {
@@ -59,6 +60,8 @@ class SurveyController extends Controller {
       $request->session()->flash('warning', 'Survey "' . $uuid . '" not found.');
       return redirect()->route('dashboard');
     endif;
+
+    $survey->version = SurveysLastVersionsView::getById($survey->id);
 
     return view('survey.edit')->with([
       'survey' => $survey,
