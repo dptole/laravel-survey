@@ -200,6 +200,7 @@ class SurveyController extends Controller {
     endif;
 
     $survey->total_answers = AnswersSessions::countBySurveyId($survey->id);
+    $survey->versions = Surveys::getVersions($survey);
 
     return view('survey.stats')->withSurvey($survey);
   }

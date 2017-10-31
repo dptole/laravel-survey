@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Surveys;
 use App\SurveysLastVersionsView;
 use App\QuestionsOptions;
+use App\QuestionsOptionsView;
 use App\Questions;
-use App\Surveys;
+use App\Answers;
 use App\Helper;
 use Webpatser\Uuid\Uuid;
 use DB;
@@ -178,6 +180,37 @@ class Surveys extends Model {
         }, QuestionsOptions::getAllByQuestionId($question->id))
       ];
     }, Questions::getAllBySurveyIdUnpaginated($survey->id));
+  }
+
+  /************************************************/
+
+  public static function getVersions(Surveys $survey) {
+    $versions = [];
+    $array_questions_versions = range(1, SurveysLastVersionsView::getById($survey->id)->last_version);
+    foreach($array_questions_versions as $version):
+      $questions = Questions::getAllByVersion($survey->id, $version);
+      $users_answers = [];
+
+      foreach($questions as $question):
+        $questions_answers_versions = range(1, QuestionsOptionsView::getById($question->id)->last_version);
+
+        foreach($questions_answers_versions as $questions_answers_version):
+          $questions_answers []= [
+            'version' => $questions_answers_version,
+            'answers' => QuestionsOptions::getAllByVersion($question->id, $questions_answers_version)
+          ];
+        endforeach;
+
+        $question->answers = $questions_answers;
+      endforeach;
+
+      $versions []= [
+        'version' => $version,
+        'questions' => $questions
+      ];
+    endforeach;
+
+    return $versions;
   }
 
   /************************************************/

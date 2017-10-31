@@ -50,5 +50,12 @@ class QuestionsOptions extends Model {
 
     return true;
   }
+
+  public static function getAllByVersion($question_id, $version) {
+    return QuestionsOptions::where([
+      'version' => $version,
+      'question_id' => $question_id
+    ])->orderBy('id')->get()->all();
+  }
 }
 

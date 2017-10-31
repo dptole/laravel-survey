@@ -189,5 +189,13 @@ class Questions extends Model {
     $last_version = SurveysLastVersionsView::getById($survey_id);
     return $last_version ? $last_version->last_version : 1;
   }
+
+  public static function getAllByVersion($survey_id, $version) {
+    return Questions::where([
+      'version' => $version,
+      'survey_id' => $survey_id,
+      'active' => '1'
+    ])->orderBy('order')->get()->all();
+  }
 }
 
