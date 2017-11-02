@@ -185,32 +185,21 @@ class Surveys extends Model {
   /************************************************/
 
   public static function getVersions(Surveys $survey) {
-    $versions = [];
-    $array_questions_versions = range(1, SurveysLastVersionsView::getById($survey->id)->last_version);
-    foreach($array_questions_versions as $version):
-      $questions = Questions::getAllByVersion($survey->id, $version);
-      $users_answers = [];
-
-      foreach($questions as $question):
-        $questions_answers_versions = range(1, QuestionsOptionsView::getById($question->id)->last_version);
-
-        foreach($questions_answers_versions as $questions_answers_version):
-          $questions_answers []= [
-            'version' => $questions_answers_version,
-            'answers' => QuestionsOptions::getAllByVersion($question->id, $questions_answers_version)
-          ];
-        endforeach;
-
-        $question->answers = $questions_answers;
-      endforeach;
-
-      $versions []= [
+    return array_map(function($version) use ($survey) {
+      return [
         'version' => $version,
-        'questions' => $questions
-      ];
-    endforeach;
+        'questions' => array_map(function($question) use ($version) {
+          $question->answers = array_map(function($questions_answers_version) use ($question) {
+            return [
+              'version' => $questions_answers_version,
+              'answers' => QuestionsOptions::getAllByVersion($question->id, $questions_answers_version)
+            ];
+          }, range(1, QuestionsOptionsView::getById($question->id)->last_version));
 
-    return $versions;
+          return $question;
+        }, Questions::getAllByVersion($survey->id, $version))
+      ];
+    }, range(1, SurveysLastVersionsView::getById($survey->id)->last_version));
   }
 
   /************************************************/
