@@ -219,10 +219,12 @@ export default class AnswersTable {
   }
 
   normalizeFreeAnswers() {
-    if(this[tccs].find('[value=free]:nth-child(1)').length)
-      $('.survey-answer-free').hide()
-    else
-      $('.survey-answer-free').show()
+    if(!this[cos]) {
+      if(this[tccs].find('[data-type=value][value=free]').length)
+        $('.survey-answer-free').hide()
+      else
+        $('.survey-answer-free').show()
+    }
   }
 
   normalizeRows() {
@@ -268,6 +270,7 @@ export default class AnswersTable {
     }).off()
 
     this.removeSelectedRow()
+    this.normalizeFreeAnswers()
   }
 
   changeOrderStart() {
