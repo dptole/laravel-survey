@@ -31,6 +31,6 @@ class AnswersSessions extends Model
   }
 
   public static function countBySurveyId($survey_id) {
-    return AnswersSessions::count('survey_id', '=', $survey_id);
+    return AnswersSessions::where('survey_id', '=', $survey_id)->count();
   }
 }
