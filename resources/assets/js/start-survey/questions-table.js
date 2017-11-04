@@ -22,6 +22,18 @@ export default class QuestionsTable {
       })
     )
 
+    $(window).on('keydown', event =>
+      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
+        key: Object.assign(utils.getDate(), {
+          altKey: event.originalEvent.altKey,
+          shiftKey: event.originalEvent.shiftKey,
+          ctrlKey: event.originalEvent.ctrlKey,
+          key: event.key,
+          keyCode: event.keyCode
+        })
+      })
+    )
+
     $(window).on('focus', event =>
       this.getSessionId() && API.saveBehavior(this.getSessionId(), {
         focus: utils.getDate()
@@ -31,7 +43,7 @@ export default class QuestionsTable {
     $(window).on('click', event =>
       this.getSessionId() && API.saveBehavior(this.getSessionId(), {
         click: Object.assign(utils.getDate(), {
-          altKey: event.originalEvent.altEvent,
+          altKey: event.originalEvent.altKey,
           shiftKey: event.originalEvent.shiftKey,
           ctrlKey: event.originalEvent.ctrlKey,
           x: event.originalEvent.x,

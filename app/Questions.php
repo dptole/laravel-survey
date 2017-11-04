@@ -191,11 +191,20 @@ class Questions extends Model {
   }
 
   public static function getAllByVersion($survey_id, $version) {
-    return Questions::where([
+    return array_map(function($question) {
+      $question->answers = array_map(function($questions_answers_version) use ($question) {
+        return [
+          'version' => $questions_answers_version,
+          'answers' => QuestionsOptions::getAllByVersion($question->id, $questions_answers_version)
+        ];
+      }, range(1, QuestionsOptionsView::getById($question->id)->last_version));
+
+      return $question;
+    }, Questions::where([
       'version' => $version,
       'survey_id' => $survey_id,
       'active' => '1'
-    ])->orderBy('order')->get()->all();
+    ])->orderBy('order')->get()->all());
   }
 }
 

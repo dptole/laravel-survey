@@ -9,6 +9,7 @@ use App\QuestionsOptions;
 use App\QuestionsOptionsView;
 use App\Questions;
 use App\Answers;
+use App\AnswersSessions;
 use App\Helper;
 use Webpatser\Uuid\Uuid;
 use DB;
@@ -188,16 +189,8 @@ class Surveys extends Model {
     return array_map(function($version) use ($survey) {
       return [
         'version' => $version,
-        'questions' => array_map(function($question) use ($version) {
-          $question->answers = array_map(function($questions_answers_version) use ($question) {
-            return [
-              'version' => $questions_answers_version,
-              'answers' => QuestionsOptions::getAllByVersion($question->id, $questions_answers_version)
-            ];
-          }, range(1, QuestionsOptionsView::getById($question->id)->last_version));
-
-          return $question;
-        }, Questions::getAllByVersion($survey->id, $version))
+        'answers_sessions' => AnswersSessions::getBySurveyId($survey->id, $version),
+        'questions' => Questions::getAllByVersion($survey->id, $version)
       ];
     }, range(1, SurveysLastVersionsView::getById($survey->id)->last_version));
   }

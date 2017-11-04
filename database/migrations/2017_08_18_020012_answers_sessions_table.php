@@ -20,6 +20,7 @@ class AnswersSessionsTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('session_uuid');
             $table->unsignedInteger('survey_id');
+            $table->unsignedInteger('version');
             $table->text('request_info');
             $table->timestamps();
         });
