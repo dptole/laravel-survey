@@ -200,7 +200,30 @@ class SurveyController extends Controller {
     endif;
 
     $survey->total_answers = AnswersSessions::countBySurveyId($survey->id);
-    $survey->versions = Surveys::getVersions($survey);
+    $versions = Surveys::getVersions($survey);
+    $global_answers_sessions = 0;
+    $global_answers = 0;
+
+    foreach($versions as &$version):
+      $total_questions = count($version['questions']);
+      $global_answers_sessions += count($version['answers_sessions']);
+
+      $total_answers_sessions = count($version['answers_sessions']);
+      $total_answers = array_reduce(
+        $version['answers_sessions'],
+        function($accumulator, $answer_session) use ($total_questions, &$global_answers) {
+          $fully_answered = count($answer_session['answers']) === $total_questions;
+          $global_answers += $fully_answered;
+          return $accumulator + $fully_answered;
+        },
+        0
+      );
+
+      $version['fully_answered'] = sprintf('%.2f', $total_answers / $total_answers_sessions * 100);
+    endforeach;
+
+    $survey->versions = $versions;
+    $survey->fully_answered = sprintf('%.2f', $global_answers / $global_answers_sessions * 100);
 
     return view('survey.stats')->withSurvey($survey);
   }
