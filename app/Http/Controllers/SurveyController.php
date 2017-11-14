@@ -219,11 +219,11 @@ class SurveyController extends Controller {
         0
       );
 
-      $version['fully_answered'] = sprintf('%.2f', $total_answers / $total_answers_sessions * 100);
+      $version['fully_answered_%'] = sprintf('%.2f', $total_answers / $total_answers_sessions * 100) . '%';
     endforeach;
 
     $survey->versions = $versions;
-    $survey->fully_answered = sprintf('%.2f', $global_answers / $global_answers_sessions * 100);
+    $survey->{'fully_answered_%'} = sprintf('%.2f', $global_answers / $global_answers_sessions * 100) . '%';
 
     return view('survey.stats')->withSurvey($survey);
   }

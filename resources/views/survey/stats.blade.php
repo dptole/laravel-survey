@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      Total answers: {{ $survey->total_answers }} ({{ $survey->fully_answered }}% fully answered)
+      Total answers: {{ $survey->total_answers }} ({{ $survey->{'fully_answered_%'} }} fully answered)
     </div>
   </div>
 
@@ -20,7 +20,7 @@
     </div>
     <div class="col-xs-12">
       <ul>
-        <li>Answers: {{ count($version['answers_sessions']) }} ({{ $version['fully_answered'] }}% fully answered)</li>
+        <li>Answers: {{ count($version['answers_sessions']) }} ({{ $version['fully_answered_%'] }} fully answered)</li>
       </ul>
     </div>
   </div>

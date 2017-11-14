@@ -44,6 +44,10 @@ class Kernel extends HttpKernel
 
         'google_recaptcha' => [
             \App\Http\Middleware\GoogleReCaptcha::class
+        ],
+
+        'email_checkdnsrr' => [
+            \App\Http\Middleware\CheckDNSRR::class,
         ]
     ];
 
