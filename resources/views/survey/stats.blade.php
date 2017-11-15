@@ -8,23 +8,35 @@
   </h1>
 
   <div class="row">
-    <div class="col-xs-12">
-      Total answers: {{ $survey->total_answers }} ({{ $survey->{'fully_answered_%'} }} fully answered)
-    </div>
-  </div>
+    <div class="col-xs-12 stats-container">
+      <div class="row">
+        <div class="col-xs-12">
+          Total answers: {{ $survey->total_answers }} ({{ $survey->{'fully_answered_%'} }} fully answered)
+        </div>
+      </div>
 
-  @foreach($survey->versions as $version)
-  <div class="row stats-version-container">
-    <div class="col-xs-12">
-      Version: {{ $version['version'] }}
+      @foreach($survey->versions as $version)
+      <div class="row stats-version-container">
+        <div class="col-xs-12">
+          Version: {{ $version['version'] }}
+        </div>
+        <div class="col-xs-12">
+          <ul>
+            <li>Answers: {{ count($version['answers_sessions']) }} ({{ $version['fully_answered_%'] }} fully answered)</li>
+          </ul>
+        </div>
+      </div>
+      @endforeach
     </div>
+
     <div class="col-xs-12">
-      <ul>
-        <li>Answers: {{ count($version['answers_sessions']) }} ({{ $version['fully_answered_%'] }} fully answered)</li>
-      </ul>
+      <div class="row">
+        <div class="pull-right col-sm-4 col-xs-12 form-group">
+          {{ Html::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
+        </div>
+      </div>
     </div>
   </div>
-  @endforeach
 
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection
