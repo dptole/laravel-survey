@@ -1,4 +1,6 @@
-import PublicSurveyStats from './stats.js'
+import $ from 'jquery'
+import _ from 'lodash'
+import {PublicSurveyStats, d3Graph} from './stats.js'
 
 const public_survey_stats = new PublicSurveyStats
 
@@ -13,3 +15,6 @@ public_survey_stats
   .on('new-user', function(data) {
     console.log('new-user', data)
   })
+
+d3Graph.drawBars()
+$(window).on('resize', d3Graph.drawBars)

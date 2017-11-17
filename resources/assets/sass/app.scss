@@ -1,7 +1,7 @@
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
 * {
-  font-family: courier !important;
+  font-family: 'courier new', monospace, courier !important;
 }
 
 .btn-link:hover, .btn-link:active {
@@ -38,4 +38,11 @@
 
 .stats-container {
   padding: 20px;
+}
+
+
+.d3-axis path, .d3-axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }

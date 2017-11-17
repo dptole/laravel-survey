@@ -7,6 +7,8 @@
     Statistics
   </h1>
 
+  <div class="text-center svg-container"></div>
+
   <div class="row">
     <div class="col-xs-12 stats-container">
       <div class="row">
@@ -38,6 +40,9 @@
     </div>
   </div>
 
+  <script type="text/javascript">
+    var $survey_d3_data_json = {!! $survey_d3_data_json !!}
+  </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection
 
