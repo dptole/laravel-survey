@@ -16,5 +16,5 @@ public_survey_stats
     console.log('new-user', data)
   })
 
-d3Graph.drawBars()
+setTimeout(d3Graph.drawBars, 1000)
 $(window).on('resize', d3Graph.drawBars)

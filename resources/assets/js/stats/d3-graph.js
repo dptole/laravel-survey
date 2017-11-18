@@ -7,8 +7,13 @@ function getData() {
 }
 
 const d3Graph = {
-  svg: d3.select('.svg-container').append('svg'),
+  svg: null,
   drawBars: _ => {
+    if(!d3Graph.svg) {
+      $('span.svg-loader').remove()
+      d3Graph.svg = d3.select('.svg-container').append('svg')
+    }
+
     const svg = d3Graph.svg
     svg.selectAll('*').remove()
 

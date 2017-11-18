@@ -7,8 +7,6 @@
     Statistics
   </h1>
 
-  <div class="text-center svg-container"></div>
-
   <div class="row">
     <div class="col-xs-12 stats-container">
       <div class="row">
@@ -17,8 +15,12 @@
         </div>
       </div>
 
+      <div class="text-center svg-container">
+        <span class="svg-loader">Loading graph...</span>
+      </div>
+
       @foreach($survey->versions as $version)
-      <div class="row stats-version-container">
+      <div class="row stats-version-container hide">
         <div class="col-xs-12">
           Version: {{ $version['version'] }}
         </div>
