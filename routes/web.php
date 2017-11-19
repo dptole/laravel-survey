@@ -13,7 +13,7 @@
 
 Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
 
-Route::group(['prefix' => 'laravel', 'middleware' => 'google_recaptcha'], function() {
+Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
   Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
   Route::get('/s/{s_link}', ['uses' => 'PublicSurveyController@shareableLink', 'as' => 'public_survey.shareable_link']);
   Auth::routes();
