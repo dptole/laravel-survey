@@ -63,6 +63,10 @@ const d3Graph = {
     bars
       .enter()
       .append('rect')
+      .attr('x', d => x_scale(d[x_column]))
+      .attr('y', inner_height)
+      .attr('height', 0)
+      .attr('fill', d => colors(d[x_column] + d[y_column]))
       .attr('width', x_scale.rangeBand())
       .on('mouseover', d => {
         const svg_text_over_rect_offset = 5
@@ -73,17 +77,28 @@ const d3Graph = {
           .attr('x', x_scale(d[x_column]) + x_scale.rangeBand() / 2.3)
           .attr('y', y_scale(d[y_column]) - svg_text_over_rect_offset)
           .text(d[y_column])
+          .style('opacity', 0)
+          .transition()
+          .duration(400)
+          .style('opacity', 1)
       })
       .on('mouseleave', _ =>
-        g.selectAll('text.svg-text-over-rect').remove()
+        g.selectAll('text.svg-text-over-rect')
+          .transition()
+          .duration(400)
+          .style('opacity', 0)
+          .each('end', function() {
+            d3.select(this).remove()
+          })
       )
 
     // Update
     bars
-      .attr('x', d => x_scale(d[x_column]))
+      .transition()
+      .delay((d, i) => i * 200)
+      .duration(1000)
       .attr('y', d => y_scale(d[y_column]))
       .attr('height', d => inner_height - y_scale(d[y_column]))
-      .attr('fill', d => colors(d[x_column] + d[y_column]))
 
     // Exit
     bars
