@@ -64,6 +64,19 @@ const d3Graph = {
       .enter()
       .append('rect')
       .attr('width', x_scale.rangeBand())
+      .on('mouseover', d => {
+        const svg_text_over_rect_offset = 5
+
+        g
+          .append('text')
+          .attr('class', 'svg-text-over-rect')
+          .attr('x', x_scale(d[x_column]) + x_scale.rangeBand() / 2.3)
+          .attr('y', y_scale(d[y_column]) - svg_text_over_rect_offset)
+          .text(d[y_column])
+      })
+      .on('mouseleave', _ =>
+        g.selectAll('text.svg-text-over-rect').remove()
+      )
 
     // Update
     bars
