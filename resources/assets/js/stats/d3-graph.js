@@ -1,6 +1,6 @@
 import d3 from 'd3'
 import $ from 'jquery'
-import _ from 'lodash'
+import lodash from 'lodash'
 
 function getData() {
   return $survey_d3_data_json
@@ -16,6 +16,8 @@ const d3Graph = {
 
     const svg = d3Graph.svg
     svg.selectAll('*').remove()
+
+    d3Graph.reload = lodash.debounce(d3Graph.drawBars, 100)
 
     const data = getData()
         , margins = {
@@ -48,7 +50,7 @@ const d3Graph = {
         , graph_title = 'Answers by survey version'
         , graph_text = svg.append('text').style('text-anchor', 'middle').attr('transform', 'translate(' + (outer_width / 2) + ', ' + graph_title_height + ')').text(graph_title)
         , go_back_title_height = 10
-        , go_back_title = '&larr; Go back'
+        , go_back_title = '&larr; Back'
         , go_back_text = svg.append('text').style({'text-anchor': 'left', display: 'none'}).attr('class', 'svg-clickable').attr('transform', 'translate(0, ' + go_back_title_height + ')').html(go_back_title)
 
     x_scale.domain(data.map(d => d[x_column]))
@@ -82,15 +84,9 @@ const d3Graph = {
       .attr('fill', d => colors(d[x_column] + d[y_column]))
       .attr('width', x_scale.rangeBand())
       .on('click', d => {
-        d3Graph.fadeOutGraph({
-          g,
-          x_axis_g,
-          y_axis_g,
-          x_axis_text,
-          y_axis_text,
-          graph_text,
-          bars
-        }).then(_ => {
+        d3Graph.reload = lodash.debounce(_ => {
+          g.selectAll('*').remove()
+
           const x_scale = d3.scale.ordinal().rangeBands([0, inner_width], x_scale_spaces)
               , y_scale = d3.scale.linear().range([inner_height, 0])
               , x_column = 'type'
@@ -162,7 +158,17 @@ const d3Graph = {
           graph_text
             .text('Survey version ' + d.version)
             .call(d3Graph.fadeIn)
-        })
+        }, 100)
+
+        d3Graph.fadeOutGraph({
+          g,
+          x_axis_g,
+          y_axis_g,
+          x_axis_text,
+          y_axis_text,
+          graph_text,
+          bars
+        }).then(d3Graph.reload)
       })
       .on('mouseover', d3Graph.wrapperMouseOverRect(g, {x_scale, x_column, y_scale, y_column}))
       .on('mouseleave', d3Graph.wrapperRemoveTextOverRect(g))
@@ -242,7 +248,5 @@ const d3Graph = {
         })
   }
 }
-
-d3Graph.drawBars = _.debounce(d3Graph.drawBars, 50)
 
 export default d3Graph

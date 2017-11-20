@@ -19,4 +19,4 @@ if(0) {
 }
 
 setTimeout(d3Graph.drawBars, 1000)
-$(window).on('resize', d3Graph.drawBars)
+$(window).on('resize', _ => d3Graph.reload())
