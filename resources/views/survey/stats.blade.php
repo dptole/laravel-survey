@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-xs-12 stats-container">
       <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-12 hide">
           Total answers: {{ $survey->total_answers }} ({{ $survey->{'fully_answered_%'} }} fully answered)
         </div>
       </div>
