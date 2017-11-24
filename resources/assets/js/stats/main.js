@@ -3,6 +3,7 @@ import _ from 'lodash'
 import {PublicSurveyStats, d3Graph} from './stats.js'
 
 const public_survey_stats = new PublicSurveyStats
+let window_width = 0
 
 public_survey_stats
   .websocket.config({
@@ -17,4 +18,9 @@ public_survey_stats
   })
 
 setTimeout(d3Graph.drawBars, 1000)
-$(window).on('resize', _ => d3Graph.reload())
+$(window).on('resize', _ => {
+  if(window_width !== window.innerWidth) {
+    window_width = window.innerWidth
+    d3Graph.reload()
+  }
+})
