@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Request;
 
 class Helper {
   static $pusher = null;
+  static $lsr = null;
 
   public static function getPusherOptions() {
     return [
@@ -94,5 +95,62 @@ class Helper {
 
   public static function createCarbonDate($date) {
     return new Carbon($date); //, 'America/Sao_Paulo');
+  }
+
+  public static function loadLSR() {
+    if(!self::$lsr)
+      self::$lsr = json_decode(file_get_contents(getcwd() . '/../app/data/iana-language-subtag-registry.json'));
+  }
+
+  public static function lsrGetLanguageRegions($accept_language) {
+    self::loadLSR();
+
+    $blocks = explode(',', $accept_language);
+
+    $languages_regions = array_map(function($language_tag) {
+      if(!preg_match('#([^-;]+)(?:-([^-]+))?#', $language_tag, $match))
+        return;
+
+      return [
+        'language' => $match[1],
+        'region' => isset($match[2]) ? $match[2] : ''
+      ];
+    }, $blocks);
+    $languages_regions = array_filter($languages_regions);
+
+    $region_by_language = array_reduce(Helper::$lsr->language, function($acc, $lr) use ($languages_regions) {
+      if(count($languages_regions) === 0):
+        return $acc;
+      endif;
+
+      foreach($languages_regions as $key => $language_region):
+        if($lr->Subtag === $language_region['language']):
+          if(!isset($acc[$lr->Description]) || !$acc[$lr->Description]):
+            $acc[$lr->Description] = array_reduce(Helper::$lsr->region, function($acc, $reg) use ($language_region) {
+              if($reg->Subtag === $language_region['region']):
+                $acc = $reg->Description;
+              endif;
+
+              return $acc;
+            }, '');
+          endif;
+          unset($languages_regions[$key]);
+          break;
+        endif;
+      endforeach;
+
+      return $acc;
+    }, []);
+
+    $lrs = [];
+    foreach($region_by_language as $language => $region):
+      $lrs []= $language;
+      if($region):
+        $lrs[count($lrs) - 1] .= "/$region";
+      endif;
+    endforeach;
+    sort($lrs);
+
+    return implode(', ', $lrs);
   }
 }

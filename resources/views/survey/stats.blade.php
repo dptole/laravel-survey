@@ -20,6 +20,35 @@
       </div>
 
       @foreach($survey->versions as $version)
+      <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}">
+        <thead>
+          <tr>
+            <th>Answer date</th>
+            <th>Language/Region</th>
+            <th>Completeness</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($version['answers_sessions'] as $answer_session)
+          <tr>
+            <td>{{ Helper::createCarbonDiffForHumans($answer_session->created_at) }}</td>
+            <td>
+              {{ Helper::lsrGetLanguageRegions($answer_session['request_info']->headers->{'accept-language'}[0]) }}
+            </td>
+            <td>
+            {{
+              count($version['questions']) === count($answer_session['answers'])
+                ? 'fully'
+                : 'partially'
+            }}
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+      @endforeach
+
+      @foreach($survey->versions as $version)
       <div class="row stats-version-container hide">
         <div class="col-xs-12">
           Version: {{ $version['version'] }}

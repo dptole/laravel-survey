@@ -14,6 +14,7 @@ const d3Graph = {
       d3Graph.svg = d3.select('.svg-container').append('svg')
     }
 
+    d3Graph.showTableVersion()
     const svg = d3Graph.svg
     svg.selectAll('*').remove()
 
@@ -85,6 +86,7 @@ const d3Graph = {
       .attr('width', x_scale.rangeBand())
       .on('click', d => {
         d3Graph.reload = lodash.debounce(_ => {
+          d3Graph.showTableVersion(d.version)
           g.selectAll('*').remove()
 
           const x_scale = d3.scale.ordinal().rangeBands([0, inner_width], x_scale_spaces)
@@ -141,6 +143,7 @@ const d3Graph = {
 
           go_back_text
             .on('click', _ => {
+              d3Graph.showTableVersion()
               d3Graph.fadeOutGraph({
                 g,
                 x_axis_g,
@@ -180,6 +183,8 @@ const d3Graph = {
     bars
       .exit()
       .remove()
+
+    d3Graph.showTableVersion()
   },
   barsRise(bars, {inner_height, y_scale, y_column}) {
     bars
@@ -246,6 +251,10 @@ const d3Graph = {
         .each('end', function() {
           d3.select(this).remove()
         })
+  },
+  showTableVersion(version) {
+    $('.table-versions').addClass('hide')
+    $('.table-version-' + version).removeClass('hide')
   }
 }
 

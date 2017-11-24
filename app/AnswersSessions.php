@@ -41,10 +41,13 @@ class AnswersSessions extends Model
     return array_map(function($answer_session) {
       $answer_session->answers = Answers::getByAnswersSessionId($answer_session->id);
       $answer_session->behaviors = AnswersBehavior::getByAnswersSessionId($answer_session->id);
+      $answer_session->request_info = json_decode($answer_session->request_info);
       return $answer_session;
     }, AnswersSessions::where([
       'survey_id' => $survey_id,
       'version' => $version
-    ])->get()->all());
+    ])->orderBy(
+      'created_at', 'desc'
+    )->get()->all());
   }
 }
