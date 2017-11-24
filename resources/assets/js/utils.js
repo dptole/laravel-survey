@@ -31,6 +31,10 @@ const utils = {
     return properties
   },
 
+  getConnection() {
+    return utils.getProperties(navigator.connection || navigator.mozConnection || navigator.webkitConnection)
+  },
+
   async getBattery() {
     try {
       return {
