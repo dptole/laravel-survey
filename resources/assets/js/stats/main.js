@@ -24,3 +24,7 @@ $(window).on('resize', _ => {
     d3Graph.reload()
   }
 })
+
+$(_ =>
+  window.jQuery('[data-toggle="tooltip"]').tooltip()
+)

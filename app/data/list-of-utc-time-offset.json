@@ -1,0 +1,368 @@
+{
+  "UTC-12:00": [
+    "Baker Island",
+    "Howland Island"
+  ],
+  "UTC-11:00": [
+    "American Samoa",
+    "Jarvis Island",
+    "Kingman Reef",
+    "Midway Islands",
+    "Niue",
+    "Palmyra Atoll"
+  ],
+  "UTC-10:00": [
+    "Cook Islands",
+    "French Polynesia (Pape'ete)",
+    "Johnston Atoll",
+    "United States (Honolulu)"
+  ],
+  "UTC-09:30": [
+    "French Polynesia (Marquesas Islands)"
+  ],
+  "UTC-09:00": [
+    "French Polynesia (Mangareva)",
+    "United States (Anchorage)"
+  ],
+  "UTC-08:00": [
+    "Canada (Vancouver)",
+    "Mexico (Tijuana)",
+    "Pitcairn Islands",
+    "United States (Los Angeles)"
+  ],
+  "UTC-07:00": [
+    "Canada (Edmonton)",
+    "Mexico (La Paz)",
+    "United States (Denver, Phoenix)"
+  ],
+  "UTC-06:00": [
+    "Belize",
+    "Canada (Winnipeg, Regina)",
+    "Chile (Easter Island)",
+    "Costa Rica",
+    "Gal\u00e1pagos Islands",
+    "El Salvador",
+    "Guatemala",
+    "Honduras",
+    "Mexico (Mexico City)",
+    "Nicaragua",
+    "United States (Chicago)"
+  ],
+  "UTC-05:00": [
+    "Bahamas",
+    "Brazil (Rio Branco)",
+    "Canada (Ottawa)",
+    "Cayman Islands",
+    "Colombia",
+    "Cuba",
+    "Ecuador",
+    "Haiti",
+    "Jamaica",
+    "Navassa Island",
+    "Panama",
+    "Peru",
+    "United States (Washington, DC)"
+  ],
+  "UTC-04:00": [
+    "Anguilla",
+    "Antigua and Barbuda",
+    "Aruba",
+    "Chile (Santiago)",
+    "Barbados",
+    "Bermuda",
+    "Bolivia",
+    "Brazil (Manaus)",
+    "Canada (Halifax)",
+    "Cura\u00e7ao",
+    "Dominica",
+    "Dominican Republic",
+    "Greenland (Thule Air Base)",
+    "Grenada",
+    "Guadeloupe",
+    "Guyana",
+    "Martinique",
+    "Montserrat",
+    "Paraguay",
+    "Puerto Rico",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent and the Grenadines",
+    "Sint Maarten",
+    "Turks and Caicos Islands",
+    "Trinidad and Tobago",
+    "US Virgin Islands",
+    "British Virgin Islands",
+    "Venezuela"
+  ],
+  "UTC-03:30": [
+    "Canada (Newfoundland)"
+  ],
+  "UTC-03:00": [
+    "Argentina",
+    "Brazil (Brasilia)",
+    "Falkland Islands",
+    "French Guiana",
+    "Greenland (Nuuk)",
+    "Saint Pierre and Miquelon",
+    "Suriname",
+    "Uruguay"
+  ],
+  "UTC-02:00": [
+    "Brazil (Fernando de Noronha)",
+    "South Georgia and the South Sandwich Islands"
+  ],
+  "UTC-01:00": [
+    "Cape Verde",
+    "Greenland (Ittoqqortoormiit)",
+    "Portugal (Azores)"
+  ],
+  "UTC+00:00": [
+    "Burkina Faso",
+    "C\u00f4te d'Ivoire",
+    "Faroe Islands",
+    "The Gambia",
+    "Ghana",
+    "Guinea",
+    "Guinea-Bissau",
+    "Iceland",
+    "Republic of Ireland",
+    "Liberia",
+    "Mali",
+    "Mauritania",
+    "Morocco",
+    "Portugal (Lisbon)",
+    "Saint Helena",
+    "S\u00e3o Tom\u00e9 and Pr\u00edncipe",
+    "Senegal",
+    "Sierra Leone",
+    "Spain (Canary Islands)",
+    "Togo",
+    "United Kingdom",
+    "Western Sahara"
+  ],
+  "UTC+01:00": [
+    "Albania",
+    "Andorra",
+    "Algeria",
+    "Angola",
+    "Austria",
+    "Belgium",
+    "Benin",
+    "Bosnia and Herzegovina",
+    "Cameroon",
+    "Central African Republic",
+    "Chad",
+    "Republic of the Congo",
+    "Congo, Democratic Republic of the (Kinshasa)",
+    "Croatia",
+    "Czech Republic",
+    "Denmark",
+    "Equatorial Guinea",
+    "France",
+    "Gabon",
+    "Germany",
+    "Gibraltar",
+    "Hungary",
+    "Italy",
+    "Libya",
+    "Liechtenstein",
+    "Luxembourg",
+    "Republic of Macedonia",
+    "Malta",
+    "Monaco",
+    "Netherlands",
+    "Niger",
+    "Nigeria",
+    "Norway",
+    "Poland",
+    "San Marino",
+    "Serbia and Montenegro",
+    "Slovakia",
+    "Slovenia",
+    "Spain (Madrid)",
+    "Sweden",
+    "Switzerland",
+    "Tunisia",
+    "Vatican City"
+  ],
+  "UTC+02:00": [
+    "Botswana",
+    "Bulgaria",
+    "Burundi",
+    "Democratic Republic of the Congo (Lubumbashi)",
+    "Cyprus",
+    "Egypt",
+    "Estonia",
+    "Finland",
+    "Greece",
+    "Israel",
+    "Jordan",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Lithuania",
+    "Malawi",
+    "Moldova",
+    "Mozambique",
+    "Namibia",
+    "Palestine",
+    "Romania",
+    "Russia (Kaliningrad)",
+    "Rwanda",
+    "South Africa",
+    "Sudan",
+    "Swaziland",
+    "Syria",
+    "Ukraine",
+    "Zambia",
+    "Zimbabwe"
+  ],
+  "UTC+03:00": [
+    "Bahrain",
+    "Belarus",
+    "Comoros",
+    "Djibouti",
+    "Eritrea",
+    "Ethiopia",
+    "Iraq",
+    "Kenya",
+    "Kuwait",
+    "Madagascar",
+    "Qatar",
+    "Russia (Moscow)",
+    "Saudi Arabia",
+    "Somalia",
+    "South Sudan",
+    "Tanzania",
+    "Turkey",
+    "Uganda",
+    "Yemen"
+  ],
+  "UTC+03:30": [
+    "Iran"
+  ],
+  "UTC+04:00": [
+    "Armenia",
+    "Azerbaijan",
+    "Georgia",
+    "Mauritius",
+    "Oman",
+    "Reunion",
+    "Russia (Samara)",
+    "Seychelles",
+    "United Arab Emirates"
+  ],
+  "UTC+04:30": [
+    "Afghanistan"
+  ],
+  "UTC+05:00": [
+    "Kazakhstan (Aktobe)",
+    "Maldives",
+    "Pakistan",
+    "Russia (Yekaterinburg)",
+    "Tajikistan",
+    "Turkmenistan",
+    "Uzbekistan"
+  ],
+  "UTC+05:30": [
+    "India",
+    "Sri Lanka"
+  ],
+  "UTC+05:45": [
+    "Nepal"
+  ],
+  "UTC+06:00": [
+    "Bangladesh",
+    "Bhutan",
+    "British Indian Ocean Territory",
+    "Kazakhstan (Astana)",
+    "Kyrgyzstan",
+    "Russia (Omsk)"
+  ],
+  "UTC+06:30": [
+    "Cocos (Keeling) Islands",
+    "Myanmar"
+  ],
+  "UTC+07:00": [
+    "Cambodia",
+    "Christmas Island",
+    "Indonesia (Jakarta)",
+    "Laos",
+    "Russia (Novosibirsk)",
+    "Thailand",
+    "Vietnam"
+  ],
+  "UTC+08:00": [
+    "Australia (Perth)",
+    "Brunei",
+    "China",
+    "Hong Kong",
+    "Indonesia (Bali)",
+    "Macau",
+    "Malaysia",
+    "Mongolia (Ulaanbaatar)",
+    "Philippines",
+    "Russia (Irkutsk)",
+    "Singapore",
+    "Taiwan"
+  ],
+  "UTC+08:30": [
+    "North Korea"
+  ],
+  "UTC+08:45": [
+    "Australia (Eucla)"
+  ],
+  "UTC+09:00": [
+    "East Timor",
+    "Indonesia (Jayapura)",
+    "Japan",
+    "South Korea",
+    "Palau",
+    "Russia (Yakutsk)"
+  ],
+  "UTC+09:30": [
+    "Australia (Adelaide)"
+  ],
+  "UTC+10:00": [
+    "Australia (Canberra)",
+    "Guam",
+    "Federated States of Micronesia (Yap)",
+    "Northern Mariana Islands",
+    "Papua New Guinea (Port Moresby)",
+    "Russia (Vladivostok)"
+  ],
+  "UTC+10:30": [
+    "Australia (Lord Howe Island)"
+  ],
+  "UTC+11:00": [
+    "Federated States of Micronesia (Palikir)",
+    "New Caledonia",
+    "Norfolk Island",
+    "Russia (Magadan, Sakhalin)",
+    "Solomon Islands",
+    "Vanuatu"
+  ],
+  "UTC+12:00": [
+    "Fiji",
+    "Kiribati (Gilbert Islands)",
+    "Marshall Islands",
+    "Nauru",
+    "New Zealand (except Chatham Islands)",
+    "Russia (Kamchatka Krai)",
+    "Tuvalu",
+    "United States (Wake Island)",
+    "France (Wallis and Futana)"
+  ],
+  "UTC+12:45": [
+    "New Zealand (Chatham Islands)"
+  ],
+  "UTC+13:00": [
+    "Kiribati (Phoenix Islands)",
+    "Tonga",
+    "Samoa",
+    "Tokelau"
+  ],
+  "UTC+14:00": [
+    "Kiribati (Line Islands)"
+  ]
+}

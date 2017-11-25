@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Request;
 class Helper {
   static $pusher = null;
   static $lsr = null;
+  static $tzs = null;
 
   public static function getPusherOptions() {
     return [
@@ -102,6 +103,12 @@ class Helper {
       self::$lsr = json_decode(file_get_contents(getcwd() . '/../app/data/iana-language-subtag-registry.json'));
   }
 
+  public static function loadTimezones() {
+    // https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
+    if(!self::$tzs)
+      self::$tzs = json_decode(file_get_contents(getcwd() . '/../app/data/list-of-utc-time-offset.json'));
+  }
+
   public static function lsrGetLanguageRegions($accept_language) {
     self::loadLSR();
 
@@ -152,5 +159,60 @@ class Helper {
     sort($lrs);
 
     return implode(', ', $lrs);
+  }
+
+  public static function tzGetCountries($tz_minutes, $opposite = true) {
+    self::loadTimezones();
+
+    if($opposite):
+      $tz_minutes = -$tz_minutes;
+    endif;
+
+    $sign = $tz_minutes > 0 ? '+' : '-';
+    $unsigned_tz_minutes = abs($tz_minutes);
+
+    $tz_key = 'UTC' . $sign .
+      str_pad($unsigned_tz_minutes / 60 | 0, 2, '0', STR_PAD_LEFT) .
+      ':' .
+      str_pad($unsigned_tz_minutes % 60, 2, '0', STR_PAD_LEFT)
+    ;
+
+    $countries = property_exists(self::$tzs, $tz_key) ?  self::$tzs->{$tz_key} : [];
+    sort($countries);
+    $countries = implode(', ', $countries);
+
+    return $countries;
+  }
+
+  public static function getIpFromRequestInfo($request_info) {
+    $has_x_forwarded_for = property_exists($request_info->headers, 'x-forwarded-for') &&
+      is_array($request_info->headers->{'x-forwarded-for'}) &&
+      count($request_info->headers->{'x-forwarded-for'}) === 1 &&
+      is_string($request_info->headers->{'x-forwarded-for'}[0]) &&
+      strlen(trim($request_info->headers->{'x-forwarded-for'}[0])) > 0
+    ;
+
+    if($has_x_forwarded_for):
+      return trim($request_info->headers->{'x-forwarded-for'}[0]);
+    endif;
+
+    $has_ips = property_exists($request_info, 'ips') &&
+      is_array($request_info->ips) &&
+      count($request_info->ips) === 1 &&
+      is_string($request_info->ips[0]) &&
+      strlen(trim($request_info->ips[0])) > 0
+    ;
+
+    return $has_ips ? trim($request_info->ips[0]) : false;
+  }
+
+  public static function getDbIpUrlFromRequestInfo($request_info) {
+    $ip = self::getIpFromRequestInfo($request_info);
+
+    if($ip):
+      return "https://db-ip.com/$ip";
+    endif;
+
+    return false;
   }
 }

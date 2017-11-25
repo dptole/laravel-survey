@@ -19,34 +19,56 @@
         <span class="svg-loader">Loading graph...</span>
       </div>
 
-      @foreach($survey->versions as $version)
-      <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}">
-        <thead>
-          <tr>
-            <th>Answer date</th>
-            <th>Language/Region</th>
-            <th>Completeness</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach($version['answers_sessions'] as $answer_session)
-          <tr>
-            <td>{{ Helper::createCarbonDiffForHumans($answer_session->created_at) }}</td>
-            <td>
-              {{ Helper::lsrGetLanguageRegions($answer_session['request_info']->headers->{'accept-language'}[0]) }}
-            </td>
-            <td>
-            {{
-              count($version['questions']) === count($answer_session['answers'])
-                ? 'fully'
-                : 'partially'
-            }}
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-      @endforeach
+      <div class="col-xs-12 lar-overflow">
+        @foreach($survey->versions as $version)
+        <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}">
+          <thead>
+            <tr>
+              <th>Answer date</th>
+              <th>
+                <span data-toggle="tooltip" data-placement="bottom" title="From the Accept-Language HTTP header">
+                  Possible languages/regions <sup>?</sup>
+                </span>
+              </th>
+              <th>
+                <span data-toggle="tooltip" data-placement="bottom" title="From JavaScript date timezone">
+                  Possible countries <sup>?</sup>
+                </span>
+              </th>
+              <th>Completeness</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($version['answers_sessions'] as $answer_session)
+            <tr>
+              <td>
+                {{ Helper::createCarbonDiffForHumans($answer_session->created_at) }}
+              </td>
+              <td>
+                {{ Helper::lsrGetLanguageRegions($answer_session['request_info']->headers->{'accept-language'}[0]) }}
+
+                @if(Helper::getDbIpUrlFromRequestInfo($answer_session->request_info))
+                  <a target="_blank" href="{{ Helper::getDbIpUrlFromRequestInfo($answer_session->request_info) }}">
+                    More information
+                  </a>
+                @endif
+              </td>
+              <td>
+                {{ Helper::tzGetCountries($answer_session->request_info->js->date->timezone) }}
+              </td>
+              <td>
+                {{
+                  count($version['questions']) === count($answer_session['answers'])
+                    ? 'fully'
+                    : 'partially'
+                }}
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+        @endforeach
+      </div>
 
       @foreach($survey->versions as $version)
       <div class="row stats-version-container hide">
