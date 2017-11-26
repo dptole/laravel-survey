@@ -57,9 +57,7 @@ const d3Graph = {
     x_scale.domain(data.map(d => d[x_column]))
     y_scale.domain([0, d3.max(data, d => d[y_column])])
 
-    svg
-      .attr('width', outer_width)
-      .attr('height', outer_height)
+    d3Graph.resizeSVG(outer_width, outer_height)
 
     const bars = g
           .selectAll('rect')
@@ -88,6 +86,11 @@ const d3Graph = {
         d3Graph.reload = lodash.debounce(_ => {
           d3Graph.showTableVersion(d.version)
           g.selectAll('*').remove()
+
+          const outer_width = $(window).width() > 500 ? 500 : $(window).width() * 0.8
+              , inner_width = outer_width - margins.left - margins.right
+
+          d3Graph.resizeSVG(outer_width, outer_height)
 
           const x_scale = d3.scale.ordinal().rangeBands([0, inner_width], x_scale_spaces)
               , y_scale = d3.scale.linear().range([inner_height, 0])
@@ -255,6 +258,13 @@ const d3Graph = {
   showTableVersion(version) {
     $('.table-versions').addClass('hide')
     $('.table-version-' + version).removeClass('hide')
+  },
+  resizeSVG(outer_width, outer_height) {
+    if(!d3Graph.svg) return false
+    d3Graph.svg
+      .attr('width', outer_width)
+      .attr('height', outer_height)
+    return true
   }
 }
 
