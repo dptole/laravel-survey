@@ -9,6 +9,7 @@ use App\Questions;
 use App\AnswersSessions;
 use App\SurveysLastVersionsView;
 use Webpatser\Uuid\Uuid;
+use Jenssegers\Agent\Agent;
 
 class SurveyController extends Controller {
   /**
@@ -214,6 +215,34 @@ class SurveyController extends Controller {
         function($accumulator, $answer_session) use ($total_questions, &$global_answers) {
           $fully_answered = count($answer_session['answers']) === $total_questions;
           $global_answers += $fully_answered;
+
+          $total_answered = count($answer_session['answers']) / $total_questions * 100;
+          if($total_answered > 100):
+            $total_answered = 100;
+          endif;
+          $answer_session['total_answered_%'] = sprintf('%.2f', $total_answered) . '%';
+
+          if(
+            property_exists($answer_session['request_info']->headers, 'user-agent') &&
+            is_array($answer_session['request_info']->headers->{'user-agent'}) &&
+            count($answer_session['request_info']->headers->{'user-agent'}) === 1 &&
+            is_string($answer_session['request_info']->headers->{'user-agent'}[0])
+          ):
+            $agent = new Agent;
+            $agent->setUserAgent($answer_session['request_info']->headers->{'user-agent'}[0]);
+            $agent->setHttpHeaders($answer_session['request_info']->headers);
+
+            $answer_session['user_agent'] = [
+              'browser' => $agent->browser(),
+              'platform' => $agent->platform()
+            ];
+          else:
+            $answer_session['user_agent'] = [
+              'browser' => 'Unknown',
+              'platform' => 'Unknown'
+            ];
+          endif;
+
           return $accumulator + $fully_answered;
         },
         0

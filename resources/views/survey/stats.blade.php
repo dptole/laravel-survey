@@ -27,14 +27,16 @@
               <th>Answer date</th>
               <th>
                 <span data-toggle="tooltip" data-placement="bottom" title="From the Accept-Language HTTP header">
-                  Possible languages/regions <sup>?</sup>
+                  Possible languages<sup>?</sup>
                 </span>
               </th>
               <th>
                 <span data-toggle="tooltip" data-placement="bottom" title="From JavaScript date timezone">
-                  Possible countries <sup>?</sup>
+                  Possible countries<sup>?</sup>
                 </span>
               </th>
+              <th>Browser</th>
+              <th>Platform</th>
               <th>Completeness</th>
             </tr>
           </thead>
@@ -57,11 +59,13 @@
                 {{ Helper::tzGetCountries($answer_session->request_info->js->date->timezone) }}
               </td>
               <td>
-                {{
-                  count($version['questions']) === count($answer_session['answers'])
-                    ? 'fully'
-                    : 'partially'
-                }}
+                {{ $answer_session['user_agent']['browser'] }}
+              </td>
+              <td>
+                {{ $answer_session['user_agent']['platform'] }}
+              </td>
+              <td>
+                {{ $answer_session['total_answered_%'] }}
               </td>
             </tr>
             @endforeach
