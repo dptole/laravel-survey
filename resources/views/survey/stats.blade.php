@@ -98,7 +98,7 @@
   </div>
 
   <script type="text/javascript">
-    var $survey_d3_data_json = {!! $survey_d3_data_json !!}
+    var $d3_answers_data = {!! $d3_answers_data !!}
   </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection

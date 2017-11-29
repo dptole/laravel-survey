@@ -213,7 +213,7 @@ class SurveyController extends Controller {
       $total_answers = array_reduce(
         $version['answers_sessions'],
         function($accumulator, $answer_session) use ($total_questions, &$global_answers) {
-          $fully_answered = count($answer_session['answers']) === $total_questions;
+          $fully_answered = count($answer_session['answers']) >= $total_questions;
           $global_answers += $fully_answered;
 
           $total_answered = count($answer_session['answers']) / $total_questions * 100;
@@ -249,39 +249,40 @@ class SurveyController extends Controller {
       );
 
       $version['fully_answered'] = $total_answers;
-      $version['fully_answered_%'] = sprintf('%.2f', $version['fully_answered'] / $total_answers_sessions * 100) . '%';
+      $version['fully_answered_%'] = (
+        $total_answers_sessions > 0
+          ? sprintf('%.2f', $version['fully_answered'] / $total_answers_sessions * 100)
+          : 0
+      ) . '%';
 
       $version['not_fully_answered'] = $total_answers_sessions - $total_answers;
-      $version['not_fully_answered_%'] = sprintf('%.2f', $version['not_fully_answered'] / $total_answers_sessions * 100) . '%';
+      $version['not_fully_answered_%'] = (
+        $total_answers_sessions > 0
+          ? sprintf('%.2f', $version['not_fully_answered'] / $total_answers_sessions * 100)
+          : 0
+      ) . '%';
     endforeach;
 
     $survey->versions = $versions;
     $survey->fully_answered = $global_answers;
-    $survey->{'fully_answered_%'} = sprintf('%.2f', $survey->fully_answered / $global_answers_sessions * 100) . '%';
+    $survey->{'fully_answered_%'} = (
+      $global_answers_sessions > 0
+        ? sprintf('%.2f', $survey->fully_answered / $global_answers_sessions * 100)
+        : 0
+     ) . '%';
 
     $survey->not_fully_answered = $global_answers_sessions - $global_answers;
-    $survey->{'not_fully_answered_%'} = sprintf('%.2f', $survey->not_fully_answered / $global_answers_sessions * 100) . '%';
+    $survey->{'not_fully_answered_%'} = (
+      $global_answers_sessions > 0
+        ? sprintf('%.2f', $survey->not_fully_answered / $global_answers_sessions * 100)
+        : 0
+    ) . '%';
 
-    $survey_d3_data = array_map(function($version) {
-      return [
-        'fully_answered' => $version['fully_answered'],
-        'version' => $version['version'],
-        'not_fully_answered' => $version['not_fully_answered']
-      ];
-    }, $survey->versions);
-
-    $survey_d3_data = array_map(function($d3_data) {
-      $d3_data['total'] = $d3_data['fully_answered'] + $d3_data['not_fully_answered'];
-      return $d3_data;
-    }, $survey_d3_data);
-
-    usort($survey_d3_data, function($a, $b) {
-      return $a['version'] < $b['version'];
-    });
+    $d3_answers_data = Surveys::getD3AnswersDataFromSurveyVersions($survey->versions);
 
     return view('survey.stats')->with([
       'survey' => $survey,
-      'survey_d3_data_json' => json_encode($survey_d3_data)
+      'd3_answers_data' => json_encode($d3_answers_data)
     ]);
   }
 }

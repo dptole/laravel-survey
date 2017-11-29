@@ -197,6 +197,29 @@ class Surveys extends Model {
 
   /************************************************/
 
+  public static function getD3AnswersDataFromSurveyVersions($versions) {
+    $survey_d3_data = array_map(function($version) {
+      return [
+        'fully_answered' => $version['fully_answered'],
+        'version' => $version['version'],
+        'not_fully_answered' => $version['not_fully_answered']
+      ];
+    }, $versions);
+
+    $survey_d3_data = array_map(function($d3_data) {
+      $d3_data['total'] = $d3_data['fully_answered'] + $d3_data['not_fully_answered'];
+      return $d3_data;
+    }, $survey_d3_data);
+
+    usort($survey_d3_data, function($a, $b) {
+      return $a['version'] < $b['version'];
+    });
+
+    return $survey_d3_data;
+  }
+
+  /************************************************/
+
   public static function getSurveyByShareableLink($s_link) {
     return (
         $survey = self::where('shareable_link', '=', $s_link)->limit(1)->get()

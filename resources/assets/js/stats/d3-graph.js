@@ -3,7 +3,7 @@ import $ from 'jquery'
 import lodash from 'lodash'
 
 function getData() {
-  return $survey_d3_data_json
+  return $d3_answers_data
 }
 
 const d3Graph = {
@@ -83,6 +83,8 @@ const d3Graph = {
       .attr('fill', d => colors(d[x_column] + d[y_column]))
       .attr('width', x_scale.rangeBand())
       .on('click', d => {
+        if(d.total < 1) return false
+
         d3Graph.reload = lodash.debounce(_ => {
           d3Graph.showTableVersion(d.version)
           g.selectAll('*').remove()
