@@ -11,6 +11,13 @@ class Helper {
   static $pusher = null;
   static $lsr = null;
   static $tzs = null;
+  static $db_ip_api_keys_info = [];
+  static $db_ip_api_ips_info = [];
+  static $db_ip_html_ips_info = [];
+
+  public static function getDbIpApiKey() {
+    return env('DB_IP_API_KEY');
+  }
 
   public static function getPusherOptions() {
     return [
@@ -214,5 +221,128 @@ class Helper {
     endif;
 
     return false;
+  }
+
+  public static function getRequestIp() {
+    $headers = getallheaders();
+    return is_array($headers) && isset($headers['x-forwarded-for'])
+      ? $headers['x-forwarded-for']
+      : $_SERVER['REMOTE_ADDR']
+    ;
+  }
+
+  public static function dbIpGetApiKeyInfo($api_key) {
+    if(isset(Helper::$db_ip_api_keys_info[$api_key])):
+      return Helper::$db_ip_api_keys_info[$api_key];
+    endif;
+
+    $api_key_info = json_decode(@file_get_contents("http://api.db-ip.com/v2/$api_key/"));
+
+    return Helper::$db_ip_api_keys_info[$api_key] = is_object($api_key_info) && property_exists($api_key_info, 'queriesLeft') && $api_key_info->queriesLeft > 0
+      ? $api_key_info
+      : null
+    ;
+  }
+
+  public static function dbIpDecorateResponse($ip_info, $ip, $api_key = null) {
+    if(!is_object($ip_info)):
+      return $ip_info;
+    endif;
+    $ip_info->Ip = $ip;
+    $ip_info->ApiKey = $api_key;
+    return $ip_info;
+  }
+
+  public static function dbIpGetIpInfo($ip, $api_key = null) {
+    $ip_from_html = Helper::dbIpGetIpInfoFromHtml($ip);
+
+    if($ip_from_html):
+      return Helper::dbIpDecorateResponse($ip_from_html, $ip, $api_key);
+    endif;
+
+    $ip_from_api = Helper::dbIpGetIpInfoFromApi($ip, $api_key);
+
+    if($ip_from_api):
+      return Helper::dbIpDecorateResponse($ip_from_api, $ip, $api_key);
+    endif;
+
+    return false;
+  }
+
+  public static function dbIpGetIpInfoFromApi($ip, $api_key = null) {
+    if(isset(Helper::$db_ip_api_ips_info[$ip])):
+      return Helper::$db_ip_api_ips_info[$ip];
+    endif;
+
+    $start_time = -Helper::ms();
+
+    if($api_key === null):
+      $api_key = Helper::getDbIpApiKey();
+    endif;
+    $api_key_info = Helper::dbIpGetApiKeyInfo($api_key);
+
+    if(!is_object($api_key_info)):
+      return false;
+    endif;
+
+    $ip_info = json_decode(@file_get_contents("http://api.db-ip.com/v2/{$api_key_info->apiKey}/$ip"));
+
+    if(!is_object($ip_info)):
+      return false;
+    endif;
+
+    $ip_info->Elapsed = $start_time + Helper::ms();
+    return Helper::$db_ip_api_ips_info[$ip] = Helper::dbIpDecorateResponse($ip_info, $ip, $api_key);
+  }
+
+  public static function dbIpGetIpInfoFromHtml($ip) {
+    if(isset(Helper::$db_ip_html_ips_info[$ip])):
+      return Helper::$db_ip_html_ips_info[$ip];
+    endif;
+
+    $start_time = -Helper::ms();
+    $content = @file_get_contents("http://db-ip.com/$ip");
+    $dom = new \DOMDocument;
+    @$dom->loadHTML($content);
+    $props = [];
+
+    $tables = $dom->getElementsByTagName('table');
+
+    foreach($tables as $table):
+      $trs = $table->getElementsByTagName('tr');
+
+      foreach($trs as $tr):
+        $th = $tr->getElementsByTagName('th');
+        $td = $tr->getElementsByTagName('td');
+
+        if(!($th->length === 1 && $td->length === 1)):
+          continue;
+        endif;
+
+        $text_th = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($th->item(0)->textContent));
+        $text_td = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(0)->textContent));
+
+        if($text_th && $text_td):
+          $props[$text_th] = $text_td;
+        endif;
+      endforeach;
+    endforeach;
+
+    if(count($props) < 1):
+      return false;
+    endif;
+
+    $ip_info = new \stdClass;
+
+    foreach($props as $key => $value):
+      $ip_info->$key = $value;
+    endforeach;
+
+    $ip_info->Elapsed = $start_time + Helper::ms();
+    return Helper::$db_ip_html_ips_info[$ip] = Helper::dbIpDecorateResponse($ip_info, $ip);
+  }
+
+  public static function ms() {
+    return microtime(true) * 1000 | 0;
   }
 }

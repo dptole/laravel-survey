@@ -8,6 +8,7 @@ use App\Answers;
 use App\AnswersSessions;
 use App\AnswersBehavior;
 use App\ApiErrors;
+use App\Helper;
 
 class APIController extends Controller {
   /**

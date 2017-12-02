@@ -66,8 +66,7 @@ export default class QuestionsTable {
     try {
       await this.generateSessionId(this.data_survey.uuid)
     } catch(error) {
-      const error_message = utils.goToProperty(error, 'response.data.error')
-      if(error_message) this.dom_survey_title.text(error_message)
+      this.dom_survey_title.text('Try again later.')
       return setTimeout(_ => location = '/laravel', 2e3)
     }
 
