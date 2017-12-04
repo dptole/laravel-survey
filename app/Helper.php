@@ -175,7 +175,7 @@ class Helper {
       $tz_minutes = -$tz_minutes;
     endif;
 
-    $sign = $tz_minutes > 0 ? '+' : '-';
+    $sign = $tz_minutes >= 0 ? '+' : '-';
     $unsigned_tz_minutes = abs($tz_minutes);
 
     $tz_key = 'UTC' . $sign .
