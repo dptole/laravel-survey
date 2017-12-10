@@ -24,20 +24,20 @@
         <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}">
           <thead>
             <tr>
-              <th>Answer date</th>
-              <th>
+              <th class="html-clickable">Answer date</th>
+              <th class="html-clickable">
                 <span data-toggle="tooltip" data-placement="bottom" title="From the Accept-Language HTTP header">
                   Possible languages<sup>?</sup>
                 </span>
               </th>
-              <th>
+              <th class="html-clickable">
                 <span data-toggle="tooltip" data-placement="bottom" title="From JavaScript date timezone">
                   Possible countries<sup>?</sup>
                 </span>
               </th>
-              <th>Browser</th>
-              <th>Platform</th>
-              <th>Completeness</th>
+              <th class="html-clickable">Browser</th>
+              <th class="html-clickable">Platform</th>
+              <th class="html-clickable">Completeness</th>
             </tr>
           </thead>
           <tbody>
@@ -98,7 +98,8 @@
   </div>
 
   <script type="text/javascript">
-    var $d3_answers_data = {!! $d3_answers_data !!}
+    var $d3_answers_data = {!! $d3_answers_data !!};
+    var $d3_dates_data = {!! $d3_dates_data !!};
   </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection

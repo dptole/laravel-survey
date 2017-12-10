@@ -279,10 +279,12 @@ class SurveyController extends Controller {
     ) . '%';
 
     $d3_answers_data = Surveys::getD3AnswersDataFromSurveyVersions($survey->versions);
+    $d3_dates_data = Surveys::getD3DatesDataFromSurveyVersions($survey->versions);
 
     return view('survey.stats')->with([
       'survey' => $survey,
-      'd3_answers_data' => json_encode($d3_answers_data)
+      'd3_answers_data' => json_encode($d3_answers_data),
+      'd3_dates_data' => json_encode($d3_dates_data)
     ]);
   }
 }

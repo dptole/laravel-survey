@@ -220,6 +220,42 @@ class Surveys extends Model {
 
   /************************************************/
 
+  public static function getD3DatesDataFromSurveyVersions($versions) {
+    $tmp_d3_dates_data = array_reduce($versions, function($acc, $version) {
+      $acc[$version['version']] = array_reduce($version['answers_sessions'], function($acc, $answer_session) {
+        $date = substr($answer_session->created_at->toDateTimeString(), 0, 10);
+
+        if(!isset($acc[$date])):
+          $acc[$date] = 0;
+        endif;
+        $acc[$date]++;
+
+        return $acc;
+      }, []);
+
+      return $acc;
+    }, []);
+
+    $d3_dates_data = [];
+
+    foreach($tmp_d3_dates_data as $version => $data):
+      foreach($data as $date => $answers):
+        if(!isset($d3_dates_data[$version])):
+          $d3_dates_data[$version] = [];
+        endif;
+
+        $d3_dates_data[$version] []= [
+          'date' => $date,
+          'answers' => $answers
+        ];
+      endforeach;
+    endforeach;
+
+    return $d3_dates_data;
+  }
+
+  /************************************************/
+
   public static function getSurveyByShareableLink($s_link) {
     return (
         $survey = self::where('shareable_link', '=', $s_link)->limit(1)->get()

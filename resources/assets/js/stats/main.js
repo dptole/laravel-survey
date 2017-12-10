@@ -17,7 +17,6 @@ public_survey_stats
     console.log('new-user', data)
   })
 
-setTimeout(d3Graph.drawBars, 1000)
 $(window).on('resize', _ => {
   if(window_width !== window.innerWidth) {
     window_width = window.innerWidth
@@ -25,6 +24,7 @@ $(window).on('resize', _ => {
   }
 })
 
-$(_ =>
+$(_ => {
   window.jQuery('[data-toggle="tooltip"]').tooltip()
-)
+  setTimeout(d3Graph.drawBars, 500)
+})
