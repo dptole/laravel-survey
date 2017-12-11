@@ -24,7 +24,7 @@
         <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}">
           <thead>
             <tr>
-              <th class="html-clickable">Answer date</th>
+              <th class="svg-answer-date html-clickable">Answer date</th>
               <th class="html-clickable">
                 <span data-toggle="tooltip" data-placement="bottom" title="From the Accept-Language HTTP header">
                   Possible languages<sup>?</sup>
