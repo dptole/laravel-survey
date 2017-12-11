@@ -21,7 +21,7 @@
 
       <div class="col-xs-12 lar-overflow">
         @foreach($survey->versions as $version)
-        <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}">
+        <table class="table bordered hide table-versions {{ 'table-version-' . $version['version'] }}" data-survey-version="{{ $version['version'] }}">
           <thead>
             <tr>
               <th class="svg-answer-date html-clickable">Answer date</th>

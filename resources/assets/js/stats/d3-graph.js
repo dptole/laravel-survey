@@ -2,8 +2,6 @@ import d3 from 'd3'
 import $ from 'jquery'
 import lodash from 'lodash'
 
-const log = console.log
-
 const d3Graph = {
   svg: null,
   margins: {
@@ -18,6 +16,7 @@ const d3Graph = {
       const old_func = d3Graph[fn]
       d3Graph[fn] = (...args) => {
         d3Graph.reload = lodash.debounce(_ => {
+          $('svg > g').remove()
           old_func.apply(d3Graph, args)
         }, 100)
 
@@ -47,8 +46,18 @@ const d3Graph = {
     }
   },
   drawLines: data => {
-    log(d3Graph.svg)
-    log(data)
+    /*
+      data = [{
+        "date": "2017-12-10",
+        "answers": 2
+      }, {
+        "date": "2017-12-08",
+        "answers": 1
+      }, {
+        "date": "2017-12-07",
+        "answers": 3
+      }]
+    */
   },
   drawBars(data, {x_column, y_column, x_axis_title, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
     const outer_width = d3Graph.getOuterWidth()
@@ -67,7 +76,7 @@ const d3Graph = {
         , y_axis_text = y_axis_g.append('text').style('text-anchor', 'middle').text(y_axis_title).attr('transform', function() {
             return 'translate(' + (-d3Graph.margins.left + this.getBBox().height) + ', ' + (inner_height / 2) + ') rotate(-90)'
           })
-        , x_axis_text = x_axis_g.append('text').style('text-anchor', 'middle').text(x_axis_title).attr('transform', 'translate(' + (inner_width / 2) + ', ' + (d3Graph.margins.bottom) + ')')
+        , x_axis_text = x_axis_g.append('text').style('text-anchor', 'middle').text(x_axis_title).attr('transform', 'translate(' + (inner_width / 2) + ', ' + (d3Graph.margins.bottom - 5) + ')')
         , graph_text = g.append('text').style('text-anchor', 'middle').text(graph_title).attr('transform', function() {
             return 'translate(' + (outer_width / 2 - d3Graph.margins.left) + ', ' + (this.getBBox().height - d3Graph.margins.bottom) + ')'
           })

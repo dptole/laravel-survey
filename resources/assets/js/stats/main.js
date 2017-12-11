@@ -61,6 +61,7 @@ $(_ => {
     const $th = $(event.target)
     const survey_version = $th.parents('table.table-versions:eq(0)').data('surveyVersion')
     const survey_data = $d3_dates_data[survey_version]
+    window.console.log(survey_data)
     //~ d3Graph.drawLines(survey_data)
   })
 
