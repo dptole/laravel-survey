@@ -57,8 +57,9 @@ const d3Graph = {
         , inner_width = d3Graph.getInnerWidth()
         , inner_height = d3Graph.getInnerHeight()
         , g = d3Graph.svg.append('g').attr('transform', 'translate(' + d3Graph.margins.left + ', ' + d3Graph.margins.top + ')')
-        , x_scale = d3.time.scale().range([0, inner_width])
-        , y_scale = d3.scale.linear().range([inner_height, 0])
+        , x_data_extent = d3.extent(data, d => d[x_column])
+        , x_scale = d3.time.scale().range([0, inner_width]).domain(x_data_extent)
+        , y_scale = d3.scale.linear().range([inner_height, 0]).domain([0, d3.max(data, d => d[y_column])])
         , draw_line_func = d3.svg.line().x(d => x_scale(d[x_column])).y(d => y_scale(d[y_column]))
         , color = d3.scale.category10()
         , graph_text = g.append('text').style('text-anchor', 'middle').text(graph_title).attr('transform', function() {
@@ -74,21 +75,26 @@ const d3Graph = {
             return 'translate(' + (-d3Graph.margins.left + this.getBBox().height) + ', ' + (inner_height / 2) + ') rotate(-90)'
           })
         , time_format_func = d3.time.format('%e/%b')
-        , x_data_extent = d3.extent(data, d => d[x_column])
         , x_axis_g = g.append('g').attr('class', 'd3-axis').attr('transform', 'translate(0, ' + inner_height + ')')
         , x_axis = d3.svg.axis().scale(x_scale).orient('bottom').ticks(2).outerTickSize(0).tickFormat(time_format_func)
         , x_axis_title = x_data_extent.length === 1 // it must crash if there is no data on the X axis
             ? time_format_func(x_data_extent[0])
             : `${time_format_func(x_data_extent[0])} ~> ${time_format_func(x_data_extent[x_data_extent.length - 1])}`
         , x_axis_text = x_axis_g.append('text').style('text-anchor', 'middle').text(x_axis_title).attr('transform', 'translate(' + (inner_width / 2) + ', ' + (d3Graph.margins.bottom - 5) + ')')
-
-    x_scale.domain(x_data_extent)
-    y_scale.domain([0, d3.max(data, d => d[y_column])])
-
-    const path = g.append('path')
+        , path = g.append('path')
             .attr('class', 'd3-path')
-            .attr('stroke', d => color(d))
+            .attr('stroke', color(data))
             .attr('d', draw_line_func(data))
+        , circle = g.selectAll('circle')
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('r', 5)
+            .attr('fill', color(data))
+            .attr('cx', d => x_scale(d[x_column]))
+            .attr('cy', d => y_scale(d[y_column]))
+            .on('mouseover', d3Graph.wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column}))
+            .on('mouseleave', d3Graph.wrapperRemoveTextOverCircle(g))
 
     x_axis_g.call(x_axis)
     y_axis_g.call(y_axis)
@@ -97,6 +103,7 @@ const d3Graph = {
     x_axis_g.call(d3Graph.fadeIn)
     graph_text.call(d3Graph.fadeIn)
     path.call(d3Graph.fadeIn)
+    circle.call(d3Graph.fadeIn)
 
     if(typeof func_go_back === 'function') {
       go_back_text.call(d3Graph.fadeIn)
@@ -202,6 +209,45 @@ const d3Graph = {
         .transition()
         .duration(400)
         .style('opacity', 1)
+    }
+  },
+  wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column}) {
+    return function(d) {
+      d3.select(this)
+        .transition()
+        .duration(400)
+        .attr('r', 10)
+
+      g
+        .append('text')
+        .attr('class', 'svg-text-over-rect')
+        .text(d[y_column])
+        .attr('x', function() {
+          return x_scale(d[x_column]) - (this.getBBox().width >> 1)
+        })
+        .attr('y', function() {
+          return y_scale(d[y_column]) - this.getBBox().height
+        })
+        .style('opacity', 0)
+        .transition()
+        .duration(400)
+        .style('opacity', 1)
+    }
+  },
+  wrapperRemoveTextOverCircle(g) {
+    return function() {
+      d3.select(this)
+        .transition()
+        .duration(400)
+        .attr('r', 5)
+
+      g.selectAll('text.svg-text-over-rect')
+        .transition()
+        .duration(400)
+        .style('opacity', 0)
+        .each('end', function() {
+          d3.select(this).remove()
+        })
     }
   },
   fadeOutGraph({g, x_axis_g, y_axis_g, x_axis_text, y_axis_text, graph_text, go_back_text, bars}) {
