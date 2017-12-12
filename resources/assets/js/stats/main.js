@@ -100,8 +100,9 @@ $(_ => {
       d3Graph.drawLines(survey_data, {
         x_column: 'date',
         y_column: 'answers',
+        y_axis_title: 'Answered',
         graph_title: 'Answers by date',
-        func_go_back: $svg_answer_completeness.click
+        func_go_back: _ => d3Graph.drawBars($d3_answers_data, $d3_answers_options)
       })
     })
   })

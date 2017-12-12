@@ -51,7 +51,7 @@ const d3Graph = {
       d3Graph.svg = d3.select('.svg-container').append('svg')
     }
   },
-  drawLines(data, {x_column, y_column, x_axis_title, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
+  drawLines(data, {x_column, y_column, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
     const outer_width = d3Graph.getOuterWidth()
         , outer_height = d3Graph.getOuterHeight()
         , inner_width = d3Graph.getInnerWidth()
@@ -68,26 +68,30 @@ const d3Graph = {
         , go_back_text = g.append('text').style('text-anchor', 'left').html(go_back_title).attr('class', 'svg-clickable').attr('transform', function() {
             return 'translate(' + (-d3Graph.margins.left) + ', ' + (-d3Graph.margins.top + this.getBBox().height) + ')'
           })
-        , x_axis = d3.svg.axis().scale(x_scale).orient('bottom').ticks(2).outerTickSize(0).tickFormat(d3.time.format('%e/%b'))
-        , y_axis = d3.svg.axis().scale(y_scale).orient('left').ticks(3).outerTickSize(0)
+        , y_axis = d3.svg.axis().scale(y_scale).orient('left').ticks(3).outerTickSize(0).tickFormat(d3.format('d'))
+        , y_axis_g = g.append('g').attr('class', 'd3-axis').attr('transform', 'translate(0, 0)')
+        , y_axis_text = y_axis_g.append('text').style('text-anchor', 'middle').text(y_axis_title).attr('transform', function() {
+            return 'translate(' + (-d3Graph.margins.left + this.getBBox().height) + ', ' + (inner_height / 2) + ') rotate(-90)'
+          })
+        , time_format_func = d3.time.format('%e/%b')
+        , x_data_extent = d3.extent(data, d => d[x_column])
+        , x_axis_g = g.append('g').attr('class', 'd3-axis').attr('transform', 'translate(0, ' + inner_height + ')')
+        , x_axis = d3.svg.axis().scale(x_scale).orient('bottom').ticks(2).outerTickSize(0).tickFormat(time_format_func)
+        , x_axis_title = x_data_extent.length === 1 // it must crash if there is no data on the X axis
+            ? time_format_func(x_data_extent[0])
+            : `${time_format_func(x_data_extent[0])} ~> ${time_format_func(x_data_extent[x_data_extent.length - 1])}`
+        , x_axis_text = x_axis_g.append('text').style('text-anchor', 'middle').text(x_axis_title).attr('transform', 'translate(' + (inner_width / 2) + ', ' + (d3Graph.margins.bottom - 5) + ')')
 
-    x_scale.domain(d3.extent(data, d => d[x_column]))
+    x_scale.domain(x_data_extent)
     y_scale.domain([0, d3.max(data, d => d[y_column])])
 
     const path = g.append('path')
-      .attr('class', 'd3-path')
-      .attr('stroke', d => color(d))
-      .attr('d', draw_line_func(data))
+            .attr('class', 'd3-path')
+            .attr('stroke', d => color(d))
+            .attr('d', draw_line_func(data))
 
-    const x_axis_g = g.append('g')
-      .attr('class', 'd3-axis')
-      .attr('transform', 'translate(0, ' + inner_height + ')')
-      .call(x_axis);
-
-    const y_axis_g = g.append('g')
-      .attr('class', 'd3-axis')
-      .attr('transform', 'translate(0, 0)')
-      .call(y_axis);
+    x_axis_g.call(x_axis)
+    y_axis_g.call(y_axis)
 
     y_axis_g.call(d3Graph.fadeIn)
     x_axis_g.call(d3Graph.fadeIn)
