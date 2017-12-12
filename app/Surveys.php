@@ -256,6 +256,42 @@ class Surveys extends Model {
 
   /************************************************/
 
+  public static function getD3BrowsersDataFromSurveyVersions($versions) {
+    return array_reduce($versions, function($acc, $version) {
+      $acc[$version['version']] = array_reduce($version['answers_sessions'], function($acc, $answer_session) {
+        if(!(isset($acc[$answer_session->user_agent['browser']]))):
+          $acc[$answer_session->user_agent['browser']] = 0;
+        endif;
+
+        $acc[$answer_session->user_agent['browser']]++;
+
+        return $acc;
+      }, []);
+
+      return $acc;
+    }, []);
+  }
+
+  /************************************************/
+
+  public static function getD3PlatformDataFromSurveyVersions($versions) {
+    return array_reduce($versions, function($acc, $version) {
+      $acc[$version['version']] = array_reduce($version['answers_sessions'], function($acc, $answer_session) {
+        if(!(isset($acc[$answer_session->user_agent['platform']]))):
+          $acc[$answer_session->user_agent['platform']] = 0;
+        endif;
+
+        $acc[$answer_session->user_agent['platform']]++;
+
+        return $acc;
+      }, []);
+
+      return $acc;
+    }, []);
+  }
+
+  /************************************************/
+
   public static function getSurveyByShareableLink($s_link) {
     return (
         $survey = self::where('shareable_link', '=', $s_link)->limit(1)->get()

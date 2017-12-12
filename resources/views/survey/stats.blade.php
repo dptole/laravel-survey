@@ -36,8 +36,8 @@
                   Possible countries<sup>?</sup>
                 </span>
               </th>
-              <th class="html-clickable">Browser</th>
-              <th class="html-clickable">Platform</th>
+              <th class="html-clickable svg-answer-browser">Browser</th>
+              <th class="html-clickable svg-answer-platform">Platform</th>
               <th class="html-clickable svg-answer-completeness">Completeness</th>
             </tr>
           </thead>
@@ -99,8 +99,12 @@
   </div>
 
   <script type="text/javascript">
-    var $d3_answers_data = {!! $d3_answers_data !!};
-    var $d3_dates_data = {!! $d3_dates_data !!};
+    var $d3_data = {
+      answers: {!! $d3_answers_data !!},
+      dates: {!! $d3_dates_data !!},
+      platforms: {!! $d3_platform_data !!},
+      browsers: {!! $d3_browsers_data !!}
+    }
   </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection

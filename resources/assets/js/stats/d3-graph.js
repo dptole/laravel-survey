@@ -220,11 +220,10 @@ const d3Graph = {
 
       g
         .append('text')
+        .style('text-anchor', 'middle')
         .attr('class', 'svg-text-over-rect')
         .text(d[y_column])
-        .attr('x', function() {
-          return x_scale(d[x_column]) - (this.getBBox().width >> 1)
-        })
+        .attr('x', x_scale(d[x_column]))
         .attr('y', function() {
           return y_scale(d[y_column]) - this.getBBox().height
         })
