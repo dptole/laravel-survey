@@ -40,11 +40,15 @@
   padding: 20px;
 }
 
-
 .d3-axis path, .d3-axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
+}
+
+.d3-path {
+  fill: none;
+  stroke-width: 2px;
 }
 
 .svg-container {

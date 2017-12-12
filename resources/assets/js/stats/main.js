@@ -23,7 +23,7 @@ const $d3_answers_options = {
       y_column: 'total',
       x_axis_title: 'Completeness',
       y_axis_title: 'Answered',
-      graph_title: 'Survey version ' + d.version,
+      graph_title: 'All answers',
       table_version: d.version,
       func_go_back: _ => d3Graph.drawBars($d3_answers_data, $d3_answers_options)
     })
@@ -44,7 +44,7 @@ public_survey_stats
   })
   .channel('public-survey')
   .on('new-user', function(data) {
-    console.log('new-user', data)
+    window.console.log('new-user', data)
   })
 
 $(window).on('resize', _ => {
@@ -57,12 +57,53 @@ $(window).on('resize', _ => {
 $(_ => {
   window.jQuery('[data-toggle="tooltip"]').tooltip()
 
-  window.jQuery('.svg-answer-date').on('click', event => {
-    const $th = $(event.target)
-    const survey_version = $th.parents('table.table-versions:eq(0)').data('surveyVersion')
-    const survey_data = $d3_dates_data[survey_version]
-    window.console.log(survey_data)
-    //~ d3Graph.drawLines(survey_data)
+  window.jQuery('table.table-versions').each((index, table) => {
+    const $table = $(table)
+    const $svg_answer_completeness = $table.find('.svg-answer-completeness')
+    const $svg_answer_date = $table.find('.svg-answer-date')
+    const d3_border_color = d3.scale.category10()()
+
+    $svg_answer_completeness.css('border', '2px dashed ' + d3_border_color)
+    $svg_answer_date.css('border', '2px dashed ' + d3_border_color)
+
+    $svg_answer_completeness.on('click', event => {
+      const survey_version = $table.data('surveyVersion')
+      const d = $d3_answers_data.find(answers =>
+        answers.version === survey_version
+      )
+
+      d3Graph.drawBars([{
+        type: 'fully',
+        total: d.fully_answered
+      }, {
+        type: 'partially',
+        total: d.not_fully_answered
+      }], {
+        x_column: 'type',
+        y_column: 'total',
+        x_axis_title: 'Completeness',
+        y_axis_title: 'Answered',
+        graph_title: 'All answers',
+        table_version: d.version,
+        func_go_back: _ => d3Graph.drawBars($d3_answers_data, $d3_answers_options)
+      })
+    })
+
+    $svg_answer_date.on('click', event => {
+      const survey_version = $table.data('surveyVersion')
+      const d3_dates_data = $d3_dates_data[survey_version]
+      const survey_data = [].concat(d3_dates_data).map(d => {
+        d.date = new Date(d.date)
+        return d
+      })
+
+      d3Graph.drawLines(survey_data, {
+        x_column: 'date',
+        y_column: 'answers',
+        graph_title: 'Answers by date',
+        func_go_back: $svg_answer_completeness.click
+      })
+    })
   })
 
   setTimeout(_ => {

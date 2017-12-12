@@ -14,20 +14,20 @@ const d3Graph = {
   init: _ => {
     'drawBars drawLines'.split(' ').forEach(fn => {
       const old_func = d3Graph[fn]
+
       d3Graph[fn] = (...args) => {
-        d3Graph.reload = lodash.debounce(_ => {
+        function refresh() {
           $('svg > g').remove()
-          old_func.apply(d3Graph, args)
-        }, 100)
+          old_func.apply(d3Graph, arguments)
+        }
+
+        d3Graph.reload = lodash.debounce(_ => refresh(...args), 100)
 
         d3Graph.getSVG()
         const g = d3Graph.svg.select('g')
 
         if(g.node())
-          d3Graph.fadeOut(g, function() {
-            $('svg > g').remove()
-            old_func.apply(d3Graph, args)
-          })
+          d3Graph.fadeOut(g, _ => refresh(...args))
         else
           old_func.apply(d3Graph, args)
       }
@@ -39,31 +39,72 @@ const d3Graph = {
   getOuterHeight: _ => {
     return 250
   },
+  getInnerWidth() {
+    return d3Graph.getOuterWidth() - d3Graph.margins.left - d3Graph.margins.right
+  },
+  getInnerHeight() {
+    return d3Graph.getOuterHeight() - d3Graph.margins.top - d3Graph.margins.bottom
+  },
   getSVG: _ => {
     if(!d3Graph.svg) {
       $('span.svg-loader').remove()
       d3Graph.svg = d3.select('.svg-container').append('svg')
     }
   },
-  drawLines: data => {
-    /*
-      data = [{
-        "date": "2017-12-10",
-        "answers": 2
-      }, {
-        "date": "2017-12-08",
-        "answers": 1
-      }, {
-        "date": "2017-12-07",
-        "answers": 3
-      }]
-    */
+  drawLines(data, {x_column, y_column, x_axis_title, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
+    const outer_width = d3Graph.getOuterWidth()
+        , outer_height = d3Graph.getOuterHeight()
+        , inner_width = d3Graph.getInnerWidth()
+        , inner_height = d3Graph.getInnerHeight()
+        , g = d3Graph.svg.append('g').attr('transform', 'translate(' + d3Graph.margins.left + ', ' + d3Graph.margins.top + ')')
+        , x_scale = d3.time.scale().range([0, inner_width])
+        , y_scale = d3.scale.linear().range([inner_height, 0])
+        , draw_line_func = d3.svg.line().x(d => x_scale(d[x_column])).y(d => y_scale(d[y_column]))
+        , color = d3.scale.category10()
+        , graph_text = g.append('text').style('text-anchor', 'middle').text(graph_title).attr('transform', function() {
+            return 'translate(' + (outer_width / 2 - d3Graph.margins.left) + ', ' + (this.getBBox().height - d3Graph.margins.bottom) + ')'
+          })
+        , go_back_title = '&larr; Back'
+        , go_back_text = g.append('text').style('text-anchor', 'left').html(go_back_title).attr('class', 'svg-clickable').attr('transform', function() {
+            return 'translate(' + (-d3Graph.margins.left) + ', ' + (-d3Graph.margins.top + this.getBBox().height) + ')'
+          })
+        , x_axis = d3.svg.axis().scale(x_scale).orient('bottom').ticks(2).outerTickSize(0).tickFormat(d3.time.format('%e/%b'))
+        , y_axis = d3.svg.axis().scale(y_scale).orient('left').ticks(3).outerTickSize(0)
+
+    x_scale.domain(d3.extent(data, d => d[x_column]))
+    y_scale.domain([0, d3.max(data, d => d[y_column])])
+
+    const path = g.append('path')
+      .attr('class', 'd3-path')
+      .attr('stroke', d => color(d))
+      .attr('d', draw_line_func(data))
+
+    const x_axis_g = g.append('g')
+      .attr('class', 'd3-axis')
+      .attr('transform', 'translate(0, ' + inner_height + ')')
+      .call(x_axis);
+
+    const y_axis_g = g.append('g')
+      .attr('class', 'd3-axis')
+      .attr('transform', 'translate(0, 0)')
+      .call(y_axis);
+
+    y_axis_g.call(d3Graph.fadeIn)
+    x_axis_g.call(d3Graph.fadeIn)
+    graph_text.call(d3Graph.fadeIn)
+    path.call(d3Graph.fadeIn)
+
+    if(typeof func_go_back === 'function') {
+      go_back_text.call(d3Graph.fadeIn)
+      go_back_text.on('click', func_go_back)
+    } else
+      go_back_text.style('display', 'none')
   },
   drawBars(data, {x_column, y_column, x_axis_title, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
     const outer_width = d3Graph.getOuterWidth()
         , outer_height = d3Graph.getOuterHeight()
-        , inner_width = outer_width - d3Graph.margins.left - d3Graph.margins.right
-        , inner_height = outer_height - d3Graph.margins.top - d3Graph.margins.bottom
+        , inner_width = d3Graph.getInnerWidth()
+        , inner_height = d3Graph.getInnerHeight()
         , x_scale_spaces = 0.3
         , x_scale = d3.scale.ordinal().rangeBands([0, inner_width], x_scale_spaces)
         , y_scale = d3.scale.linear().range([inner_height, 0])
