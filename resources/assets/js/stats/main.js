@@ -36,6 +36,46 @@ const $d3_answers_options = {
   }
 }
 
+function websocketQuestionAnswered(data) {
+  const $table = window.jQuery('#lar-tab-user-answers-' + (data.user.session_id) + ' table')
+  const $first_tr = $table.find('tbody > :eq(1)')
+  const started_from_zero = !!$first_tr.find('> td').attr('colspan')
+  
+  if(started_from_zero)
+    $first_tr.remove()
+  
+  const $question = window.jQuery('<tr>')
+  const $answer = window.jQuery('<tr>')
+  const answer_check = data.user.question_option.type === 'check'
+  const glyphicon_css_class = 'glyphicon ' + (answer_check ? 'glyphicon-ok' : 'glyphicon-pencil')
+  const answer_text = answer_check ? data.user.question_option.description : data.user.answer.free_text
+  const $question_line = window.jQuery('<th>').text(`Question ${data.user.question.order}`)
+  
+  if(started_from_zero)
+    $question_line.attr('width', '30%')
+  
+  $question.append($question_line)
+  $question.append(
+    window.jQuery('<td>').text(data.user.question.description)
+  )
+  
+  $answer.append(
+    window.jQuery('<th>').append(
+      answer_check ? 'Selected answer' : 'Typed answer'
+    )
+  )
+
+  $answer.append(
+    window.jQuery('<td>').append(
+      window.jQuery('<span>').addClass(glyphicon_css_class),
+      ' ',
+      answer_text
+    )
+  )
+  
+  $table.find('tbody').append($question, $answer)
+}
+
 function d3BackRoot() {
   $('.table-users-info').addClass('hide')
   d3Graph.drawBars($d3_data.answers, $d3_answers_options)
@@ -71,10 +111,10 @@ public_survey_stats
     cluster: 'us2',
     encrypted: true
   })
-  .channel('public-survey')
-  .on('new-user', function(data) {
-    window.console.log('new-user', data)
-  })
+  .channel('public-survey-' + $survey_uuid)
+    .on('new-user', data => window.jQuery('.lar-refresh-survey').removeClass('hide'))
+    .on('user-done-survey', data => window.jQuery('.lar-refresh-survey').removeClass('hide'))
+    .on('user-answer', data => websocketQuestionAnswered(data))
 
 $(window).on('resize', _ => {
   if(window_width !== window.innerWidth) {

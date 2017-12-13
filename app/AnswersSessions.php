@@ -65,6 +65,21 @@ class AnswersSessions extends Model
     ;
   }
 
+  public static function getByUuid($answer_session_uuid) {
+    return (
+      $answer_session = AnswersSessions::where([
+        'session_uuid' => $answer_session_uuid
+      ])->limit(1)
+        ->get()
+        ->all()
+    ) &&
+      is_array($answer_session) &&
+      count($answer_session) === 1
+        ? $answer_session[0]
+        : null
+    ;
+  }
+
   public static function updateCountryInfo($answer_session_id, $ip) {
     $answer_session = AnswersSessions::where([
       'id' => $answer_session_id

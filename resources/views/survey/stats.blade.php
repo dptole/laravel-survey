@@ -3,6 +3,10 @@
 @section('title', '/ Survey statistics')
 
 @section('content')
+  <h1 class="title m-b-md text-center text-warning bg-warning lar-refresh-survey hide">
+    {{ Html::linkRoute('survey.stats', 'New data available, refresh the page', [$survey->uuid], ['class' => 'btn btn-info btn-block']) }}
+  </h1>
+
   <h1 class="title m-b-md text-center">
     Statistics
   </h1>
@@ -297,8 +301,9 @@
       dates: {!! $d3_dates_data !!},
       platforms: {!! $d3_platform_data !!},
       browsers: {!! $d3_browsers_data !!}
-    }
-    var $country_info = {!! $country_info !!}
+    };
+    var $country_info = {!! $country_info !!};
+    var $survey_uuid = "{{ $survey->uuid }}";
   </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection

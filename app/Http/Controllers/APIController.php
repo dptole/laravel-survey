@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Surveys;
+use App\SurveysLastVersionsView;
 use App\Answers;
+use App\Questions;
+use App\QuestionsOptions;
 use App\AnswersSessions;
 use App\AnswersBehavior;
 use App\ApiErrors;
@@ -67,6 +70,19 @@ class APIController extends Controller {
     $answer->request_info = $request_info;
     $answer->answers_session_id = $answers_session_id;
     $answer->save();
+
+    $survey_uuid = Surveys::find($survey_id)->uuid;
+
+    Helper::broadcast('public-survey-' . $survey_uuid, 'user-answer', [
+      'user' => [
+        'session_id' => $request->input('answers_session_id'),
+        'survey_version' => SurveysLastVersionsView::getById($survey_id),
+        'question' => Questions::find($question_id),
+        'question_option' => QuestionsOptions::find($question_option_id),
+        'answer' => $answer
+      ]
+    ]);
+
     return response()->json(true);
   }
 
@@ -76,10 +92,22 @@ class APIController extends Controller {
    * @return {"success":true}
    */
   public function saveBehavior(Request $request) {
+    $answer_session = AnswersSessions::getByUuid($request->input('answers_session_id'));
+    $behavior = $request->input('behavior');
+
     $answers_behavior = new AnswersBehavior;
-    $answers_behavior->answers_session_id = AnswersSessions::getIdByUuid($request->input('answers_session_id'));
-    $answers_behavior->behavior = json_encode($request->input('behavior'));
+    $answers_behavior->answers_session_id = $answer_session->id;
+    $answers_behavior->behavior = json_encode($behavior);
     $answers_behavior->save();
+
+    if(isset($behavior['reload'])):
+      $survey = Surveys::find($answer_session->survey_id);
+      Helper::broadcast('public-survey-' . $survey->uuid, 'user-done-survey', [
+        'user' => [
+          'session_id' => $request->input('answers_session_id')
+        ]
+      ]);
+    endif;
 
     return response()->json(true);
   }
@@ -87,12 +115,36 @@ class APIController extends Controller {
   /**
    * Fetches the country info via some IP.
    *
-   * @return {"success":<COUNTRY_INFO>}
+   * @return {
+   *  "success": {
+   *    "Address type": "IPv4 ",
+   *    "Hostname": "dynamic-adsl-78-15-117-251.clienti.tiscali.it",
+   *    "ASN": "8612 - TISCALI",
+   *    "ISP": "Tiscali SpA",
+   *    "Connection type": "xDSL",
+   *    "Crawler": "No",
+   *    "Proxy": "No",
+   *    "Attack source": "No",
+   *    "Threat level": "Low",
+   *    "Country": "Italy",
+   *    "State / Region": "Sardinia (Roman province)",
+   *    "District / County": "Provincia di Cagliari",
+   *    "City": "Casteddu/Cagliari",
+   *    "Coordinates": "39.2703, 9.09582",
+   *    "Timezone": "Europe/Rome (UTC+1)",
+   *    "Languages": "it-IT, de-IT, fr-IT, sc, ca, co, sl",
+   *    "Currency": "Euro (EUR)",
+   *    "Elapsed": 9163,
+   *    "Ip": "78.15.117.251"
+   *  }
+   * }
    */
   public function fetchCountryInfo(Request $request) {
     return response()->json(
       AnswersSessions::updateCountryInfo(
-        $request->input('answers_session_id'),
+        $request->input('answers_session_uuid')
+          ? AnswersSessions::getIdByUuid($request->input('answers_session_uuid'))
+          : $request->input('answers_session_id'),
         Helper::dbIpGetIpInfo($request->input('ip'))
       )
     );

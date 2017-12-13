@@ -39,7 +39,7 @@ class PublicSurveyController extends Controller {
       endif;
     endforeach;
 
-    Helper::broadcast('public-survey', 'new-user', [
+    Helper::broadcast('public-survey-' . $uuid, 'new-user', [
       'user' => [
         'headers' => $request->header(),
         'ips' => $request->ips()
