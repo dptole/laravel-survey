@@ -2,6 +2,11 @@ import $ from 'jquery'
 import _ from 'lodash'
 import {PublicSurveyStats, d3Graph} from './stats.js'
 
+function d3BackRoot() {
+  $('.table-users-info').addClass('hide')
+  d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+}
+
 const $d3_answers_options = {
   x_column: 'version',
   y_column: 'total',
@@ -25,7 +30,7 @@ const $d3_answers_options = {
       y_axis_title: 'Answered',
       graph_title: 'All answers',
       table_version: d.version,
-      func_go_back: _ => d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+      func_go_back: d3BackRoot
     })
 
     return true
@@ -55,7 +60,35 @@ $(window).on('resize', _ => {
 })
 
 $(_ => {
+  let scroll_top = document.documentElement.scrollTop
   window.jQuery('[data-toggle="tooltip"]').tooltip()
+
+  window.jQuery('.lar-user-answer td').on('click', event => {
+    const $tr = $(event.target).parent()
+    const uuid = $tr.data('tableUserInfo')
+
+    if(!uuid)
+      return false
+
+    scroll_top = document.documentElement.scrollTop
+    $tr.parents('table:eq(0)').addClass('hide')
+    const $table_user_info = $('.table-user-info-' + uuid)
+    $table_user_info.removeClass('hide')
+    if($table_user_info.offset())
+      document.documentElement.scrollTop =  $table_user_info.offset().top
+  })
+
+  window.jQuery('.lar-user-info-return').on('click', event => {
+    const $button = $(event.target)
+    const survey_version = $(event.target).data('surveyVersion')
+
+    if(!survey_version)
+      return false
+
+    $('.table-version-' + survey_version).removeClass('hide')
+    $button.parents('table:eq(0)').addClass('hide')
+    document.documentElement.scrollTop =  scroll_top
+  })
 
   window.jQuery('table.table-versions').each((index, table) => {
     const $table = $(table)
@@ -88,7 +121,7 @@ $(_ => {
         y_axis_title: 'Answered',
         graph_title: 'All answers',
         table_version: d.version,
-        func_go_back: _ => d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+        func_go_back: d3BackRoot
       })
     })
 
@@ -108,7 +141,7 @@ $(_ => {
         y_axis_title: 'Answers',
         graph_title: 'Answers by browser',
         table_version: survey_version,
-        func_go_back: _ => d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+        func_go_back: d3BackRoot
       })
     })
 
@@ -128,7 +161,7 @@ $(_ => {
         y_axis_title: 'Answers',
         graph_title: 'Platforms by browser',
         table_version: survey_version,
-        func_go_back: _ => d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+        func_go_back: d3BackRoot
       })
     })
 
@@ -145,7 +178,7 @@ $(_ => {
         y_column: 'answers',
         y_axis_title: 'Answered',
         graph_title: 'Answers by date',
-        func_go_back: _ => d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+        func_go_back: d3BackRoot
       })
     })
   })
