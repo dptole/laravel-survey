@@ -34,5 +34,9 @@ class ResourceController extends Controller {
       'content-type' => 'text/css'
     ]);
   }
+
+  public function fonts($font_file) {
+    return $this->fromPublicPath('/fonts/' . $font_file);
+  }
 }
 

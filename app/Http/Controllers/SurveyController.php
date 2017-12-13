@@ -206,13 +206,14 @@ class SurveyController extends Controller {
     $global_answers = 0;
 
     foreach($versions as &$version):
+      $questions = $version['questions'];
       $total_questions = count($version['questions']);
       $global_answers_sessions += count($version['answers_sessions']);
 
       $total_answers_sessions = count($version['answers_sessions']);
       $total_answers = array_reduce(
         $version['answers_sessions'],
-        function($accumulator, $answer_session) use ($total_questions, &$global_answers) {
+        function($accumulator, $answer_session) use ($total_questions, &$global_answers, $questions) {
           $fully_answered = count($answer_session['answers']) >= $total_questions;
           $global_answers += $fully_answered;
 
@@ -242,6 +243,8 @@ class SurveyController extends Controller {
               'platform' => 'Unknown'
             ];
           endif;
+
+          $answer_session['joined_questions_and_answers'] = AnswersSessions::joinQuestionsAndAnswers($answer_session['survey_id'], $answer_session['id']);
 
           return $accumulator + $fully_answered;
         },

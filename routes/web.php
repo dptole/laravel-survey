@@ -18,6 +18,10 @@ Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email
   Route::get('/s/{s_link}', ['uses' => 'PublicSurveyController@shareableLink', 'as' => 'public_survey.shareable_link']);
   Auth::routes();
 
+  Route::group(['prefix' => 'fonts'], function() {
+    Route::get('/{font_file}', ['uses' => 'ResourceController@fonts', 'as' => 'fonts']);
+  });
+
   Route::group(['prefix' => 'r'], function() {
     Route::get('/js.js', ['uses' => 'ResourceController@js', 'as' => 'js']);
     Route::get('/questions.js', ['uses' => 'ResourceController@questions', 'as' => 'questions']);

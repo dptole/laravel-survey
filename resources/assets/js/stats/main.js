@@ -86,7 +86,7 @@ $(_ => {
       return false
 
     $('.table-version-' + survey_version).removeClass('hide')
-    $button.parents('table:eq(0)').addClass('hide')
+    $button.parents('.table-users-info').addClass('hide')
     document.documentElement.scrollTop =  scroll_top
   })
 

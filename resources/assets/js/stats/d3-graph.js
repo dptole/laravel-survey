@@ -21,7 +21,7 @@ const d3Graph = {
           old_func.apply(d3Graph, arguments)
         }
 
-        d3Graph.reload = lodash.debounce(_ => refresh(...args), 100)
+        d3Graph.reload = lodash.debounce(_ => refresh(...(args).concat({mode: 'resize'})), 100)
 
         d3Graph.getSVG()
         const g = d3Graph.svg.select('g')
@@ -51,7 +51,9 @@ const d3Graph = {
       d3Graph.svg = d3.select('.svg-container').append('svg')
     }
   },
-  drawLines(data, {x_column, y_column, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
+  drawLines(data, {x_column, y_column, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}, extra) {
+    const mode = extra && extra.mode
+
     const outer_width = d3Graph.getOuterWidth()
         , outer_height = d3Graph.getOuterHeight()
         , inner_width = d3Graph.getInnerWidth()
@@ -111,7 +113,9 @@ const d3Graph = {
     } else
       go_back_text.style('display', 'none')
   },
-  drawBars(data, {x_column, y_column, x_axis_title, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}) {
+  drawBars(data, {x_column, y_column, x_axis_title, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}, extra) {
+    const mode = extra && extra.mode
+
     const outer_width = d3Graph.getOuterWidth()
         , outer_height = d3Graph.getOuterHeight()
         , inner_width = d3Graph.getInnerWidth()
@@ -137,7 +141,7 @@ const d3Graph = {
             return 'translate(' + (-d3Graph.margins.left) + ', ' + (-d3Graph.margins.top + this.getBBox().height) + ')'
           })
 
-    d3Graph.showTableVersion(table_version)
+    if(mode !== 'resize') d3Graph.showTableVersion(table_version)
 
     x_scale.domain(data.map(d => d[x_column]))
     y_scale.domain([0, d3.max(data, d => d[y_column])])

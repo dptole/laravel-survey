@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Webpatser\Uuid\Uuid;
 use App\SurveysLastVersionsView;
 use App\AnswersBehavior;
+use DB;
 
 class AnswersSessions extends Model
 {
@@ -49,5 +50,18 @@ class AnswersSessions extends Model
     ])->orderBy(
       'created_at', 'desc'
     )->get()->all());
+  }
+
+  public static function joinQuestionsAndAnswers($survey_id, $answers_session_id) {
+    return DB::table('answers')
+      ->select('answers.free_text', 'questions.description as description_question', 'questions.order', 'questions.version', 'questions_options.type', 'questions_options.description as description_option')
+      ->join('questions', 'questions.id', '=', 'answers.question_id')
+      ->join('questions_options', 'questions_options.id', '=', 'answers.question_option_id')
+      ->where('answers.survey_id', '=', $survey_id)
+      ->where('answers.answers_session_id', '=', $answers_session_id)
+      ->orderBy('order', 'asc')
+      ->get()
+      ->all()
+    ;
   }
 }
