@@ -10,6 +10,9 @@ Pre-requisites
 - Node.js v7+
 - MySQL v5.5+
 - PHP v5.6+
+- Pusher
+- GoogleRecaptcha
+- Db-Ip
 
 Building
 ========
@@ -89,5 +92,41 @@ Start up the server.
 $ php artisan serve
 ```
 
+> You will have to access `http://localhost:8000/laravel/`.
+
+3rd party integrations
+======================
+
+# Pusher
+
+Create your app at [pusher's dashboard][pusher-url]. Edit the `.env` file with your credentials
+
+```
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=
+```
+
+# Google Recaptcha
+
+Go to [Google Recaptcha's admin page][google-recaptcha-url] and register a new site. Edit the `.env` file with your keys
+
+```
+GOOGLE_RECAPTCHA_SITE_SECRET=
+GOOGLE_RECAPTCHA_SITE_KEY=
+```
+
+# Db-Ip
+
+Register at [db-ip][db-ip-url] to get your key. Edit the `.env` file afterwards.
+
+```
+DB_IP_API_KEY=
+```
+
+[db-ip-url]: https://db-ip.com/login/
+[google-recaptcha-url]: https://www.google.com/recaptcha/admin#list
+[pusher-url]: https://dashboard.pusher.com/accounts/sign_in
 [composer-url]: https://getcomposer.org/
 
