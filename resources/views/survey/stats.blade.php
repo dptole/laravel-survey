@@ -144,31 +144,14 @@
                     </tr>
                     
                     <tr>
-                      <th>IP Address</th>
-                      <td>
-                        {{ Helper::getIpFromRequestInfo($answer_session->request_info) }}
-                      </td>
-                    </tr>
-                    
-                    <tr>
                       <th>Country info</th>
-                      <td>
-                        @if(property_exists($answer_session->request_info, 'db-ip'))
-                        @foreach($answer_session->request_info->{'db-ip'} as $key => $value)
-                        <table class="table bordered">
-                          <tbody>
-                            <tr>
-                              <th width="30%">{{ $key }}</th>
-                              <td>{{ $value }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        @endforeach
-                        @else
-                          <span data-toggle="tooltip" data-placement="top" title="Not yet implemented">
-                            <a href="javascript:void 0">Fetch</a>
-                          </span>
-                        @endif
+                      <td class="lar-country-info-box" data-answer-session-uuid="{{ $answer_session->session_uuid }}">
+                        <table class="table bordered lar-has-country-info hide"></table>
+
+                        <div class="lar-hasnt-country-info">
+                          <span class="glyphicon glyphicon-refresh animation-spin hide lar-loading-country-info" aria-hidden="true"></span>
+                          <button class="btn btn-primary lar-fetch-country-info" data-answer-session-id="{{ $answer_session->id }}" data-answer-session-uuid="{{ $answer_session->session_uuid }}" data-answer-session-ip="{{ Helper::getIpFromRequestInfo($answer_session->request_info) }}">Fetch</button>
+                        </div>
                       </td>
                     </tr>
                     
@@ -315,6 +298,7 @@
       platforms: {!! $d3_platform_data !!},
       browsers: {!! $d3_browsers_data !!}
     }
+    var $country_info = {!! $country_info !!}
   </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection

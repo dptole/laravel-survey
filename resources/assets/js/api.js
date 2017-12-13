@@ -32,5 +32,13 @@ export default {
     }).then(response =>
       response && response.data && response.data.success || response.data.error
     )
+  },
+  async fetchCountryInfo(answers_session_id, ip) {
+    return await http_request.post('/fetch_country_info', {
+      answers_session_id,
+      ip
+    }).then(response =>
+      response && response.data && response.data.success || response.data.error
+    )
   }
 }

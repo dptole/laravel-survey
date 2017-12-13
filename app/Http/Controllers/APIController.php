@@ -83,5 +83,19 @@ class APIController extends Controller {
 
     return response()->json(true);
   }
+
+  /**
+   * Fetches the country info via some IP.
+   *
+   * @return {"success":<COUNTRY_INFO>}
+   */
+  public function fetchCountryInfo(Request $request) {
+    return response()->json(
+      AnswersSessions::updateCountryInfo(
+        $request->input('answers_session_id'),
+        Helper::dbIpGetIpInfo($request->input('ip'))
+      )
+    );
+  }
 }
 

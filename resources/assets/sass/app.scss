@@ -79,3 +79,19 @@
 .lar-overflow {
   overflow: auto;
 }
+
+@keyframes animation-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+.animation-spin {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-name: animation-spin;
+  animation-duration: 1s;
+}

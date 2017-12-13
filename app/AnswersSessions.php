@@ -64,4 +64,25 @@ class AnswersSessions extends Model
       ->all()
     ;
   }
+
+  public static function updateCountryInfo($answer_session_id, $ip) {
+    $answer_session = AnswersSessions::where([
+      'id' => $answer_session_id
+    ])->limit(1)->get()->all();
+
+    if(count($answer_session) !== 1):
+      return $ip;
+    endif;
+
+    $request_info = json_decode($answer_session[0]->request_info);
+    $request_info->{'db-ip'} = $ip;
+
+    AnswersSessions::where([
+      'id' => $answer_session_id
+    ])->update([
+      'request_info' => json_encode($request_info)
+    ]);
+
+    return $ip;
+  }
 }

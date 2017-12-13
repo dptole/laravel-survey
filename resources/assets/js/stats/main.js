@@ -1,11 +1,10 @@
 import $ from 'jquery'
 import _ from 'lodash'
+import API from '../api.js'
 import {PublicSurveyStats, d3Graph} from './stats.js'
 
-function d3BackRoot() {
-  $('.table-users-info').addClass('hide')
-  d3Graph.drawBars($d3_data.answers, $d3_answers_options)
-}
+const public_survey_stats = new PublicSurveyStats
+let window_width = 0
 
 const $d3_answers_options = {
   x_column: 'version',
@@ -37,8 +36,33 @@ const $d3_answers_options = {
   }
 }
 
-const public_survey_stats = new PublicSurveyStats
-let window_width = 0
+function d3BackRoot() {
+  $('.table-users-info').addClass('hide')
+  d3Graph.drawBars($d3_data.answers, $d3_answers_options)
+}
+
+function renderCountryInfo(answer_session_uuid, country_info) {
+  const $lar_country_info = window.jQuery('.lar-country-info-box[data-answer-session-uuid="' + answer_session_uuid + '"]')
+  const $table = $lar_country_info.find('.lar-has-country-info')
+  const $fetch_box = $lar_country_info.find('.lar-hasnt-country-info')
+  
+  if($lar_country_info.length < 1 || !$fetch_box.is(':visible'))
+    return false
+  
+  const $tbody = window.jQuery('<tbody>')
+  for(const prop in country_info)
+    $tbody.append(
+      window.jQuery('<tr>').append(
+        window.jQuery('<th>').text(prop),
+        window.jQuery('<td>').text(country_info[prop])
+      )
+    )
+  
+  $table.append($tbody)
+  
+  $table.removeClass('hide')
+  $fetch_box.addClass('hide')
+}
 
 public_survey_stats
   .websocket.config({
@@ -64,7 +88,7 @@ $(_ => {
   window.jQuery('[data-toggle="tooltip"]').tooltip()
 
   window.jQuery('.lar-user-answer td').on('click', event => {
-    const $tr = $(event.target).parent()
+    const $tr = window.jQuery(event.target).parent()
     const uuid = $tr.data('tableUserInfo')
 
     if(!uuid)
@@ -72,26 +96,71 @@ $(_ => {
 
     scroll_top = document.documentElement.scrollTop
     $tr.parents('table:eq(0)').addClass('hide')
-    const $table_user_info = $('.table-user-info-' + uuid)
+    const $table_user_info = window.jQuery('.table-user-info-' + uuid)
     $table_user_info.removeClass('hide')
     if($table_user_info.offset())
       document.documentElement.scrollTop =  $table_user_info.offset().top
   })
 
+  window.jQuery('.lar-fetch-country-info').on('click', event => {
+    const $button = window.jQuery(event.target)
+    const $country_info_box = $button.parents('.lar-country-info-box:eq(0)')
+    const $loader = $country_info_box.find('.lar-loading-country-info')
+    
+    if($country_info_box.length < 1) {
+      window.console.log('bad view')
+      return false;
+    }
+    
+    if($loader.is(':visible')) {
+      window.console.log('is loading...')
+      return false
+    }
+    
+    if($country_info[event.target.dataset.answerSessionUuid]) {
+      renderCountryInfo(
+        event.target.dataset.answerSessionUuid,
+        $country_info[event.target.dataset.answerSessionUuid]
+      )
+      return false
+    }
+    
+    $button.addClass('hide')
+    $loader.removeClass('hide')
+    
+    setTimeout(_ => {
+      API.fetchCountryInfo(
+        event.target.dataset.answerSessionId,
+        event.target.dataset.answerSessionIp
+      ).then(response => {
+        $country_info[event.target.dataset.answerSessionUuid] = response
+        
+        renderCountryInfo(
+          event.target.dataset.answerSessionUuid,
+          $country_info[event.target.dataset.answerSessionUuid]
+        )
+      }).catch(error => {
+        window.alert('Error fetching the country info')
+        $button.removeClass('hide')
+        $loader.addClass('hide')
+      })
+    }, 1000)
+  })
+
   window.jQuery('.lar-user-info-return').on('click', event => {
-    const $button = $(event.target)
+    const $button = window.jQuery(event.target)
     const survey_version = $(event.target).data('surveyVersion')
 
     if(!survey_version)
       return false
 
-    $('.table-version-' + survey_version).removeClass('hide')
+    window.jQuery('.table-version-' + survey_version).removeClass('hide')
     $button.parents('.table-users-info').addClass('hide')
     document.documentElement.scrollTop =  scroll_top
   })
 
   window.jQuery('table.table-versions').each((index, table) => {
-    const $table = $(table)
+    const $table = window.jQuery(table)
     const $svg_answer_completeness = $table.find('.svg-answer-completeness')
     const $svg_answer_date = $table.find('.svg-answer-date')
     const $svg_browser_date = $table.find('.svg-answer-browser')

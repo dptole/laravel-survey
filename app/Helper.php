@@ -249,7 +249,7 @@ class Helper {
       return $ip_info;
     endif;
     $ip_info->Ip = $ip;
-    $ip_info->ApiKey = $api_key;
+    // $ip_info->ApiKey = $api_key;
     return $ip_info;
   }
 

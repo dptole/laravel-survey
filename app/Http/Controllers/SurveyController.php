@@ -202,6 +202,7 @@ class SurveyController extends Controller {
 
     $survey->total_answers = AnswersSessions::countBySurveyId($survey->id);
     $versions = Surveys::getVersions($survey);
+    $country_info = [];
     $global_answers_sessions = 0;
     $global_answers = 0;
 
@@ -213,9 +214,13 @@ class SurveyController extends Controller {
       $total_answers_sessions = count($version['answers_sessions']);
       $total_answers = array_reduce(
         $version['answers_sessions'],
-        function($accumulator, $answer_session) use ($total_questions, &$global_answers, $questions) {
+        function($accumulator, $answer_session) use ($total_questions, &$global_answers, $questions, &$country_info) {
           $fully_answered = count($answer_session['answers']) >= $total_questions;
           $global_answers += $fully_answered;
+
+          if(property_exists($answer_session->request_info, 'db-ip')):
+            $country_info[$answer_session->session_uuid] = $answer_session->request_info->{'db-ip'};
+          endif;
 
           $total_answered = count($answer_session['answers']) / $total_questions * 100;
           if($total_answered > 100):
@@ -288,6 +293,7 @@ class SurveyController extends Controller {
 
     return view('survey.stats')->with([
       'survey' => $survey,
+      'country_info' => json_encode($country_info),
       'd3_platform_data' => json_encode($d3_platform_data),
       'd3_browsers_data' => json_encode($d3_browsers_data),
       'd3_answers_data' => json_encode($d3_answers_data),
