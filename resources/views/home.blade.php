@@ -16,7 +16,7 @@
     }
     
     .lar-tech img {
-      max-width: 120px;
+      max-height: 120px;
     }
   </style>
 
@@ -80,6 +80,13 @@
     <div class="col-sm-4 col-xs-12">
       <div>ECMAScript 6</div>
       <img alt="Db-Ip" src="http://www.benmvp.com/slides/img/es6/es6-logo.png">
+    </div>
+
+    <div class="col-sm-4 col-xs-12">
+      <div>Packagist &amp; Composer</div>
+      <a target="_blank" href="https://packagist.org/">
+        <img alt="Packagist &amp; Composer" src="https://i2.wp.com/www.spokenbyyou.com/wp-content/uploads/2017/08/packagist.png">
+      </a>
     </div>
 
   </div>
