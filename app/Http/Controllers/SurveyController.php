@@ -219,7 +219,10 @@ class SurveyController extends Controller {
           $global_answers += $fully_answered;
 
           if(property_exists($answer_session->request_info, 'db-ip')):
-            $country_info[$answer_session->session_uuid] = $answer_session->request_info->{'db-ip'};
+            if(!isset($country_info[$answer_session->version])):
+              $country_info[$answer_session->version] = [];
+            endif;
+            $country_info[$answer_session->version][$answer_session->session_uuid] = $answer_session->request_info->{'db-ip'};
           endif;
 
           $total_answered = count($answer_session['answers']) / $total_questions * 100;

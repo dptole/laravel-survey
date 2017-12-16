@@ -12,12 +12,17 @@ const d3Graph = {
   },
 
   init: _ => {
-    'drawBars drawLines'.split(' ').forEach(fn => {
+    'drawBars drawLines drawMap'.split(' ').forEach(fn => {
+      function cleanUp() {
+        d3Graph.svg.selectAll('g').remove()
+        d3Graph.svg.style('background-image', '')
+      }
+
       const old_func = d3Graph[fn]
 
       d3Graph[fn] = (...args) => {
         function refresh() {
-          $('svg > g').remove()
+          cleanUp()
           old_func.apply(d3Graph, arguments)
         }
 
@@ -28,8 +33,10 @@ const d3Graph = {
 
         if(g.node())
           d3Graph.fadeOut(g, _ => refresh(...args))
-        else
+        else {
+          cleanUp()
           old_func.apply(d3Graph, args)
+        }
       }
     })
   },
@@ -49,6 +56,62 @@ const d3Graph = {
     if(!d3Graph.svg) {
       $('span.svg-loader').remove()
       d3Graph.svg = d3.select('.svg-container').append('svg')
+    }
+  },
+  drawMap(data, {func_go_back}) {
+    const outer_width = d3Graph.getOuterWidth()
+        , outer_height = d3Graph.getOuterHeight()
+        , image = new Image
+        , g = d3Graph.svg.append('g')
+            .attr('transform', 'translate(0, 0)')
+        , text = g.append('text')
+            .text('Loading...')
+            .style('text-anchor', 'middle')
+            .attr('x', d3Graph.getOuterWidth() >> 1)
+            .attr('y', d3Graph.getOuterHeight() >> 1)
+        , x_scale = d3.scale.linear().range([0, outer_width]).domain([-180, 180])
+        , y_scale = d3.scale.linear().range([0, outer_height]).domain([90, -90])
+        , go_back_title = '&larr; Back'
+        , go_back_text = g.append('text').style('opacity', 0).attr('fill', 'white').style('text-anchor', 'left').html(go_back_title).attr('class', 'svg-clickable').attr('transform', function() {
+              return 'translate(10, ' + (d3Graph.getOuterHeight() - this.getBBox().height) + ')'
+            })
+
+    d3Graph.resizeSVG(outer_width, outer_height)
+
+    image.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/BlackMarble20161km.jpg/1024px-BlackMarble20161km.jpg'
+    image.onload = _ => {
+      d3Graph.svg
+        .style('background-image', 'url(' + image.src + ')')
+        .style('background-size', '100% 100%')
+        .style('background-position', 'center center')
+
+      text.call(d3Graph.fadeOut)
+
+      if(typeof func_go_back === 'function') {
+        go_back_text.call(d3Graph.fadeIn)
+        go_back_text.on('click', func_go_back)
+      }
+
+      const circles = g.selectAll('circle')
+        .data(data)
+
+      circles
+        .enter()
+        .append('circle')
+        .attr('class', 'svg-clickable')
+        .attr('r', 3)
+        .attr('fill', 'red')
+        .attr('cx', d => x_scale(d[1]))
+        .attr('cy', d => y_scale(d[0]))
+        .on('click', d => {
+          $('.table-users-info').addClass('hide')
+          $('tr[data-table-user-info=' + d.answer_session_uuid + '] > td').click()
+        })
+
+      circles.exit().remove()
+    }
+    image.onerror = _ => {
+      text.text('Error :( try again')
     }
   },
   drawLines(data, {x_column, y_column, y_axis_title, graph_title, func_go_back, table_version, on_click_bar}, extra) {

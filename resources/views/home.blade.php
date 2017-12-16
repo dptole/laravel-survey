@@ -82,13 +82,12 @@
       <img alt="Db-Ip" src="http://www.benmvp.com/slides/img/es6/es6-logo.png">
     </div>
 
-    <div class="col-sm-4 col-xs-12">
+    <div class="col-sm-4 col-xs-12 col-sm-offset-4">
       <div>Packagist &amp; Composer</div>
       <a target="_blank" href="https://packagist.org/">
         <img alt="Packagist &amp; Composer" src="https://i2.wp.com/www.spokenbyyou.com/wp-content/uploads/2017/08/packagist.png">
       </a>
     </div>
-
   </div>
 
   <h1 class="text-center">Create your own surveys with Laravel!</h1>

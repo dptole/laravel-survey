@@ -35,7 +35,7 @@
                   Possible languages<sup>?</sup>
                 </span>
               </th>
-              <th class="html-clickable">
+              <th class="html-clickable svg-answer-country">
                 <span data-toggle="tooltip" data-placement="bottom" title="From JavaScript date timezone">
                   Possible countries<sup>?</sup>
                 </span>
@@ -53,12 +53,6 @@
               </td>
               <td>
                 {{ Helper::lsrGetLanguageRegions($answer_session['request_info']->headers->{'accept-language'}[0]) }}
-
-                @if(Helper::getDbIpUrlFromRequestInfo($answer_session->request_info))
-                  <a target="_blank" href="{{ Helper::getDbIpUrlFromRequestInfo($answer_session->request_info) }}">
-                    More information
-                  </a>
-                @endif
               </td>
               <td>
                 {{ Helper::tzGetCountries($answer_session->request_info->js->date->timezone) }}
@@ -154,7 +148,7 @@
 
                         <div class="lar-hasnt-country-info">
                           <span class="glyphicon glyphicon-refresh animation-spin hide lar-loading-country-info" aria-hidden="true"></span>
-                          <button class="btn btn-primary lar-fetch-country-info" data-answer-session-id="{{ $answer_session->id }}" data-answer-session-uuid="{{ $answer_session->session_uuid }}" data-answer-session-ip="{{ Helper::getIpFromRequestInfo($answer_session->request_info) }}">Fetch</button>
+                          <button class="btn btn-primary lar-fetch-country-info" data-answer-session-id="{{ $answer_session->id }}" data-answer-session-uuid="{{ $answer_session->session_uuid }}" data-survey-version="{{ $answer_session->version }}" data-answer-session-ip="{{ Helper::getIpFromRequestInfo($answer_session->request_info) }}">Fetch</button>
                         </div>
                       </td>
                     </tr>

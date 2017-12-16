@@ -144,23 +144,20 @@ $(_ => {
 
   window.jQuery('.lar-fetch-country-info').on('click', event => {
     const $button = window.jQuery(event.target)
+    const survey_version = $button.data('surveyVersion')
     const $country_info_box = $button.parents('.lar-country-info-box:eq(0)')
     const $loader = $country_info_box.find('.lar-loading-country-info')
     
-    if($country_info_box.length < 1) {
-      window.console.log('bad view')
-      return false;
-    }
-    
-    if($loader.is(':visible')) {
-      window.console.log('is loading...')
+    if($country_info_box.length < 1)
       return false
-    }
     
-    if($country_info[event.target.dataset.answerSessionUuid]) {
+    if($loader.is(':visible'))
+      return false
+    
+    if($country_info[survey_version] && $country_info[survey_version][event.target.dataset.answerSessionUuid]) {
       renderCountryInfo(
         event.target.dataset.answerSessionUuid,
-        $country_info[event.target.dataset.answerSessionUuid]
+        $country_info[survey_version][event.target.dataset.answerSessionUuid]
       )
       return false
     }
@@ -173,14 +170,15 @@ $(_ => {
         event.target.dataset.answerSessionId,
         event.target.dataset.answerSessionIp
       ).then(response => {
-        $country_info[event.target.dataset.answerSessionUuid] = response
+        if(!$country_info[survey_version])
+          $country_info[survey_version] = {}
+        $country_info[survey_version][event.target.dataset.answerSessionUuid] = response
         
         renderCountryInfo(
           event.target.dataset.answerSessionUuid,
-          $country_info[event.target.dataset.answerSessionUuid]
+          $country_info[survey_version][event.target.dataset.answerSessionUuid]
         )
       }).catch(error => {
-        window.alert('Error fetching the country info')
         $button.removeClass('hide')
         $loader.addClass('hide')
       })
@@ -205,11 +203,42 @@ $(_ => {
     const $svg_answer_date = $table.find('.svg-answer-date')
     const $svg_browser_date = $table.find('.svg-answer-browser')
     const $svg_platform_date = $table.find('.svg-answer-platform')
+    const $svg_country = $table.find('.svg-answer-country')
     const d3_border_color = d3.scale.category10()();
 
-    [$svg_answer_completeness, $svg_answer_date, $svg_browser_date, $svg_platform_date].forEach($dom =>
+    [$svg_country, $svg_answer_completeness, $svg_answer_date, $svg_browser_date, $svg_platform_date].forEach($dom =>
       $dom.css('border', '2px dashed ' + d3_border_color)
     )
+
+    $svg_country.on('click', event => {
+      const survey_version = $table.data('surveyVersion')
+      const countries = $country_info[survey_version] || {}
+      const data = Object.keys(countries)
+        .map(k =>
+          ({
+            answer_session_uuid: k,
+            c: countries[k].Coordinates
+          })
+        )
+        .filter(c =>
+          ({
+            answer_session_uuid: c.answer_session_uuid,
+            c: !/0, +0/.test(c.c)
+          })
+        )
+        .map(c => {
+          const coords = c.c.match(/^([^,]+),(.+)$/) && [parseFloat(RegExp.$1.trim()), parseFloat(RegExp.$2.trim())]
+          if(coords) {
+            coords.answer_session_uuid = c.answer_session_uuid
+            return coords
+          }
+        })
+        .filter(id => id)
+
+      d3Graph.drawMap(data, {
+        func_go_back: d3BackRoot
+      })
+    })
 
     $svg_answer_completeness.on('click', event => {
       const survey_version = $table.data('surveyVersion')
