@@ -12,7 +12,7 @@ const d3Graph = {
   },
 
   init: _ => {
-    'drawBars drawLines drawMap'.split(' ').forEach(fn => {
+    'drawBars drawLines drawMap drawHorizontalBars'.split(' ').forEach(fn => {
       function cleanUp() {
         d3Graph.svg.selectAll('g').remove()
         d3Graph.svg.style('background-image', '')
@@ -251,6 +251,82 @@ const d3Graph = {
       .exit()
       .remove()
   },
+  drawHorizontalBars(data, {x_column, y_column, x_axis_title, graph_title, func_go_back, table_version, on_click_bar}, extra) {
+    const mode = extra && extra.mode
+        , margins_left = d3Graph.margins.left
+
+    d3Graph.margins.left = 120
+
+    const outer_width = d3Graph.getOuterWidth()
+        , outer_height = d3Graph.getOuterHeight()
+        , inner_width = d3Graph.getInnerWidth()
+        , inner_height = d3Graph.getInnerHeight()
+        , y_scale_spaces = 0.3
+        , y_scale = d3.scale.ordinal().rangeBands([0, inner_height], y_scale_spaces)
+        , x_scale = d3.scale.linear().range([0, inner_width])
+        , colors = d3.scale.category10()
+        , g = d3Graph.svg.append('g').attr('transform', 'translate(' + d3Graph.margins.left + ', ' + d3Graph.margins.top + ')')
+        , x_axis_g = g.append('g').attr('class', 'd3-axis').attr('transform', 'translate(0, ' + inner_height + ')')
+        , x_axis = d3.svg.axis().scale(x_scale).orient('bottom').ticks(5).outerTickSize(0).tickFormat(d3.format('d'))
+        , y_axis_g = g.append('g').attr('class', 'd3-axis').attr('transform', 'translate(0, 0)')
+        , y_axis = d3.svg.axis().scale(y_scale).orient('left').outerTickSize(0)
+        , x_axis_text = x_axis_g.append('text').style('text-anchor', 'middle').text(x_axis_title).attr('transform', 'translate(' + (inner_width / 2) + ', ' + (d3Graph.margins.bottom - 5) + ')')
+        , graph_text = g.append('text').style('text-anchor', 'middle').text(graph_title).attr('transform', function() {
+            return 'translate(' + (outer_width / 2 - d3Graph.margins.left) + ', ' + (this.getBBox().height - d3Graph.margins.bottom) + ')'
+          })
+        , go_back_title = '&larr; Back'
+        , go_back_text = g.append('text').style('text-anchor', 'left').html(go_back_title).attr('class', 'svg-clickable').attr('transform', function() {
+            return 'translate(' + (-d3Graph.margins.left) + ', ' + (-d3Graph.margins.top + this.getBBox().height) + ')'
+          })
+
+    if(mode !== 'resize') d3Graph.showTableVersion(table_version)
+
+    x_scale.domain([0, d3.max(data, d => d[x_column])])
+    y_scale.domain(data.map(d => d[y_column]))
+
+    d3Graph.resizeSVG(outer_width, outer_height)
+
+    const bars = g
+          .selectAll('rect')
+          .data(data)
+
+    x_axis_g.call(x_axis)
+    y_axis_g.call(y_axis)
+
+    x_axis_g.call(d3Graph.fadeIn)
+    y_axis_g.call(d3Graph.fadeIn)
+    x_axis_text.call(d3Graph.fadeIn)
+    graph_text.call(d3Graph.fadeIn)
+    if(typeof func_go_back === 'function') {
+      go_back_text.call(d3Graph.fadeIn)
+      go_back_text.on('click', func_go_back)
+    } else
+      go_back_text.style('display', 'none')
+
+    // Enter
+    bars
+      .enter()
+      .append('rect')
+      .attr('class', 'svg-clickable')
+      .attr('x', 0)
+      .attr('y', d => y_scale(d[y_column]))
+      .attr('height', y_scale.rangeBand())
+      .attr('fill', d => colors(d[x_column] + d[y_column]))
+      .attr('width', 0)
+      .on('mouseover', d3Graph.wrapperMouseOverRectHorizontal(g, {x_scale, x_column, y_scale, y_column}))
+      .on('mouseleave', d3Graph.wrapperRemoveTextOverRect(g))
+      .on('click', on_click_bar)
+
+    // Update
+    d3Graph.barsRiseHorizontal(bars, {inner_height, x_scale, x_column})
+
+    // Exit
+    bars
+      .exit()
+      .remove()
+
+    d3Graph.margins.left = margins_left
+  },
   barsRise(bars, {inner_height, y_scale, y_column}) {
     bars
       .transition()
@@ -258,6 +334,13 @@ const d3Graph = {
       .duration(1000)
       .attr('y', d => y_scale(d[y_column]))
       .attr('height', d => inner_height - y_scale(d[y_column]))
+  },
+  barsRiseHorizontal(bars, {inner_height, x_scale, x_column}) {
+    bars
+      .transition()
+      .delay((d, i) => i * 100)
+      .duration(1000)
+      .attr('width', d => x_scale(d[x_column]))
   },
   wrapperMouseOverRect(g, {x_scale, x_column, y_scale, y_column}) {
     return d => {
@@ -272,6 +355,23 @@ const d3Graph = {
           return x_scale(d[x_column]) + (x_scale.rangeBand() >> 1) - (bbox.width >> 1)
         })
         .attr('y', y_scale(d[y_column]) - svg_text_over_rect_offset)
+        .style('opacity', 0)
+        .transition()
+        .duration(400)
+        .style('opacity', 1)
+    }
+  },
+  wrapperMouseOverRectHorizontal(g, {x_scale, x_column, y_scale, y_column}) {
+    return d => {
+      const svg_text_over_rect_offset = 5
+
+      g
+        .append('text')
+        .attr('class', 'svg-text-over-rect')
+        .style('text-anchor', 'middle')
+        .text(d[x_column])
+        .attr('x', x_scale(d[x_column]) >> 1)
+        .attr('y', y_scale(d[y_column]))
         .style('opacity', 0)
         .transition()
         .duration(400)

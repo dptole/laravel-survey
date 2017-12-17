@@ -272,11 +272,10 @@ $(_ => {
         }
       })
 
-      d3Graph.drawBars(d, {
-        x_column: 'type',
-        y_column: 'total',
-        x_axis_title: 'Browsers',
-        y_axis_title: 'Answers',
+      d3Graph.drawHorizontalBars(d, {
+        x_column: 'total',
+        y_column: 'type',
+        x_axis_title: 'Answers',
         graph_title: 'Answers by browser',
         table_version: survey_version,
         func_go_back: d3BackRoot
@@ -292,11 +291,10 @@ $(_ => {
         }
       })
 
-      d3Graph.drawBars(d, {
-        x_column: 'type',
-        y_column: 'total',
-        x_axis_title: 'Platform',
-        y_axis_title: 'Answers',
+      d3Graph.drawHorizontalBars(d, {
+        x_column: 'total',
+        y_column: 'type',
+        x_axis_title: 'Answers',
         graph_title: 'Platforms by browser',
         table_version: survey_version,
         func_go_back: d3BackRoot
