@@ -9,7 +9,6 @@ use App\Answers;
 use App\Questions;
 use App\QuestionsOptions;
 use App\AnswersSessions;
-use App\AnswersBehavior;
 use App\ApiErrors;
 use App\Helper;
 
@@ -82,32 +81,6 @@ class APIController extends Controller {
         'answer' => $answer
       ]
     ]);
-
-    return response()->json(true);
-  }
-
-  /**
-   * Saves user behavior when answering the survey.
-   *
-   * @return {"success":true}
-   */
-  public function saveBehavior(Request $request) {
-    $answer_session = AnswersSessions::getByUuid($request->input('answers_session_id'));
-    $behavior = $request->input('behavior');
-
-    $answers_behavior = new AnswersBehavior;
-    $answers_behavior->answers_session_id = $answer_session->id;
-    $answers_behavior->behavior = json_encode($behavior);
-    $answers_behavior->save();
-
-    if(isset($behavior['reload'])):
-      $survey = Surveys::find($answer_session->survey_id);
-      Helper::broadcast('public-survey-' . $survey->uuid, 'user-done-survey', [
-        'user' => [
-          'session_id' => $request->input('answers_session_id')
-        ]
-      ]);
-    endif;
 
     return response()->json(true);
   }

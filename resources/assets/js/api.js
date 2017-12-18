@@ -25,14 +25,6 @@ export default {
       response && response.data && response.data.success || response.data.error
     )
   },
-  async saveBehavior(answers_session_id, behavior) {
-    return await http_request.post('/save_behavior', {
-      answers_session_id,
-      behavior
-    }).then(response =>
-      response && response.data && response.data.success || response.data.error
-    )
-  },
   async fetchCountryInfo(answers_session_id, ip) {
     return await http_request.post('/fetch_country_info', {
       answers_session_id,

@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Webpatser\Uuid\Uuid;
 use App\SurveysLastVersionsView;
-use App\AnswersBehavior;
 use DB;
 
 class AnswersSessions extends Model
@@ -41,7 +40,6 @@ class AnswersSessions extends Model
   public static function getBySurveyId($survey_id, $version) {
     return array_map(function($answer_session) {
       $answer_session->answers = Answers::getByAnswersSessionId($answer_session->id);
-      $answer_session->behaviors = AnswersBehavior::getByAnswersSessionId($answer_session->id);
       $answer_session->request_info = json_decode($answer_session->request_info);
       return $answer_session;
     }, AnswersSessions::where([

@@ -9,42 +9,6 @@ export default class QuestionsTable {
     this.dom_survey_title = $('<h1>').addClass('text-center')
     this.dom_survey_title.text('Loading...')
     this.dom_survey_container.append(this.dom_survey_title)
-
-    $(window).on('beforeunload', event => {
-      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
-        reload: utils.getDate()
-      })
-    })
-
-    $(window).on('blur', event =>
-      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
-        blur: utils.getDate()
-      })
-    )
-
-    $(window).on('focus', event =>
-      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
-        focus: utils.getDate()
-      })
-    )
-
-    $(window).on('click', event =>
-      this.getSessionId() && API.saveBehavior(this.getSessionId(), {
-        click: Object.assign(utils.getDate(), {
-          altKey: event.originalEvent.altKey,
-          shiftKey: event.originalEvent.shiftKey,
-          ctrlKey: event.originalEvent.ctrlKey,
-          x: event.originalEvent.x,
-          y: event.originalEvent.y,
-          screenX: event.originalEvent.screenX,
-          screenY: event.originalEvent.screenY,
-          pageX: event.originalEvent.pageX,
-          pageY: event.originalEvent.pageY,
-          offsetX: event.originalEvent.offsetX,
-          offsetY: event.originalEvent.offsetY
-        })
-      })
-    )
   }
 
   async start() {
