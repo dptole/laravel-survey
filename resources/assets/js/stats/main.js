@@ -217,25 +217,27 @@ $(_ => {
         .map(k =>
           ({
             answer_session_uuid: k,
-            c: countries[k].Coordinates
+            c: countries[k].Coordinates,
+            country: countries[k].Country
           })
         )
         .filter(c =>
-          ({
-            answer_session_uuid: c.answer_session_uuid,
-            c: !/0, +0/.test(c.c)
-          })
+          !/0, +0/.test(c.c)
         )
         .map(c => {
           const coords = c.c.match(/^([^,]+),(.+)$/) && [parseFloat(RegExp.$1.trim()), parseFloat(RegExp.$2.trim())]
           if(coords) {
             coords.answer_session_uuid = c.answer_session_uuid
+            coords.country = c.country
             return coords
           }
         })
         .filter(id => id)
 
       d3Graph.drawMap(data, {
+        x_column: '1',
+        y_column: '0',
+        mouseover: 'country',
         func_go_back: d3BackRoot
       })
     })

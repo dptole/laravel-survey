@@ -86,11 +86,14 @@ class AnswersSessions extends Model
     ])->limit(1)->get()->all();
 
     if(count($answer_session) !== 1):
-      return $ip;
+      return false;
     endif;
 
     $request_info = json_decode($answer_session[0]->request_info);
-    $request_info->{'db-ip'} = $ip;
+    if(property_exists($request_info, 'db-ip')):
+      return $request_info->{'db-ip'};
+    endif;
+    $request_info->{'db-ip'} = Helper::dbIpGetIpInfo($ip);
 
     AnswersSessions::where([
       'id' => $answer_session_id
@@ -98,6 +101,6 @@ class AnswersSessions extends Model
       'request_info' => json_encode($request_info)
     ]);
 
-    return $ip;
+    return $request_info->{'db-ip'};
   }
 }

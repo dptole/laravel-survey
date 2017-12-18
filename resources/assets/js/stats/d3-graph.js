@@ -58,7 +58,7 @@ const d3Graph = {
       d3Graph.svg = d3.select('.svg-container').append('svg')
     }
   },
-  drawMap(data, {func_go_back}) {
+  drawMap(data, {x_column, y_column, mouseover, func_go_back}) {
     const outer_width = d3Graph.getOuterWidth()
         , outer_height = d3Graph.getOuterHeight()
         , image = new Image
@@ -73,12 +73,12 @@ const d3Graph = {
         , y_scale = d3.scale.linear().range([0, outer_height]).domain([90, -90])
         , go_back_title = '&larr; Back'
         , go_back_text = g.append('text').style('opacity', 0).attr('fill', 'white').style('text-anchor', 'left').html(go_back_title).attr('class', 'svg-clickable').attr('transform', function() {
-              return 'translate(10, ' + (d3Graph.getOuterHeight() - this.getBBox().height) + ')'
+              return 'translate(10, ' + (d3Graph.getOuterHeight() - (this.getBBox().height << 1)) + ')'
             })
 
     d3Graph.resizeSVG(outer_width, outer_height)
 
-    image.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/BlackMarble20161km.jpg/1024px-BlackMarble20161km.jpg'
+    image.src = 'https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-1024.png'
     image.onload = _ => {
       d3Graph.svg
         .style('background-image', 'url(' + image.src + ')')
@@ -101,12 +101,14 @@ const d3Graph = {
         .attr('class', 'svg-clickable')
         .attr('r', 3)
         .attr('fill', 'red')
-        .attr('cx', d => x_scale(d[1]))
-        .attr('cy', d => y_scale(d[0]))
+        .attr('cx', d => x_scale(d[x_column]))
+        .attr('cy', d => y_scale(d[y_column]))
         .on('click', d => {
           $('.table-users-info').addClass('hide')
           $('tr[data-table-user-info=' + d.answer_session_uuid + '] > td').click()
         })
+        .on('mouseover', d3Graph.wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column, mouseover}))
+        .on('mouseleave', d3Graph.wrapperRemoveTextOverCircle(g, 3))
 
       circles.exit().remove()
     }
@@ -378,7 +380,7 @@ const d3Graph = {
         .style('opacity', 1)
     }
   },
-  wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column}) {
+  wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column, mouseover}) {
     return function(d) {
       d3.select(this)
         .transition()
@@ -389,7 +391,8 @@ const d3Graph = {
         .append('text')
         .style('text-anchor', 'middle')
         .attr('class', 'svg-text-over-rect')
-        .text(d[y_column])
+        .text(d[mouseover || y_column])
+        .attr('fill', mouseover ? 'white' : 'black')
         .attr('x', x_scale(d[x_column]))
         .attr('y', function() {
           return y_scale(d[y_column]) - this.getBBox().height
@@ -400,12 +403,12 @@ const d3Graph = {
         .style('opacity', 1)
     }
   },
-  wrapperRemoveTextOverCircle(g) {
+  wrapperRemoveTextOverCircle(g, shrink_to) {
     return function() {
       d3.select(this)
         .transition()
         .duration(400)
-        .attr('r', 5)
+        .attr('r', shrink_to || 5)
 
       g.selectAll('text.svg-text-over-rect')
         .transition()

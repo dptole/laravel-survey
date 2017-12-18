@@ -140,14 +140,21 @@ class APIController extends Controller {
    * }
    */
   public function fetchCountryInfo(Request $request) {
-    return response()->json(
-      AnswersSessions::updateCountryInfo(
-        $request->input('answers_session_uuid')
-          ? AnswersSessions::getIdByUuid($request->input('answers_session_uuid'))
-          : $request->input('answers_session_id'),
-        Helper::dbIpGetIpInfo($request->input('ip'))
-      )
+    $answers_session_id = $request->input('answers_session_uuid')
+      ? AnswersSessions::getIdByUuid($request->input('answers_session_uuid'))
+      : $request->input('answers_session_id')
+    ;
+
+    $country_info = AnswersSessions::updateCountryInfo(
+      $answers_session_id,
+      $request->input('ip')
     );
+
+    if(!$country_info):
+      return response(new ApiErrors('INVALID_ANSWERS_SESSION', $request));
+    endif;
+
+    return response()->json($country_info);
   }
 }
 

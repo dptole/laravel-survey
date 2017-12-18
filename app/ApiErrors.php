@@ -14,7 +14,12 @@ class ApiErrors implements JsonSerializable {
     ],
     2 => [
       'error' => 'INVALID_SURVEY',
-      'detail' => 'The given survey uuid is invalid.',
+      'detail' => 'The survey uuid given is invalid.',
+      'status' => 400
+    ],
+    3 => [
+      'error' => 'INVALID_ANSWERS_SESSION',
+      'detail' => 'The answers session id given is invalid.',
       'status' => 400
     ]
   ];
