@@ -125,8 +125,14 @@ Register at [db-ip][db-ip-url] to get your key. Edit the `.env` file afterwards.
 DB_IP_API_KEY=
 ```
 
+License
+=======
+
+[MIT][LICENSE]
+
 [db-ip-url]: https://db-ip.com/login/
 [google-recaptcha-url]: https://www.google.com/recaptcha/admin#list
 [pusher-url]: https://dashboard.pusher.com/accounts/sign_in
 [composer-url]: https://getcomposer.org/
+[LICENSE]: LICENSE
 
