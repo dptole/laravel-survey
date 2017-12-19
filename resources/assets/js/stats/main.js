@@ -218,7 +218,7 @@ $(_ => {
           ({
             answer_session_uuid: k,
             c: countries[k].Coordinates,
-            country: countries[k].Country
+            country: countries[k].Country + '/' + countries[k]['State / Region']
           })
         )
         .filter(c =>
@@ -237,7 +237,7 @@ $(_ => {
       d3Graph.drawMap(data, {
         x_column: '1',
         y_column: '0',
-        mouseover: 'country',
+        mouseover_column: 'country',
         func_go_back: d3BackRoot
       })
     })

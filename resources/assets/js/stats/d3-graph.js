@@ -58,9 +58,10 @@ const d3Graph = {
       d3Graph.svg = d3.select('.svg-container').append('svg')
     }
   },
-  drawMap(data, {x_column, y_column, mouseover, func_go_back}) {
+  drawMap(data, {x_column, y_column, mouseover_column, func_go_back}) {
     const outer_width = d3Graph.getOuterWidth()
         , outer_height = d3Graph.getOuterHeight()
+        , circle_r = 5
         , image = new Image
         , g = d3Graph.svg.append('g')
             .attr('transform', 'translate(0, 0)')
@@ -99,7 +100,7 @@ const d3Graph = {
         .enter()
         .append('circle')
         .attr('class', 'svg-clickable')
-        .attr('r', 3)
+        .attr('r', circle_r)
         .attr('fill', 'red')
         .attr('cx', d => x_scale(d[x_column]))
         .attr('cy', d => y_scale(d[y_column]))
@@ -107,8 +108,8 @@ const d3Graph = {
           $('.table-users-info').addClass('hide')
           $('tr[data-table-user-info=' + d.answer_session_uuid + '] > td').click()
         })
-        .on('mouseover', d3Graph.wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column, mouseover}))
-        .on('mouseleave', d3Graph.wrapperRemoveTextOverCircle(g, 3))
+        .on('mouseover', d3Graph.wrapperMouseOverCircleMap(g, {mouseover_column}))
+        .on('mouseleave', d3Graph.wrapperRemoveTextOverCircle(g, circle_r))
 
       circles.exit().remove()
     }
@@ -380,7 +381,7 @@ const d3Graph = {
         .style('opacity', 1)
     }
   },
-  wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column, mouseover}) {
+  wrapperMouseOverCircleMap(g, {mouseover_column}) {
     return function(d) {
       d3.select(this)
         .transition()
@@ -389,10 +390,32 @@ const d3Graph = {
 
       g
         .append('text')
-        .style('text-anchor', 'middle')
+        .attr('text-anchor', 'middle')
         .attr('class', 'svg-text-over-rect')
-        .text(d[mouseover || y_column])
-        .attr('fill', mouseover ? 'white' : 'black')
+        .style('font-weight', '700')
+        .text(d[mouseover_column])
+        .attr('fill', 'black')
+        .attr('x', d3Graph.getOuterWidth() >> 1)
+        .attr('y', d3Graph.getOuterHeight() - 5)
+        .style('opacity', 0)
+        .transition()
+        .duration(400)
+        .style('opacity', 1)
+    }
+  },
+  wrapperMouseOverCircle(g, {x_scale, x_column, y_scale, y_column}) {
+    return function(d) {
+      d3.select(this)
+        .transition()
+        .duration(400)
+        .attr('r', 10)
+
+      g
+        .append('text')
+        .style('text-anchor', 'start')
+        .attr('class', 'svg-text-over-rect')
+        .text(d[y_column])
+        .attr('fill', 'black')
         .attr('x', x_scale(d[x_column]))
         .attr('y', function() {
           return y_scale(d[y_column]) - this.getBBox().height
