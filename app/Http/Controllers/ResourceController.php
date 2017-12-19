@@ -38,5 +38,11 @@ class ResourceController extends Controller {
   public function fonts($font_file) {
     return $this->fromPublicPath('/fonts/' . $font_file);
   }
+
+  public function jpgImages($image_file) {
+    return $this->fromPublicPath('/images/' . $image_file, [
+      'content-type' => 'image/jpg'
+    ]);
+  }
 }
 

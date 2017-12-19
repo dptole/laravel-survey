@@ -298,6 +298,7 @@
     };
     var $country_info = {!! $country_info !!};
     var $survey_uuid = "{{ $survey->uuid }}";
+    var $world_map_url = "{{ asset('laravel/images/jpg/world-map.jpg') }}";
   </script>
   <script type="text/javascript" src="{{ Helper::route('stats') }}"></script>
 @endsection

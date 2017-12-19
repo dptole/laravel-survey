@@ -78,7 +78,7 @@ const d3Graph = {
 
     d3Graph.resizeSVG(outer_width, outer_height)
 
-    image.src = 'https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-1024.png'
+    image.src = $world_map_url
     image.onload = _ => {
       d3Graph.svg
         .style('background-image', 'url(' + image.src + ')')

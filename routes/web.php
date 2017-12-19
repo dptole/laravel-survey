@@ -22,6 +22,10 @@ Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email
     Route::get('/{font_file}', ['uses' => 'ResourceController@fonts', 'as' => 'fonts']);
   });
 
+  Route::group(['prefix' => 'images/jpg'], function() {
+    Route::get('/{image_file}', ['uses' => 'ResourceController@jpgImages', 'as' => 'jpgImages']);
+  });
+
   Route::group(['prefix' => 'r'], function() {
     Route::get('/js.js', ['uses' => 'ResourceController@js', 'as' => 'js']);
     Route::get('/questions.js', ['uses' => 'ResourceController@questions', 'as' => 'questions']);
