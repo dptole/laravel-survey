@@ -297,7 +297,7 @@ $(_ => {
         x_column: 'total',
         y_column: 'type',
         x_axis_title: 'Answers',
-        graph_title: 'Platforms by browser',
+        graph_title: 'Answers by platform',
         table_version: survey_version,
         func_go_back: d3BackRoot
       })
