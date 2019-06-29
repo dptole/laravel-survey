@@ -3,7 +3,7 @@
 @section('title', '/ Home')
 
 @section('content')
-  <h1 class="text-center">This app was created using the following technologies</h1>
+  <h1 class="text-center hide">This app was created using the following technologies</h1>
 
   <style>
     .lar-tech > div {
@@ -20,7 +20,7 @@
     }
   </style>
 
-  <div class="row text-center lar-tech">
+  <div class="row text-center lar-tech hide">
     <div class="col-sm-4 col-xs-12">
       <div>Bootstrap</div>
       <a target="_blank" href="https://getbootstrap.com/">
