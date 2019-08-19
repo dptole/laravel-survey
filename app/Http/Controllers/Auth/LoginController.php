@@ -41,12 +41,12 @@ class LoginController extends Controller
     public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []) {
         return parent::validate(
             $request,
-            array_merge(
-                $rules,
-                [
-                    'g-recaptcha-response' => 'required|google_recaptcha'
-                ]
-            ),
+            // array_merge(
+            //     $rules,
+            //     [
+            //         'g-recaptcha-response' => 'required|google_recaptcha'
+            //     ]
+            // ),
             $messages,
             $customAttributes
         );

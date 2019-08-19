@@ -29,7 +29,7 @@ class Surveys extends Model {
   }
 
   public function getShareableUrlAttribute() {
-    return 'https://dptole.ngrok.io/laravel/s/' . $this->shareable_link;
+    return 'http://gcufeedback.test/s/' . $this->shareable_link;
   }
 
   /************************************************/

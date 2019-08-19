@@ -27,7 +27,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/laravel/dashboard';
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -51,7 +51,7 @@ class RegisterController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users|email_checkdnsrr',
             'password' => 'required|min:6|confirmed',
-            'g-recaptcha-response' => 'required|google_recaptcha'
+            // 'g-recaptcha-response' => 'required|google_recaptcha'
         ]);
     }
 
