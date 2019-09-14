@@ -3,7 +3,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Laravel @yield('title')</title>
+<title>QEC GCU @yield('title')</title>
 
 <script type="text/javascript">window.Laravel = {csrfToken: '{{ csrf_token() }}'};</script>
 <link href="https://getbootstrap.com/docs/3.3/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
