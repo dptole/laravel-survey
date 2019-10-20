@@ -29,7 +29,7 @@ class Surveys extends Model {
   }
 
   public function getShareableUrlAttribute() {
-    return env('survey_shareable_link', 'http://qecgcu.test:8080') . '/s/' . $this->shareable_link;
+    return env('APP_URL', 'http://qecgcu.test:8080') . '/s/' . $this->shareable_link;
   }
 
   /************************************************/

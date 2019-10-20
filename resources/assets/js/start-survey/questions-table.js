@@ -19,7 +19,7 @@ export default class QuestionsTable {
       await this.generateSessionId(this.data_survey.uuid)
     } catch(error) {
       this.dom_survey_title.text('Try again later.')
-      return setTimeout(_ => location = '/laravel', 2e3)
+      return setTimeout(_ => location = '/', 2e3)
     }
 
     this.fxFade(_ => this.viewStart())
@@ -223,6 +223,6 @@ export default class QuestionsTable {
     this.dom_start_button.remove()
     this.dom_survey_table.remove()
     this.dom_survey_title.text('Thanks for participating!')
-    setTimeout(_ => location = '/laravel', 2000)
+    setTimeout(_ => location = '/', 2000)
   }
 }
