@@ -1,22 +1,198 @@
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
 
-@font-face {
-  font-family: 'Laravel Survey Glyphicons Halflings';
-  src: url(/fonts/glyphicons-halflings-regular.eot?f4769f9bdb7466be65088239c12046d1);
-  src: url(/fonts/glyphicons-halflings-regular.eot?f4769f9bdb7466be65088239c12046d1) format("embedded-opentype"),
-       url(/fonts/glyphicons-halflings-regular.woff2?448c34a56d699c29117adc64c43affeb) format("woff2"),
-       url(/fonts/glyphicons-halflings-regular.woff?fa2772327f55d8198301fdb8bcfc8158) format("woff"),
-       url(/fonts/glyphicons-halflings-regular.ttf?e18bbf611f2a2e43afc071aa2f4e1512) format("truetype"),
-       url(/fonts/glyphicons-halflings-regular.svg?89889688147bd7575d6327160d64e760) format("svg")
- }
+// Variables
+@import 'variables';
 
-.glyphicon {
-  font-family: 'Laravel Survey Glyphicons Halflings' !important;
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+#mainHeader {
+    border-bottom: solid 1px #d8d8d8;
 }
 
-*:not(.glyphicon) {
-  font-family: 'courier new', monospace, courier !important;
+
+#mainFooter {
+    border-top: solid 1px #d8d8d8;
 }
+
+.card {
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .16);
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        font-size: 1.3rem;
+    }
+}
+
+#mainSidebar {
+    a {
+      color: $gray-700;
+      padding: 0.5rem 0;
+    }
+
+    svg {
+        fill: $gray-500;
+    }
+
+    li.active {
+        a {
+            color: $primary;
+        }
+
+        svg {
+            fill: $primary;
+        }
+    }
+
+    i {
+        display: inline-flex;
+        align-self: center;
+        position: relative;
+        height: 1em;
+        width: 0.4em;
+        margin-right: 1.5rem;
+
+        svg {
+            bottom: -.3em;
+            position: absolute;
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+    }
+}
+
+.icon {
+    > svg {
+        width: 1.5rem;
+        height: 1.5rem
+    }
+}
+
+.icon-sm {
+    > svg {
+        width: 1rem;
+        height: 1rem
+    }
+}
+
+.grey-icon {
+    fill: #adb5bd;
+}
+
+.text-grey {
+    color: #adb5bd;
+}
+
+.bt-3 {
+    border-top-width: 3px;
+}
+
+.fill-white {
+    fill: #fff;
+}
+
+.fill-primary {
+    fill: $primary;
+}
+
+.fill-success {
+    fill: $success;
+}
+
+.fill-danger {
+    fill: $danger;
+}
+
+.fill-warning {
+    fill: $warning;
+}
+
+.card-table {
+    margin: 0;
+
+    tr:first-child {
+        td {
+            border: 0;
+        }
+    }
+
+    th {
+        background-color: #ebecee;
+        vertical-align: middle;
+        font-weight: normal;
+        padding: 0.5rem 1.25rem;
+        border: 0;
+    }
+
+    td {
+        padding: 1.25rem;
+    }
+}
+
+.card-tabs {
+    padding: 0 1.25rem;
+
+    .nav-item {
+        margin-right: 1.5rem;
+    }
+
+    .nav-link {
+        border: 0;
+        color: #495057;
+        padding: 0.8rem 0;
+    }
+
+    .nav-link.active {
+        background-color: transparent;
+        color: $primary;
+        border-bottom: solid 2px $primary;
+    }
+}
+
+@-webkit-keyframes spin {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    -webkit-animation: spin 2s linear infinite;
+    -moz-animation: spin 2s linear infinite;
+    -ms-animation: spin 2s linear infinite;
+    -o-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+// Orignal sass of survey
 
 .btn-link:hover, .btn-link:active {
   text-decoration: none !important;

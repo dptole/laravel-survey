@@ -1,4 +1,4 @@
-@extends('main')
+@extends('layouts.app')
 
 @section('title', '/ Edit survey')
 

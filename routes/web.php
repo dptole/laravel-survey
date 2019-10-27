@@ -13,6 +13,7 @@
 
 Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
 
+// Changed the following route and removed laravel prefix and google captcha
 // Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
 Route::group(['middleware' => ['email_checkdnsrr']], function() {
   Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
@@ -46,8 +47,35 @@ Route::group(['middleware' => ['email_checkdnsrr']], function() {
     Route::post('/fetch_country_info', ['uses' => 'APIController@fetchCountryInfo']);
   });
 
-  Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {
-    Route::get('/', ['uses' => 'DashboardController@getDashboard', 'as' => 'dashboard']);
+    Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {
+        Route::get('/', ['uses' => 'DashboardController@getDashboard', 'as' => 'dashboard']);
+
+
+
+
+
+        Route::get('/teacher', [ApplicantController::class, 'index'])->name('teacher.index');
+        Route::post('/teacher/store', [ApplicantController::class, 'store'])->name('teacher.store');
+        Route::get('teacher/{id}/edit', [ApplicantController::class, 'edit'])->name('teacher.edit');
+        Route::post('/teacher/{id}/update', [ApplicantController::class, 'update'])->name('teacher.update');
+        Route::delete('/teacher/{id}/destroy', [ApplicantController::class, 'destroy'])->name('teacher.destroy');
+  
+
+        Route::get('/program', [ApplicantController::class, 'index'])->name('program.index');
+        Route::post('/program/store', [ApplicantController::class, 'store'])->name('program.store');
+        Route::get('program/{id}/edit', [ApplicantController::class, 'edit'])->name('program.edit');
+        Route::post('/program/{id}/update', [ApplicantController::class, 'update'])->name('program.update');
+        Route::delete('/program/{id}/destroy', [ApplicantController::class, 'destroy'])->name('program.destroy');
+  
+        Route::get('/course', [ApplicantController::class, 'index'])->name('course.index');
+        Route::post('/course/store', [ApplicantController::class, 'store'])->name('course.store');
+        Route::get('course/{id}/edit', [ApplicantController::class, 'edit'])->name('course.edit');
+        Route::post('/course/{id}/update', [ApplicantController::class, 'update'])->name('course.update');
+        Route::delete('/course/{id}/destroy', [ApplicantController::class, 'destroy'])->name('course.destroy');
+
+
+
+
 
     Route::group(['prefix' => 'survey'], function() {
       Route::get('/create', ['uses' => 'SurveyController@create', 'as' => 'survey.create']);
