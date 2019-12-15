@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Teacher;
+use App\Course;
+use App\Program;
+use App\Department;
 use Illuminate\Http\Request;
 
-class TeacherController extends Controller
+class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,14 +16,11 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        
-        // $teachers = Datatables::of(Teacher::with(['requirement','feedback']))->make(true);
-        $teachers = Teacher::get();
-        $departments = null;
+        $courses = Course::paginate(25);
+        $departments = Department::all();
+        $programs = Program::all();
 
-        // dd($teachers);
-
-        return view('teacher.index', compact('teachers', 'departments'));
+        return view('course.index', compact('courses', 'departments', 'programs'));
     }
 
     /**
@@ -42,32 +41,36 @@ class TeacherController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $this->validate($request, [
-            'name'  => 'required|string',
-            'designation' => 'required',
+        // dd($request);
 
+        $data = $this->validate($request, [
+            'course_code'  => 'required|string',
+            'course_title' => 'required|string',
+            'semester'      => 'required',
+            'program'       => 'required'
         ]);
         
-        $teacher = new Teacher;
-        $teacher->name = $request['name'];
-        $teacher->designation = $request['designation'];
-        $teacher->email = $request['email'];
-        $teacher->mobile_no = $request['mobile_number'];
-        $teacher->phone_no = $request['phone_number'];
-        $teacher->save();
+        $course = new Course;
+        $course->course_code = $request['course_code'];
+        $course->course_title = $request['course_title'];
+        $course->semester = $request['semester'];
+        $course->program_id = $request['program'];
+        $course->department_id = 1;
+        $course->save();
 
         // flash('Program Added!')->success()->important();
 
-        return redirect()->route('program.index');
+        return redirect()->route('course.index');
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Teacher  $teacher
+     * @param  \App\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function show(Teacher $teacher)
+    public function show(Course $course)
     {
         //
     }
@@ -75,10 +78,10 @@ class TeacherController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Teacher  $teacher
+     * @param  \App\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function edit(Teacher $teacher)
+    public function edit(Course $course)
     {
         //
     }
@@ -87,10 +90,10 @@ class TeacherController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Teacher  $teacher
+     * @param  \App\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Teacher $teacher)
+    public function update(Request $request, Course $course)
     {
         //
     }
@@ -98,10 +101,10 @@ class TeacherController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Teacher  $teacher
+     * @param  \App\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Teacher $teacher)
+    public function destroy(Course $course)
     {
         //
     }

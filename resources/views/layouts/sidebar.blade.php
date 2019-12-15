@@ -1,6 +1,17 @@
 <aside id="mainSidebar">
     <ul class="nav flex-column">
 
+        <li class="nav-item {{ request()->path() == 'admin' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('home') }}">
+                <i>
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20">
+                        <path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm-5.6-4.29a9.95 9.95 0 0 1 11.2 0 8 8 0 1 0-11.2 0zm6.12-7.64l3.02-3.02 1.41 1.41-3.02 3.02a2 2 0 1 1-1.41-1.41z"/>
+                    </svg>
+                </i>
+                Home
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->path() == 'admin/dashboard' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('dashboard') }}">
                 <i>
@@ -12,16 +23,17 @@
             </a>
         </li>
 
-        <li class="nav-item {{ request()->path() == 'admin/teacher' ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('teacher.index') }}">
+        <li class="nav-item {{ request()->path() == 'admin/department' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('department.index') }}">
                 <i>
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20">
-                        <path d="M5 5a5 5 0 0 1 10 0v2A5 5 0 0 1 5 7V5zM0 16.68A19.9 19.9 0 0 1 10 14c3.64 0 7.06.97 10 2.68V20H0v-3.32z"/>
+                        <path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm-5.6-4.29a9.95 9.95 0 0 1 11.2 0 8 8 0 1 0-11.2 0zm6.12-7.64l3.02-3.02 1.41 1.41-3.02 3.02a2 2 0 1 1-1.41-1.41z"/>
                     </svg>
                 </i>
-                Teachers
+                Department
             </a>
         </li>
+
 
         <li class="nav-item {{ request()->path() == 'admin/program' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('program.index') }}">
@@ -42,6 +54,17 @@
                     </svg>
                 </i>
                 Courses
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->path() == 'admin/teacher' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('teacher.index') }}">
+                <i>
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20">
+                        <path d="M5 5a5 5 0 0 1 10 0v2A5 5 0 0 1 5 7V5zM0 16.68A19.9 19.9 0 0 1 10 14c3.64 0 7.06.97 10 2.68V20H0v-3.32z"/>
+                    </svg>
+                </i>
+                Teachers
             </a>
         </li>
 
