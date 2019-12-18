@@ -17,8 +17,14 @@
         <label class="col-form-label">Designation</label>
         <select class="form-control" name="designation" id="designation">
             <option disabled="true" selected="true">Chose One...</option>
-            <option value="visiting lecturer">Visiting Lecturer</option>
-            <option value="lecturer">Lecturer</option>            
+            <option value="Assistant Professor">Assistant Professor</option>
+            <option value="Associate Professor">Associate Professor</option>
+            <option value="Distinguished Professor">Distinguished Professor</option> 
+            <option value="Lecturer">Lecturer</option>  
+            <option value="Professor">Professor</option>           
+            <option value="Senior Visiting Faculity">Senior Visiting Faculity</option>            
+            <option value="Visting Faculity">Visting Faculity</option>
+            
         </select>
     </div>
 

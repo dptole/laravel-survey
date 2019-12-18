@@ -43,6 +43,7 @@
             <table id="applicant-table" class="table table-striped table-bordered wrap" data-toggle="dataTable" data-form="deleteForm">
                 <thead>
                 <tr>
+                    <th>#</th>
                     <th>Full Name</th>
                     <th>Designation</th>
                     <th>Email</th>
@@ -55,13 +56,14 @@
                 <tbody>
                 @foreach($teachers as $teacher)
                     <tr>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $teacher->name }}</td>
                         <td>{{ $teacher->designation }}</td>
                         <td>{{ $teacher->email }}</td>
                         <td>{{ $teacher->mobile_no }}</td>
                         <td>{{ $teacher->phone_no }}</td>
                         <td>
-                            @if($teacher['status'] == 1)
+                            @if($teacher['active'] == 1)
                                 <span class="icon" style="fill:#228B22">
                             @else
                                 <span class="icon" style="fill:#adb5bd">

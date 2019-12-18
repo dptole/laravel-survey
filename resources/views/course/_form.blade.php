@@ -24,11 +24,15 @@
     <div class="form-group">
         <label class="col-form-label">Semester</label>
         <select class="form-control" name="semester" id="semester">
-                    <option disabled="true" selected="true">Chose One...</option>
-                    <option value=1>{{ "Semester 1"}}</option>
-                    <option value=2>{{ "Semester 2"}}</option>
-                    <option value=3>{{ "Semester 3"}}</option>
-                    <option value=4>{{ "Semester 4"}}</option>
+                <option disabled="true" selected="true">Chose One...</option>
+                <option value=1>{{ "Semester 1"}}</option>
+                <option value=2>{{ "Semester 2"}}</option>
+                <option value=3>{{ "Semester 3"}}</option>
+                <option value=4>{{ "Semester 4"}}</option>
+                <option value=5>{{ "Semester 5"}}</option>
+                <option value=6>{{ "Semester 6"}}</option>
+                <option value=7>{{ "Semester 7"}}</option>
+                <option value=8>{{ "Semester 8"}}</option>
         </select>
   </div>
 
@@ -41,16 +45,6 @@
             @endforeach
         </select>
   </div>
-
-    <!-- <div class="form-group">
-        <label class="col-form-label">Department</label>
-        <select class="form-control" name="department" id="department">
-                    <option disabled="true" selected="true">Chose One...</option>
-            @foreach($departments as $department)
-                <option value="{!!$department->id!!}">{{ $department->name}}</option>
-            @endforeach
-        </select>
-  </div> -->
 
     <div class="form-group">
         <input type="submit" class="btn btn-primary" value="Add">

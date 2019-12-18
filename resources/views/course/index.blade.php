@@ -52,7 +52,7 @@
                 <tbody>
                 @foreach($courses as $course)
                     <tr>
-                        <td>{{ $course->id }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $course->course_code }}</td>
                         <td>{{ $course->course_title }}</td>
                         <td>{{ $course->semester }}</td>

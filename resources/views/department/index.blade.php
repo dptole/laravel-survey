@@ -64,7 +64,7 @@
                 <tbody>
                 @foreach($departments as $department)
                     <tr>
-                        <td>{{ $department->id }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $department->name }}</td>
                         <td>
                             {!! Form::model($department, ['method' => 'delete', 'route' => ['department.destroy', $department->id], 'class' =>'form-inline form-delete d-inline']) !!}

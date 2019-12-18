@@ -58,7 +58,7 @@ class TeacherController extends Controller
 
         // flash('Program Added!')->success()->important();
 
-        return redirect()->route('program.index');
+        return redirect()->route('teacher.index');
     }
 
     /**

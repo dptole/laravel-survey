@@ -50,7 +50,7 @@
                 <tbody>
                     @foreach($programs as $program)
                         <tr>
-                            <td>{{ $program->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $program->name }}</td>
                             <td>{{ $program->Department->name }}</td>
                             <td>
