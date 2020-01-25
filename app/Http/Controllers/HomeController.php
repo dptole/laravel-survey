@@ -23,6 +23,6 @@ class HomeController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function root() {
-    return redirect('/');
+    return redirect('/laravel/');
   }
 }
