@@ -9,13 +9,13 @@ const http_request = axios.create({
 })
 
 export default {
-  async generateSessionId(survey_uuid, extra_info = {}) {
-    return await http_request.post(`${survey_uuid}/session_id`, extra_info).then(response =>
+  generateSessionId: (survey_uuid, extra_info = {}) =>
+    http_request.post(`${survey_uuid}/session_id`, extra_info).then(response =>
       response && response.data && response.data.success && response.data.success.session_id || response.data.error
-    )
-  },
-  async saveAnswer(answers_session_id, survey_id, question_id, question_option_id, free_text = '') {
-    return await http_request.post('/save_answer', {
+    ),
+
+  saveAnswer: (answers_session_id, survey_id, question_id, question_option_id, free_text = '') =>
+    http_request.post('/save_answer', {
       answers_session_id,
       survey_id,
       question_id,
@@ -23,14 +23,13 @@ export default {
       free_text
     }).then(response =>
       response && response.data && response.data.success || response.data.error
-    )
-  },
-  async fetchCountryInfo(answers_session_id, ip) {
-    return await http_request.post('/fetch_country_info', {
+    ),
+
+  fetchCountryInfo: (answers_session_id, ip) =>
+    http_request.post('/fetch_country_info', {
       answers_session_id,
       ip
     }).then(response =>
       response && response.data && response.data.success || response.data.error
     )
-  }
 }

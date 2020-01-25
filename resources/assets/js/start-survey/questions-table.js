@@ -11,34 +11,37 @@ export default class QuestionsTable {
     this.dom_survey_container.append(this.dom_survey_title)
   }
 
-  async start() {
+  start() {
     this.data_survey = this.dom_survey_container.data('survey')
     this.data_survey.all_answers = []
 
-    try {
-      await this.generateSessionId(this.data_survey.uuid)
-    } catch(error) {
+    return this.generateSessionId(this.data_survey.uuid).then(sid => {
+      this.fxFade(_ => this.viewStart())
+      return sid
+    }).catch(error => {
       this.dom_survey_title.text('Try again later.')
       return setTimeout(_ => location = '/laravel', 2e3)
-    }
-
-    this.fxFade(_ => this.viewStart())
+    })
   }
 
-  async generateSessionId(survey_uuid) {
-    this._session_id = await API.generateSessionId(survey_uuid, {
-      window: {
-        width: $(window).width(),
-        height: $(window).height()
-      },
-      screen: {
-        width: $(document.documentElement).width(),
-        height: $(document.documentElement).height()
-      },
-      date: utils.getDate(),
-      connection: utils.getConnection(),
-      battery: await utils.getBattery()
-    })
+  generateSessionId(survey_uuid) {
+    utils.getBattery().then(battery =>
+      API.generateSessionId(survey_uuid, {
+        window: {
+          width: $(window).width(),
+          height: $(window).height()
+        },
+        screen: {
+          width: $(document.documentElement).width(),
+          height: $(document.documentElement).height()
+        },
+        date: utils.getDate(),
+        connection: utils.getConnection(),
+        battery: battery
+      })
+    ).then(sid =>
+      this._session_id = sid
+    )
   }
 
   getSessionId() {

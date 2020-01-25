@@ -35,18 +35,18 @@ const utils = {
     return utils.getProperties(navigator.connection || navigator.mozConnection || navigator.webkitConnection)
   },
 
-  async getBattery() {
-    try {
-      return {
+  getBattery() {
+    return navigator.getBattery().then(battery =>
+      ({
         success: true,
-        result: utils.getProperties(await navigator.getBattery())
-      }
-    } catch(error) {
-      return {
+        result: utils.getProperties(battery)
+      })
+    ).catch(error =>
+      ({
         success: false,
         result: utils.getProperties(error)
-      }
-    }
+      })
+    )
   },
 
   getDate() {

@@ -1,5 +1,4 @@
 import $ from 'jquery'
-import _ from 'lodash'
 import API from '../api.js'
 import {PublicSurveyStats, d3Graph} from './stats.js'
 
