@@ -11,13 +11,7 @@ class Helper {
   static $pusher = null;
   static $lsr = null;
   static $tzs = null;
-  static $db_ip_api_keys_info = [];
-  static $db_ip_api_ips_info = [];
   static $db_ip_html_ips_info = [];
-
-  public static function getDbIpApiKey() {
-    return env('DB_IP_API_KEY');
-  }
 
   public static function getPusherOptions() {
     return [
@@ -231,68 +225,22 @@ class Helper {
     ;
   }
 
-  public static function dbIpGetApiKeyInfo($api_key) {
-    if(isset(Helper::$db_ip_api_keys_info[$api_key])):
-      return Helper::$db_ip_api_keys_info[$api_key];
-    endif;
-
-    $api_key_info = json_decode(@file_get_contents("http://api.db-ip.com/v2/$api_key/"));
-
-    return Helper::$db_ip_api_keys_info[$api_key] = is_object($api_key_info) && property_exists($api_key_info, 'queriesLeft') && $api_key_info->queriesLeft > 0
-      ? $api_key_info
-      : null
-    ;
-  }
-
-  public static function dbIpDecorateResponse($ip_info, $ip, $api_key = null) {
+  public static function dbIpDecorateResponse($ip_info, $ip) {
     if(!is_object($ip_info)):
       return $ip_info;
     endif;
     $ip_info->Ip = $ip;
-    // $ip_info->ApiKey = $api_key;
     return $ip_info;
   }
 
-  public static function dbIpGetIpInfo($ip, $api_key = null) {
+  public static function dbIpGetIpInfo($ip) {
     $ip_from_html = Helper::dbIpGetIpInfoFromHtml($ip);
 
     if($ip_from_html):
-      return Helper::dbIpDecorateResponse($ip_from_html, $ip, $api_key);
-    endif;
-
-    $ip_from_api = Helper::dbIpGetIpInfoFromApi($ip, $api_key);
-
-    if($ip_from_api):
-      return Helper::dbIpDecorateResponse($ip_from_api, $ip, $api_key);
+      return Helper::dbIpDecorateResponse($ip_from_html, $ip);
     endif;
 
     return false;
-  }
-
-  public static function dbIpGetIpInfoFromApi($ip, $api_key = null) {
-    if(isset(Helper::$db_ip_api_ips_info[$ip])):
-      return Helper::$db_ip_api_ips_info[$ip];
-    endif;
-
-    $start_time = -Helper::ms();
-
-    if($api_key === null):
-      $api_key = Helper::getDbIpApiKey();
-    endif;
-    $api_key_info = Helper::dbIpGetApiKeyInfo($api_key);
-
-    if(!is_object($api_key_info)):
-      return false;
-    endif;
-
-    $ip_info = json_decode(@file_get_contents("http://api.db-ip.com/v2/{$api_key_info->apiKey}/$ip"));
-
-    if(!is_object($ip_info)):
-      return false;
-    endif;
-
-    $ip_info->Elapsed = $start_time + Helper::ms();
-    return Helper::$db_ip_api_ips_info[$ip] = Helper::dbIpDecorateResponse($ip_info, $ip, $api_key);
   }
 
   public static function dbIpGetIpInfoFromHtml($ip) {
@@ -308,24 +256,51 @@ class Helper {
 
     $tables = $dom->getElementsByTagName('table');
 
-    foreach($tables as $table):
+    foreach($tables as $table_index => $table):
       $trs = $table->getElementsByTagName('tr');
 
-      foreach($trs as $tr):
-        $th = $tr->getElementsByTagName('th');
-        $td = $tr->getElementsByTagName('td');
+      if($table_index === 1):
+        foreach($trs as $tr_index => $tr):
+          $th = $tr->getElementsByTagName('th');
+          $td = $tr->getElementsByTagName('td');
 
-        if(!($th->length === 1 && $td->length === 1)):
-          continue;
-        endif;
+          if($tr_index === 0):
+            if(!(
+              $th->length === 3 &&
+              $td->length === 0 &&
+              $th->item(0)->textContent === 'Crawler' &&
+              $th->item(1)->textContent === 'Proxy' &&
+              $th->item(2)->textContent === 'Attack source'
+            )):
+              break;
+            endif;
+          else:
+            if(!($th->length === 0 && $td->length === 3)):
+              break;
+            endif;
 
-        $text_th = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($th->item(0)->textContent));
-        $text_td = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(0)->textContent));
+            $props['Security / Crawler'] = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(0)->textContent)) === 'Yes';
+            $props['Security / Proxy'] = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(1)->textContent)) === 'Yes';
+            $props['Security / Attack source'] = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(2)->textContent)) === 'Yes';
+          endif;
+        endforeach;
+      else:
+        foreach($trs as $tr_index => $tr):
+          $th = $tr->getElementsByTagName('th');
+          $td = $tr->getElementsByTagName('td');
 
-        if($text_th && $text_td):
-          $props[$text_th] = $text_td;
-        endif;
-      endforeach;
+          if(!($th->length === 1 && $td->length === 1)):
+            continue;
+          endif;
+
+          $text_th = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($th->item(0)->textContent));
+          $text_td = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(0)->textContent));
+
+          if($text_th && $text_td):
+            $props[$text_th] = $text_td;
+          endif;
+        endforeach;
+      endif;
     endforeach;
 
     if(count($props) < 1):
@@ -344,5 +319,13 @@ class Helper {
 
   public static function ms() {
     return microtime(true) * 1000 | 0;
+  }
+
+  public static function readDotEnvFile() {
+    return parse_ini_file(
+      dirname($_SERVER['DOCUMENT_ROOT']) . "/.env",
+      false,
+      INI_SCANNER_RAW
+    );
   }
 }
