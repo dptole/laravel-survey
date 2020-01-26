@@ -9,7 +9,6 @@
       @include('partials.messages')
       @yield('content')
     </div>
-    @include('partials.javascript')
     @include('partials.footer')
   </body>
 </html>
