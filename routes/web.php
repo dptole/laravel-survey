@@ -75,3 +75,4 @@ Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email
   });
 });
 
+Route::any('/{fallback}', ['uses' => 'HomeController@root', 'as' => 'fallback']);
