@@ -13,6 +13,14 @@
 
 Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
 
+Route::group(['prefix' => 'laravel'], function() {
+  Route::group(['prefix' =>'sse'], function() {
+    Route::get('/', ['uses' => 'ServerSentEventController', 'as' => 'sse-root']);
+    Route::get('/example', ['uses' => 'ServerSentEventController@example', 'as' => 'sse-example']);
+    Route::get('/{channel}', ['uses' => 'ServerSentEventController@channel', 'as' => 'sse-channel']);
+  });
+});
+
 Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
   Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
   Route::get('/s/{s_link}', ['uses' => 'PublicSurveyController@shareableLink', 'as' => 'public_survey.shareable_link']);
@@ -45,7 +53,7 @@ Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email
     Route::post('/fetch_country_info', ['uses' => 'APIController@fetchCountryInfo']);
   });
 
-  Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function() {
+  Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function() {
     Route::get('/', ['uses' => 'DashboardController@getDashboard', 'as' => 'dashboard']);
 
     Route::group(['prefix' => 'survey'], function() {

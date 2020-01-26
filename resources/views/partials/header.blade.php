@@ -12,5 +12,5 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico?1">
+<link rel="icon" type="image/x-icon" href="https://avatars2.githubusercontent.com/u/3951114">
 <link href="{{ Helper::route('css') }}" rel="stylesheet">
