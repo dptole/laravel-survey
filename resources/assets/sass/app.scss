@@ -10,6 +10,24 @@
        url(/laravel/fonts/glyphicons-halflings-regular.svg?89889688147bd7575d6327160d64e760) format("svg")
  }
 
+body {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.navbar {
+  margin-bottom: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.container {
+  overflow: auto;
+  margin: 50px 0 40px 0;
+}
+
 .glyphicon {
   font-family: 'Laravel Survey Glyphicons Halflings' !important;
 }
@@ -23,7 +41,10 @@
 }
 
 .panel {
-  margin-top: 50px;
+  margin: 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
 .no-padding-left {
