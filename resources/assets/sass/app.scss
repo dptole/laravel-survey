@@ -10,11 +10,29 @@
        url(/laravel/fonts/glyphicons-halflings-regular.svg?89889688147bd7575d6327160d64e760) format("svg")
  }
 
+@keyframes animation-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
 body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.navbar > .container-fluid,
+.container,
+.panel > .panel-footer > div:nth-child(1)
+{
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .navbar {
@@ -25,7 +43,8 @@ body {
 
 .container {
   overflow: auto;
-  margin: 50px 0 40px 0;
+  margin-top: 50px;
+  margin-bottom: 40px;
 }
 
 .glyphicon {
@@ -101,18 +120,28 @@ body {
   overflow: auto;
 }
 
-@keyframes animation-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(180deg);
-  }
-}
-
 .animation-spin {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-name: animation-spin;
   animation-duration: 1s;
 }
+
+@media (max-width: 399px) {
+  html:after {
+    content: "The device must be at least 400px wide.";
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    color: red;
+  }
+  body {
+    display: none;
+  }
+}
+
