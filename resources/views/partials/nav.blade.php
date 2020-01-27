@@ -36,7 +36,7 @@
               <li role="separator" class="divider"></li>
               <li>
                 {{ Html::linkRoute('logout', 'Logout', [], ['onclick' => 'event.preventDefault(); logout_form.submit()']) }}
-                {!! Form::open(['id' => 'logout_form', 'url' => URL::to('/laravel/logout', [], isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io')]) !!}
+                {!! Form::open(['id' => 'logout_form', 'url' => URL::to(env('LARAVEL_SURVEY_PREFIX_URL') . '/logout')]) !!}
                 {!! Form::close() !!}
               </li>
             </ul>

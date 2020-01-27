@@ -321,11 +321,25 @@ class Helper {
     return microtime(true) * 1000 | 0;
   }
 
-  public static function readDotEnvFile() {
+  public static function getDotEnvFile() {
     return parse_ini_file(
-      dirname($_SERVER['DOCUMENT_ROOT']) . "/.env",
+      dirname($_SERVER['DOCUMENT_ROOT']) . '/.env',
       false,
       INI_SCANNER_RAW
     );
+  }
+
+  public static function getPendingDotEnvFileConfigs() {
+    $pending = [];
+
+    $envs = $this->getDotEnvFile();
+
+    // @TODO
+
+    return $pending;
+  }
+
+  public static function hasPendingDotEnvFileConfigs() {
+    return count($this->getPendingDotEnvFileConfigs()) > 0;
   }
 }

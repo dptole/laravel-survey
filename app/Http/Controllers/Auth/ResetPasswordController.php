@@ -25,7 +25,7 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/laravel/';
+    protected $redirectTo = env('LARAVEL_SURVEY_PREFIX_URL');
 
     /**
      * Create a new controller instance.

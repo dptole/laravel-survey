@@ -23,6 +23,6 @@ class HomeController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function root() {
-    return redirect('/laravel/');
+    return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
   }
 }

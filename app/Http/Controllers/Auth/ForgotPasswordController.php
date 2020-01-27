@@ -30,6 +30,6 @@ class ForgotPasswordController extends Controller
         $this->middleware('guest');
     }
 
-    public function sendResetLinkEmail() { return redirect('/laravel/'); }
-    public function showLinkRequestForm() { return redirect('/laravel/'); }
+    public function sendResetLinkEmail() { return redirect(env('LARAVEL_SURVEY_PREFIX_URL')); }
+    public function showLinkRequestForm() { return redirect(env('LARAVEL_SURVEY_PREFIX_URL')); }
 }
