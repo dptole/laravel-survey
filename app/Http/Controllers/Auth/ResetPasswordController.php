@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
+define('RESET_PASSWORD_REDIRECT_TO', env('LARAVEL_SURVEY_PREFIX_URL'));
+
 class ResetPasswordController extends Controller
 {
     /*
@@ -25,7 +27,7 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = env('LARAVEL_SURVEY_PREFIX_URL');
+    protected $redirectTo = RESET_PASSWORD_REDIRECT_TO;
 
     /**
      * Create a new controller instance.

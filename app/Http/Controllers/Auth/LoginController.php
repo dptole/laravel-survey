@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
-define('REDIRECT_TO', env('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
+define('LOGIN_REDIRECT_TO', env('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
 
 class LoginController extends Controller
 {
@@ -28,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = REDIRECT_TO;
+    protected $redirectTo = LOGIN_REDIRECT_TO;
 
     /**
      * Create a new controller instance.

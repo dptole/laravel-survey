@@ -16,7 +16,7 @@
 
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li>{{ Html::linkRoute('root', 'Home') }}</li>
+        <li>{{ Html::linkRoute('home', 'Home') }}</li>
 
         @if(!Auth::check())
           <li>{{ Html::linkRoute('register', 'Register') }}</li>

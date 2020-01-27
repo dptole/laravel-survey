@@ -23,6 +23,10 @@ class HomeController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function root() {
-    return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
+    if(env('LARAVEL_SURVEY_PREFIX_URL') === '/'):
+      return $this->index();
+    else:
+      return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
+    endif;
   }
 }

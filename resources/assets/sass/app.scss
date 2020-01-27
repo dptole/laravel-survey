@@ -26,8 +26,11 @@ body {
   height: 100vh;
 }
 
+.survey-errors {
+  margin-top: 20px;
+}
+
 .navbar > .container-fluid,
-.container,
 .panel > .panel-footer > div:nth-child(1)
 {
   max-width: 1024px;
@@ -35,16 +38,20 @@ body {
   margin-right: auto;
 }
 
+.div-body > .container {
+  max-width: 1024px;
+}
+
+.div-body {
+  width: 100%;
+  margin: 50px auto 40px auto;
+  overflow: auto;
+}
+
 .navbar {
   margin-bottom: 0;
   position: absolute;
   width: 100%;
-}
-
-.container {
-  overflow: auto;
-  margin-top: 50px;
-  margin-bottom: 40px;
 }
 
 .glyphicon {

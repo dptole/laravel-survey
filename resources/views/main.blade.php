@@ -5,9 +5,11 @@
   </head>
   <body>
     @include('partials.nav')
-    <div class="container">
-      @include('partials.messages')
-      @yield('content')
+    <div class="div-body">
+      <div class="container">
+        @include('partials.messages')
+        @yield('content')
+      </div>
     </div>
     @include('partials.footer')
   </body>

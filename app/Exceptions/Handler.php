@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -44,6 +46,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // https://stackoverflow.com/a/42975261
+        if($exception instanceof NotFoundHttpException)
+          return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
+
         // We should handle exceptions here.
         return parent::render($request, $exception);
     }

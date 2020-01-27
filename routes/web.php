@@ -21,7 +21,7 @@ Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL')], function() {
   });
 });
 
-Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
+Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL'), 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
   Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
   Route::get('/s/{s_link}', ['uses' => 'PublicSurveyController@shareableLink', 'as' => 'public_survey.shareable_link']);
   Auth::routes();
@@ -82,5 +82,3 @@ Route::group(['prefix' => 'laravel', 'middleware' => ['google_recaptcha', 'email
     });
   });
 });
-
-Route::any('/{fallback}', ['uses' => 'HomeController@root', 'as' => 'fallback']);
