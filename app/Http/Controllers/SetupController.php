@@ -53,6 +53,19 @@ class SetupController extends Controller {
     }
     */
 
+    if($fields_to_update['PUSHER_ENABLED'] !== false):
+      // @TODO
+      // Transform this check into a validator
+      // This way the user can be notified of different kinds of errors
+
+      $app_key = $fields_to_update['PUSHER_APP_KEY'];
+      $app_secret = $fields_to_update['PUSHER_APP_SECRET'];
+      $app_id = $fields_to_update['PUSHER_APP_ID'];
+      $app_cluster = $fields_to_update['PUSHER_APP_CLUSTER'];
+
+      Helper::arePusherConfigsValid($app_key, $app_id, $app_cluster, $app_secret);
+    endif;
+
     return redirect()->route('home');
   }
 }

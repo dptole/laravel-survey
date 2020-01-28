@@ -352,25 +352,25 @@ class Helper {
           'value' => $envs['PUSHER_ENABLED'],
           'name' => 'PUSHER_ENABLED'
         ],
-        'App ID' => [
+        'App id' => [
           'type' => 'text',
           'description' => '',
           'value' => $envs['PUSHER_APP_ID'],
           'name' => 'PUSHER_APP_ID'
         ],
-        'App key' => [
+        'Key' => [
           'type' => 'text',
           'description' => '',
           'value' => $envs['PUSHER_APP_KEY'],
           'name' => 'PUSHER_APP_KEY'
         ],
-        'App secret' => [
+        'Secret' => [
           'type' => 'text',
           'description' => '',
           'value' => $envs['PUSHER_APP_SECRET'],
           'name' => 'PUSHER_APP_SECRET'
         ],
-        'App cluster' => [
+        'Cluster' => [
           'type' => 'text',
           'description' => '',
           'value' => $envs['PUSHER_APP_CLUSTER'],
@@ -424,5 +424,45 @@ class Helper {
 
   public static function hasPendingDotEnvFileConfigs() {
     return count(self::getPendingDotEnvFileConfigs()) > 0;
+  }
+
+  public static function arePusherConfigsValid($auth_key, $app_id, $cluster, $secret) {
+    /*
+      https://pusher.com/docs/channels/library_auth_reference/rest-api
+
+      It was pretty annoying trying to implement a simple check using Pusher
+      but thanks to their good API error responses I could succeed
+    */
+
+    $auth_timestamp = time();
+    $auth_version = '1.0';
+    $querystring = join('&', [
+      'auth_key=' . $auth_key,
+      'auth_timestamp=' . $auth_timestamp,
+      'auth_version=' . $auth_version
+    ]);
+    $path = '/apps/' . $app_id . '/channels';
+    $method = 'GET';
+    $signature_payload = join("\n", [$method, $path, $querystring]);
+    $signature = hash_hmac('sha256', $signature_payload, $secret);
+    $querystring .= '&auth_signature=' . $signature;
+    $api = 'http://api-' . $cluster . '.pusher.com' . $path . '?' . $querystring;
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $api);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $response = curl_exec($ch);
+
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $json = json_decode($response);
+
+    curl_close($ch);
+
+    return $json instanceof \stdClass &&
+      property_exists($json, 'channels') &&
+      $http_code === 200
+    ;
   }
 }
