@@ -28,9 +28,7 @@ class Helper {
       is_array($form_arguments) ? $form_arguments : [],
       [
         'url' => URL::to(
-          self::urlRemoveDomain(route($route, $route_arguments)),
-          [],
-          isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'dptole.ngrok.io'
+          self::urlRemoveDomain(route($route, $route_arguments))
         )
       ]
     ));
@@ -126,7 +124,7 @@ class Helper {
     }, $blocks);
     $languages_regions = array_filter($languages_regions);
 
-    $region_by_language = array_reduce(Helper::$lsr->language, function($acc, $lr) use ($languages_regions) {
+    $region_by_language = array_reduce(self::$lsr->language, function($acc, $lr) use ($languages_regions) {
       if(count($languages_regions) === 0):
         return $acc;
       endif;
@@ -134,7 +132,7 @@ class Helper {
       foreach($languages_regions as $key => $language_region):
         if($lr->Subtag === $language_region['language']):
           if(!isset($acc[$lr->Description]) || !$acc[$lr->Description]):
-            $acc[$lr->Description] = array_reduce(Helper::$lsr->region, function($acc, $reg) use ($language_region) {
+            $acc[$lr->Description] = array_reduce(self::$lsr->region, function($acc, $reg) use ($language_region) {
               if($reg->Subtag === $language_region['region']):
                 $acc = $reg->Description;
               endif;
@@ -234,21 +232,21 @@ class Helper {
   }
 
   public static function dbIpGetIpInfo($ip) {
-    $ip_from_html = Helper::dbIpGetIpInfoFromHtml($ip);
+    $ip_from_html = self::dbIpGetIpInfoFromHtml($ip);
 
     if($ip_from_html):
-      return Helper::dbIpDecorateResponse($ip_from_html, $ip);
+      return self::dbIpDecorateResponse($ip_from_html, $ip);
     endif;
 
     return false;
   }
 
   public static function dbIpGetIpInfoFromHtml($ip) {
-    if(isset(Helper::$db_ip_html_ips_info[$ip])):
-      return Helper::$db_ip_html_ips_info[$ip];
+    if(isset(self::$db_ip_html_ips_info[$ip])):
+      return self::$db_ip_html_ips_info[$ip];
     endif;
 
-    $start_time = -Helper::ms();
+    $start_time = -self::ms();
     $content = @file_get_contents("http://db-ip.com/$ip");
     $dom = new \DOMDocument;
     @$dom->loadHTML($content);
@@ -313,8 +311,8 @@ class Helper {
       $ip_info->$key = $value;
     endforeach;
 
-    $ip_info->Elapsed = $start_time + Helper::ms();
-    return Helper::$db_ip_html_ips_info[$ip] = Helper::dbIpDecorateResponse($ip_info, $ip);
+    $ip_info->Elapsed = $start_time + self::ms();
+    return self::$db_ip_html_ips_info[$ip] = self::dbIpDecorateResponse($ip_info, $ip);
   }
 
   public static function ms() {
@@ -332,14 +330,99 @@ class Helper {
   public static function getPendingDotEnvFileConfigs() {
     $pending = [];
 
-    $envs = $this->getDotEnvFile();
+    $envs = self::getDotEnvFile();
 
-    // @TODO
+    if(!(
+      isset($envs['PUSHER_APP_ID']) &&
+      !empty($envs['PUSHER_APP_ID']) &&
+
+      isset($envs['PUSHER_APP_KEY']) &&
+      !empty($envs['PUSHER_APP_KEY']) &&
+
+      isset($envs['PUSHER_APP_SECRET']) &&
+      !empty($envs['PUSHER_APP_SECRET']) &&
+
+      isset($envs['PUSHER_APP_CLUSTER']) &&
+      !empty($envs['PUSHER_APP_CLUSTER'])
+    )):
+      $pending['Pusher'] = [
+        'Enabled?' => [
+          'type' => 'checkbox',
+          'description' => 'If disabled the system will use <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events" target="_blank">SSE</a> instead.',
+          'value' => $envs['PUSHER_ENABLED'],
+          'name' => 'PUSHER_ENABLED'
+        ],
+        'App ID' => [
+          'type' => 'text',
+          'description' => '',
+          'value' => $envs['PUSHER_APP_ID'],
+          'name' => 'PUSHER_APP_ID'
+        ],
+        'App key' => [
+          'type' => 'text',
+          'description' => '',
+          'value' => $envs['PUSHER_APP_KEY'],
+          'name' => 'PUSHER_APP_KEY'
+        ],
+        'App secret' => [
+          'type' => 'text',
+          'description' => '',
+          'value' => $envs['PUSHER_APP_SECRET'],
+          'name' => 'PUSHER_APP_SECRET'
+        ],
+        'App cluster' => [
+          'type' => 'text',
+          'description' => '',
+          'value' => $envs['PUSHER_APP_CLUSTER'],
+          'name' => 'PUSHER_APP_CLUSTER'
+        ],
+      ];
+    endif;
+
+    if(!(
+      isset($envs['GOOGLE_RECAPTCHA_SITE_SECRET']) &&
+      !empty($envs['GOOGLE_RECAPTCHA_SITE_SECRET']) &&
+
+      isset($envs['GOOGLE_RECAPTCHA_SITE_KEY']) &&
+      !empty($envs['GOOGLE_RECAPTCHA_SITE_KEY'])
+    )):
+      $pending['Google ReCaptcha'] = [
+        'Enabled?' => [
+          'type' => 'checkbox',
+          'description' => 'If disabled the system will not check if users are (probably) humans or bots.',
+          'value' => $envs['GOOGLE_RECAPTCHA_ENABLED'],
+          'name' => 'GOOGLE_RECAPTCHA_ENABLED'
+        ],
+        'Site secret' => [
+          'type' => 'text',
+          'description' => '',
+          'value' => $envs['GOOGLE_RECAPTCHA_SITE_SECRET'],
+          'name' => 'GOOGLE_RECAPTCHA_SITE_SECRET'
+        ],
+        'Site key' => [
+          'type' => 'text',
+          'description' => '',
+          'value' => $envs['GOOGLE_RECAPTCHA_SITE_KEY'],
+          'name' => 'GOOGLE_RECAPTCHA_SITE_KEY'
+        ]
+      ];
+    endif;
+
+    if(count($pending) > 0):
+      $pending['Site'] = [
+        'URL prefix' => [
+          'type' => 'text',
+          'description' => 'Leave it empty for the system to look like a standalone app. A new URL prefix must start with / but not end with this character.',
+          'value' => $envs['LARAVEL_SURVEY_PREFIX_URL'],
+          'name' => 'LARAVEL_SURVEY_PREFIX_URL'
+        ]
+      ];
+    endif;
 
     return $pending;
   }
 
   public static function hasPendingDotEnvFileConfigs() {
-    return count($this->getPendingDotEnvFileConfigs()) > 0;
+    return count(self::getPendingDotEnvFileConfigs()) > 0;
   }
 }

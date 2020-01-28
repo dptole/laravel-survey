@@ -106,8 +106,8 @@ function renderCountryInfo(answer_session_uuid, country_info) {
 public_survey_stats
   .websocket.config({
     broadcaster: 'pusher',
-    key: '21d452bbca84d41d5945',
-    cluster: 'us2',
+    key: PUSHER_APP_KEY,
+    cluster: PUSHER_APP_CLUSTER,
     encrypted: true
   })
   .channel('public-survey-' + $survey_uuid)

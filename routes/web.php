@@ -14,6 +14,10 @@
 Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
 
 Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL')], function() {
+  Route::post('/setup-update-missing-configs', ['uses' => 'SetupController@updateMissingConfigs', 'as' => 'setup-update-missing-configs']);
+});
+
+Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL')], function() {
   Route::group(['prefix' =>'sse'], function() {
     Route::get('/', ['uses' => 'ServerSentEventController', 'as' => 'sse-root']);
     Route::get('/example', ['uses' => 'ServerSentEventController@example', 'as' => 'sse-example']);
