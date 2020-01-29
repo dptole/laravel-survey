@@ -24,6 +24,15 @@
                   <blockquote><p>{!! $field['description'] !!}</p></blockquote>
                 @endif
 
+              @elseif($field['type'] === 'div')
+                <div class="form-group">
+                  {{ Form::label($field['name'], $category) }}
+                  <div class="{{ $field['name'] }}"></div>
+                </div>
+                @if(strlen($field['description']) > 0)
+                  <blockquote><p>{!! $field['description'] !!}</p></blockquote>
+                @endif
+
               @elseif($field['type'] === 'checkbox')
                 <div class="form-group">
                   {{ Form::label($field['name'], $category) }}
@@ -41,7 +50,7 @@
         @endforeach
 
         <div class="form-group">
-          {{ Form::submit('Save', ['class' => 'btn btn-success btn-block']) }}
+          {{ Form::submit('Save', ['class' => 'btn btn-success btn-block setup-save']) }}
         </div>
 
       {!! Helper::closeForm() !!}
@@ -51,6 +60,8 @@
     <pre class="hide" style="white-space:pre-wrap">
     <?php print_r(Helper::getPendingDotEnvFileConfigs()); ?>
     </pre>
+
+    <script src="{{ asset('js/setup.js') }}"></script>
 
   @else
     <h1 class="text-center">Create your own surveys with Laravel!</h1>

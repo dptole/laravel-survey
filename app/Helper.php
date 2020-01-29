@@ -404,6 +404,12 @@ class Helper {
           'description' => '',
           'value' => $envs['GOOGLE_RECAPTCHA_SITE_KEY'],
           'name' => 'GOOGLE_RECAPTCHA_SITE_KEY'
+        ],
+        'ReCaptcha' => [
+          'type' => 'div',
+          'description' => 'A ReCaptcha element will appear, in case you wish to submit its configs, for validation purposes.',
+          'value' => '',
+          'name' => 'GOOGLE_RECAPTCHA_ELEMENT'
         ]
       ];
     endif;
