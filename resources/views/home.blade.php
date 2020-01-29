@@ -6,18 +6,6 @@
   @if(Helper::hasPendingDotEnvFileConfigs())
     <h1 class="text-center">Some configurations are missing!</h1>
 
-    <script>
-      var LARAVEL_SETUP = {
-        @if(session('last_inputs'))
-          last_inputs: {!! json_encode(session('last_inputs')) !!},
-        @endif
-
-        @if(session('setup_errors'))
-          setup_errors: {!! json_encode(session('setup_errors')) !!}
-        @endif
-      };
-    </script>
-
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
       {!! Helper::openForm('setup-update-missing-configs') !!}

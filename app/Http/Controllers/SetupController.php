@@ -5,11 +5,53 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helper;
 use ReCaptcha\ReCaptcha;
+use Validator;
 
 class SetupController extends Controller {
   public function updateMissingConfigs(Request $request) {
     $fields_to_update = [
       'GOOGLE_RECAPTCHA_TOKEN' => $request->input('GOOGLE_RECAPTCHA_TOKEN')
+    ];
+
+    Validator::extend('setup_pusher', function($attribute, $value, $parameters, $validator) {
+      list($app_key, $app_id, $app_cluster, $app_secret) = $value;
+      return Helper::arePusherConfigsValid($app_key, $app_id, $app_cluster, $app_secret);
+    }, 'Pusher: It seems like these keys are invalid.');
+
+    Validator::extend('setup_google_recaptcha', function($attribute, $value, $parameters, $validator) {
+      list($site_secret) = $parameters;
+      return (new ReCaptcha($site_secret))->verify($value)->isSuccess();
+    }, 'Google ReCaptcha: Site secret and site key didn\'t match.');
+
+    Validator::extend('setup_url_prefix', function($attribute, $value, $parameters, $validator) {
+      $trimmed_value = trim($value);
+      $exploded_value = explode('/', $trimmed_value);
+      $exploded_index = 0;
+
+      $all_url_validated = array_reduce($exploded_value, function($acc, $path) use (&$exploded_index) {
+        if(!$acc) return $acc;
+
+        if($exploded_index === 0):
+          $acc = $path === '';
+        else:
+          $trimmed_path = trim($path);
+          $acc = $trimmed_path === $path && strlen($path) > 0;
+        endif;
+
+        $exploded_index++;
+        return $acc;
+      }, true);
+
+      return $value === '' || (
+        $value === $trimmed_value &&
+        count($exploded_value) > 1 &&
+        $all_url_validated
+      );
+    }, 'URL prefix: It must either be empty or a URL path starting with /<mandatory prefix>/<maybe>/<more>');
+
+    $validator_params = [
+      'inputs' => [],
+      'rules' => []
     ];
 
     foreach(Helper::getPendingDotEnvFileConfigs() as $group => $fields):
@@ -31,70 +73,41 @@ class SetupController extends Controller {
       endforeach;
     endforeach;
 
-    /*
-    https://stackoverflow.com/questions/46541323/laravel-form-array-validation
-
-    array(9) {
-      ["PUSHER_ENABLED"]=>
-      bool(true)
-      ["PUSHER_APP_ID"]=>
-      string(0) ""
-      ["PUSHER_APP_KEY"]=>
-      string(0) ""
-      ["PUSHER_APP_SECRET"]=>
-      string(0) ""
-      ["PUSHER_APP_CLUSTER"]=>
-      string(0) ""
-      ["GOOGLE_RECAPTCHA_ENABLED"]=>
-      bool(true)
-      ["GOOGLE_RECAPTCHA_SITE_SECRET"]=>
-      string(0) ""
-      ["GOOGLE_RECAPTCHA_SITE_KEY"]=>
-      string(0) ""
-      ["LARAVEL_SURVEY_PREFIX_URL"]=>
-      string(8) "/laravel"
-    }
-    */
-
-    $setup_errors = [];
-
     if($fields_to_update['PUSHER_ENABLED'] !== false):
-      // @TODO
-      // Transform this check into a validator
-      // This way the user can be notified of different kinds of errors
+      $values = [
+        $fields_to_update['PUSHER_APP_KEY'],
+        $fields_to_update['PUSHER_APP_ID'],
+        $fields_to_update['PUSHER_APP_CLUSTER'],
+        $fields_to_update['PUSHER_APP_SECRET']
+      ];
 
-      $app_key = $fields_to_update['PUSHER_APP_KEY'];
-      $app_secret = $fields_to_update['PUSHER_APP_SECRET'];
-      $app_id = $fields_to_update['PUSHER_APP_ID'];
-      $app_cluster = $fields_to_update['PUSHER_APP_CLUSTER'];
-
-      if(!Helper::arePusherConfigsValid($app_key, $app_id, $app_cluster, $app_secret)):
-        $setup_errors['Pusher'] = 'It seems like these keys are invalid.';
-      endif;
+      $validator_params['inputs']['pusher'] = $values;
+      $validator_params['rules']['pusher'] = 'setup_pusher';
     endif;
 
     if($fields_to_update['GOOGLE_RECAPTCHA_ENABLED'] !== false):
-      // @TODO
-      // Transform this check into a validator
-      // This way the user can be notified of different kinds of errors
+      $validator_params['inputs']['google-recaptcha'] = $fields_to_update['GOOGLE_RECAPTCHA_TOKEN'];
+      $validator_params['rules']['google-recaptcha'] = 'setup_google_recaptcha:' . $fields_to_update['GOOGLE_RECAPTCHA_SITE_SECRET'];
+    endif;
 
-      $rc = new ReCaptcha(
-        $fields_to_update['GOOGLE_RECAPTCHA_SITE_SECRET']
-      );
+    $validator_params['inputs']['url_prefix'] = $fields_to_update['LARAVEL_SURVEY_PREFIX_URL'];
+    $validator_params['rules']['url_prefix'] = 'setup_url_prefix';
 
-      if(!$rc->verify($fields_to_update['GOOGLE_RECAPTCHA_TOKEN'])->isSuccess()):
-        $setup_errors['Google ReCaptcha'] = 'It seems like these keys are invalid.';
-      endif;
+    $validator = Validator::make(
+      $validator_params['inputs'],
+      $validator_params['rules']
+    );
+
+    if($validator->fails()):
+      return redirect()->route('home')->withErrors($validator)->withInput();
     endif;
 
     // @TODO
-    // In case all fields are valid
-    // Update the .env file
-    // And redirect home without params
+    // Update configurations in the .env file
+    // Restart the server
 
-    return redirect()->route('home')->with([
-      'setup_errors' => $setup_errors,
-      'last_inputs' => $fields_to_update
-    ]);
+    $request->session()->flash('success', 'Configurations updated successfully.');
+
+    return redirect()->route('home')->withInput();
   }
 }
