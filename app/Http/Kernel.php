@@ -48,6 +48,10 @@ class Kernel extends HttpKernel
 
         'email_checkdnsrr' => [
             \App\Http\Middleware\EmailCheckDNSRR::class,
+        ],
+
+        'setup' => [
+            \App\Http\Middleware\SetupCheck::class,
         ]
     ];
 

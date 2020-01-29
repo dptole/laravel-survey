@@ -23,7 +23,8 @@ class Helper {
   public static function openForm($route, array $route_arguments = [], array $form_arguments = []) {
     return Form::open(array_merge(
       [
-        'autocomplete' => 'off'
+        'autocomplete' => 'off',
+        'name' => $route
       ],
       is_array($form_arguments) ? $form_arguments : [],
       [

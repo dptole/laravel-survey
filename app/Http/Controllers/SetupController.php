@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Helper;
+use ReCaptcha\ReCaptcha;
 
 class SetupController extends Controller {
   public function updateMissingConfigs(Request $request) {
-    $fields_to_update = [];
+    $fields_to_update = [
+      'GOOGLE_RECAPTCHA_TOKEN' => $request->input('GOOGLE_RECAPTCHA_TOKEN')
+    ];
 
     foreach(Helper::getPendingDotEnvFileConfigs() as $group => $fields):
       foreach($fields as $category => $field):
@@ -53,6 +56,8 @@ class SetupController extends Controller {
     }
     */
 
+    $setup_errors = [];
+
     if($fields_to_update['PUSHER_ENABLED'] !== false):
       // @TODO
       // Transform this check into a validator
@@ -63,9 +68,33 @@ class SetupController extends Controller {
       $app_id = $fields_to_update['PUSHER_APP_ID'];
       $app_cluster = $fields_to_update['PUSHER_APP_CLUSTER'];
 
-      Helper::arePusherConfigsValid($app_key, $app_id, $app_cluster, $app_secret);
+      if(!Helper::arePusherConfigsValid($app_key, $app_id, $app_cluster, $app_secret)):
+        $setup_errors['Pusher'] = 'It seems like these keys are invalid.';
+      endif;
     endif;
 
-    return redirect()->route('home');
+    if($fields_to_update['GOOGLE_RECAPTCHA_ENABLED'] !== false):
+      // @TODO
+      // Transform this check into a validator
+      // This way the user can be notified of different kinds of errors
+
+      $rc = new ReCaptcha(
+        $fields_to_update['GOOGLE_RECAPTCHA_SITE_SECRET']
+      );
+
+      if(!$rc->verify($fields_to_update['GOOGLE_RECAPTCHA_TOKEN'])->isSuccess()):
+        $setup_errors['Google ReCaptcha'] = 'It seems like these keys are invalid.';
+      endif;
+    endif;
+
+    // @TODO
+    // In case all fields are valid
+    // Update the .env file
+    // And redirect home without params
+
+    return redirect()->route('home')->with([
+      'setup_errors' => $setup_errors,
+      'last_inputs' => $fields_to_update
+    ]);
   }
 }
