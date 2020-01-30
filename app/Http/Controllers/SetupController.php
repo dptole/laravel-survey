@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Helper;
-use ReCaptcha\ReCaptcha;
 use Validator;
 
 class SetupController extends Controller {
