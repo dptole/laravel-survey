@@ -11,6 +11,8 @@ Pre-requisites
 - MySQL v5.5+ (or MariaDB)
 - PHP v5.6+
 
+> Or you could install it via [docker][docker-install-container-url].
+
 Building
 ========
 
@@ -126,5 +128,6 @@ License
 [google-recaptcha-url]: https://www.google.com/recaptcha/admin#list
 [pusher-url]: https://dashboard.pusher.com/accounts/sign_in
 [composer-url]: https://getcomposer.org/
+[docker-install-container-url]: docker
 [LICENSE]: LICENSE
 
