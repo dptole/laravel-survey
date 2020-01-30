@@ -6,8 +6,9 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Helper;
 
-define('REGISTER_REDIRECT_TO', env('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
+define('REGISTER_REDIRECT_TO', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
 
 class RegisterController extends Controller
 {
@@ -49,12 +50,17 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users|email_checkdnsrr',
-            'password' => 'required|min:6|confirmed',
-            'g-recaptcha-response' => 'required|google_recaptcha'
-        ]);
+            'password' => 'required|min:6|confirmed'
+        ];
+
+        if(\Helper::isGoogleReCaptchaEnabled()):
+            $rules['g-recaptcha-response'] = 'required|google_recaptcha';
+        endif;
+
+        return Validator::make($data, $rules);
     }
 
     /**

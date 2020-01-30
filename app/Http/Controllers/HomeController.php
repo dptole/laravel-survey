@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Surveys;
+use App\Helper;
 
 class HomeController extends Controller {
   /**
@@ -23,10 +24,10 @@ class HomeController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function root() {
-    if(env('LARAVEL_SURVEY_PREFIX_URL') === '/'):
+    if(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') === '/'):
       return $this->index();
     else:
-      return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
+      return redirect(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
     endif;
   }
 }

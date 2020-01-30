@@ -14,11 +14,11 @@
 Route::get('/', ['uses' => 'HomeController@root', 'as' => 'root']);
 
 Route::group(['prefix' => '/', 'middleware' => ['setup']], function() {
-  Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL')], function() {
+  Route::group(['prefix' => Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL')], function() {
     Route::post('/setup-update-missing-configs', ['uses' => 'SetupController@updateMissingConfigs', 'as' => 'setup-update-missing-configs']);
   });
 
-  Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL')], function() {
+  Route::group(['prefix' => Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL')], function() {
     Route::group(['prefix' =>'sse'], function() {
       Route::get('/', ['uses' => 'ServerSentEventController', 'as' => 'sse-root']);
       Route::get('/example', ['uses' => 'ServerSentEventController@example', 'as' => 'sse-example']);
@@ -26,7 +26,7 @@ Route::group(['prefix' => '/', 'middleware' => ['setup']], function() {
     });
   });
 
-  Route::group(['prefix' => env('LARAVEL_SURVEY_PREFIX_URL'), 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
+  Route::group(['prefix' => Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'), 'middleware' => ['google_recaptcha', 'email_checkdnsrr']], function() {
     Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
 
     Route::get('/s/{s_link}', ['uses' => 'PublicSurveyController@shareableLink', 'as' => 'public_survey.shareable_link']);

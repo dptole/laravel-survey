@@ -26,9 +26,12 @@
           </label>
         </div>
 
+        @if(Helper::isGoogleReCaptchaEnabled())
         <div class="form-group">
-          <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
+          <div class="g-recaptcha" data-sitekey="{{ Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
         </div>
+        {!! Helper::getGoogleReCaptchaApiAsset() !!}
+        @endif
 
         <div class="form-group">
           {{ Form::submit('Login', ['class' => 'btn btn-success btn-block']) }}

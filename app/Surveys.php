@@ -29,7 +29,7 @@ class Surveys extends Model {
   }
 
   public function getShareableUrlAttribute() {
-    return env('LARAVEL_SURVEY_PREFIX_URL') . '/s/' . $this->shareable_link;
+    return Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/s/' . $this->shareable_link;
   }
 
   /************************************************/

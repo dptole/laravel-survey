@@ -14,39 +14,15 @@ class SetupController extends Controller {
     ];
 
     Validator::extend('setup_pusher', function($attribute, $value, $parameters, $validator) {
-      list($app_key, $app_id, $app_cluster, $app_secret) = $value;
-      return Helper::arePusherConfigsValid($app_key, $app_id, $app_cluster, $app_secret);
+      return call_user_func_array(['Helper', 'arePusherConfigsValid'], $value);
     }, 'Pusher: It seems like these keys are invalid.');
 
     Validator::extend('setup_google_recaptcha', function($attribute, $value, $parameters, $validator) {
-      list($site_secret) = $parameters;
-      return (new ReCaptcha($site_secret))->verify($value)->isSuccess();
+      return Helper::isValidReCaptchaToken($parameters[0], $value);
     }, 'Google ReCaptcha: Site secret and site key didn\'t match.');
 
     Validator::extend('setup_url_prefix', function($attribute, $value, $parameters, $validator) {
-      $trimmed_value = trim($value);
-      $exploded_value = explode('/', $trimmed_value);
-      $exploded_index = 0;
-
-      $all_url_validated = array_reduce($exploded_value, function($acc, $path) use (&$exploded_index) {
-        if(!$acc) return $acc;
-
-        if($exploded_index === 0):
-          $acc = $path === '';
-        else:
-          $trimmed_path = trim($path);
-          $acc = $trimmed_path === $path && strlen($path) > 0;
-        endif;
-
-        $exploded_index++;
-        return $acc;
-      }, true);
-
-      return $value === '' || (
-        $value === $trimmed_value &&
-        count($exploded_value) > 1 &&
-        $all_url_validated
-      );
+      return Helper::validateSystemUrlPrefix($value);
     }, 'URL prefix: It must either be empty or a URL path starting with /<mandatory prefix>/<maybe>/<more>');
 
     $validator_params = [
@@ -73,7 +49,7 @@ class SetupController extends Controller {
       endforeach;
     endforeach;
 
-    if($fields_to_update['PUSHER_ENABLED'] !== false):
+    if(isset($fields_to_update['PUSHER_ENABLED']) && $fields_to_update['PUSHER_ENABLED'] !== false):
       $values = [
         $fields_to_update['PUSHER_APP_KEY'],
         $fields_to_update['PUSHER_APP_ID'],
@@ -85,13 +61,15 @@ class SetupController extends Controller {
       $validator_params['rules']['pusher'] = 'setup_pusher';
     endif;
 
-    if($fields_to_update['GOOGLE_RECAPTCHA_ENABLED'] !== false):
+    if(isset($fields_to_update['GOOGLE_RECAPTCHA_ENABLED']) && $fields_to_update['GOOGLE_RECAPTCHA_ENABLED'] !== false):
       $validator_params['inputs']['google-recaptcha'] = $fields_to_update['GOOGLE_RECAPTCHA_TOKEN'];
       $validator_params['rules']['google-recaptcha'] = 'setup_google_recaptcha:' . $fields_to_update['GOOGLE_RECAPTCHA_SITE_SECRET'];
     endif;
 
-    $validator_params['inputs']['url_prefix'] = $fields_to_update['LARAVEL_SURVEY_PREFIX_URL'];
-    $validator_params['rules']['url_prefix'] = 'setup_url_prefix';
+    if(isset($fields_to_update['LARAVEL_SURVEY_PREFIX_URL']) && !Helper::validateSystemUrlPrefix($fields_to_update['LARAVEL_SURVEY_PREFIX_URL'])):
+      $validator_params['inputs']['url_prefix'] = $fields_to_update['LARAVEL_SURVEY_PREFIX_URL'];
+      $validator_params['rules']['url_prefix'] = 'setup_url_prefix';
+    endif;
 
     $validator = Validator::make(
       $validator_params['inputs'],
@@ -102,9 +80,7 @@ class SetupController extends Controller {
       return redirect()->route('home')->withErrors($validator)->withInput();
     endif;
 
-    // @TODO
-    // Update configurations in the .env file
-    // Restart the server
+    Helper::updateDotEnvFileVars($fields_to_update);
 
     $request->session()->flash('success', 'Configurations updated successfully.');
 

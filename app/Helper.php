@@ -6,16 +6,18 @@ use Collective\Html\FormFacade as Form;
 use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
+use ReCaptcha\ReCaptcha;
 
 class Helper {
   static $pusher = null;
   static $lsr = null;
   static $tzs = null;
   static $db_ip_html_ips_info = [];
+  static $dot_env_file = null;
 
   public static function getPusherOptions() {
     return [
-      'cluster' => env('PUSHER_APP_CLUSTER'),
+      'cluster' => Helper::getDotEnvFileVar('PUSHER_APP_CLUSTER'),
       'encrypted' => true
     ];
   }
@@ -52,6 +54,14 @@ class Helper {
     return Request::secure() || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO']);
   }
 
+  public static function isGoogleReCaptchaEnabled() {
+    return Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_ENABLED') === 'true';
+  }
+
+  public static function isPusherEnabled() {
+    return Helper::getDotEnvFileVar('PUSHER_ENABLED') === 'true';
+  }
+
   public static function isValidHTTPStatus($status) {
     return is_integer($status) && $status > 99 && $status < 600;
   }
@@ -73,9 +83,9 @@ class Helper {
   public static function broadcast($channel, $event, $message) {
     if(!self::$pusher)
       self::$pusher = new \Pusher\Pusher(
-        env('PUSHER_APP_KEY'),
-        env('PUSHER_APP_SECRET'),
-        env('PUSHER_APP_ID'),
+        Helper::getDotEnvFileVar('PUSHER_APP_KEY'),
+        Helper::getDotEnvFileVar('PUSHER_APP_SECRET'),
+        Helper::getDotEnvFileVar('PUSHER_APP_ID'),
         self::getPusherOptions()
       );
 
@@ -320,11 +330,89 @@ class Helper {
     return microtime(true) * 1000 | 0;
   }
 
+  public static function getGoogleReCaptchaApiAsset() {
+    echo '<script async src="https://www.google.com/recaptcha/api.js"></script>';
+  }
+
+  public static function getDotEnvFilePath() {
+    return dirname(__DIR__) . '/.env';
+  }
+
+  public static function getDotEnvFileVar($name) {
+    $dot_env = self::getDotEnvFile();
+
+    if(isset($dot_env[$name])):
+      return $dot_env[$name];
+    endif;
+
+    return null;
+  }
+
   public static function getDotEnvFile() {
-    return parse_ini_file(
-      dirname($_SERVER['DOCUMENT_ROOT']) . '/.env',
+    if(self::$dot_env_file):
+      return self::$dot_env_file;
+    endif;
+
+    return self::$dot_env_file = parse_ini_file(
+      self::getDotEnvFilePath(),
       false,
       INI_SCANNER_RAW
+    );
+  }
+
+  public static function getDotEnvFileRaw() {
+    return file_get_contents(
+      self::getDotEnvFilePath()
+    );
+  }
+
+  public static function writeDotEnvFileRaw($content) {
+    self::$dot_env_file = null;
+
+    return file_put_contents(
+      self::getDotEnvFilePath(),
+      $content
+    );
+  }
+
+  public static function updateDotEnvFileVars($vars) {
+    $content = self::getDotEnvFileRaw();
+
+    foreach($vars as $key => $value):
+      $value = is_bool($value) ? ($value === true ? 'true' : 'false') : $value;
+      $content = preg_replace('/(' . $key . ')=.*/', '$1=' . $value, $content);
+    endforeach;
+
+    return self::writeDotEnvFileRaw($content);
+  }
+
+  public static function isValidReCaptchaToken($site_secret, $token) {
+    return (new ReCaptcha($site_secret))->verify($token)->isSuccess();
+  }
+
+  public static function validateSystemUrlPrefix($value) {
+    $trimmed_value = trim($value);
+    $exploded_value = explode('/', $trimmed_value);
+    $exploded_index = 0;
+
+    $all_url_validated = array_reduce($exploded_value, function($acc, $path) use (&$exploded_index) {
+      if(!$acc) return $acc;
+
+      if($exploded_index === 0):
+        $acc = $path === '';
+      else:
+        $trimmed_path = trim($path);
+        $acc = $trimmed_path === $path && strlen($path) > 0;
+      endif;
+
+      $exploded_index++;
+      return $acc;
+    }, true);
+
+    return $value === '' || (
+      $value === $trimmed_value &&
+      count($exploded_value) > 1 &&
+      $all_url_validated
     );
   }
 
@@ -333,7 +421,7 @@ class Helper {
 
     $envs = self::getDotEnvFile();
 
-    if(!(
+    if($envs['PUSHER_ENABLED'] === 'true' && !(
       isset($envs['PUSHER_APP_ID']) &&
       !empty($envs['PUSHER_APP_ID']) &&
 
@@ -380,7 +468,7 @@ class Helper {
       ];
     endif;
 
-    if(!(
+    if($envs['GOOGLE_RECAPTCHA_ENABLED'] === 'true' && !(
       isset($envs['GOOGLE_RECAPTCHA_SITE_SECRET']) &&
       !empty($envs['GOOGLE_RECAPTCHA_SITE_SECRET']) &&
 
@@ -394,7 +482,7 @@ class Helper {
           'value' => $envs['GOOGLE_RECAPTCHA_ENABLED'],
           'name' => 'GOOGLE_RECAPTCHA_ENABLED'
         ],
-        'Site secret' => [
+        'Secret key' => [
           'type' => 'text',
           'description' => '',
           'value' => $envs['GOOGLE_RECAPTCHA_SITE_SECRET'],
@@ -415,7 +503,7 @@ class Helper {
       ];
     endif;
 
-    if(count($pending) > 0):
+    if(!self::validateSystemUrlPrefix($envs['LARAVEL_SURVEY_PREFIX_URL'])):
       $pending['Site'] = [
         'URL prefix' => [
           'type' => 'text',

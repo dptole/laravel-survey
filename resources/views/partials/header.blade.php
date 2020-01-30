@@ -8,13 +8,15 @@
 <script>
 window.Laravel = {csrfToken: '{{ csrf_token() }}'};
 
-window.LARAVEL_SURVEY_PREFIX_URL = '{{ env('LARAVEL_SURVEY_PREFIX_URL') }}';
+window.LARAVEL_SURVEY_PREFIX_URL = '{{ Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') }}';
 
-window.PUSHER_ENABLED = {{ env('PUSHER_ENABLED') ? 'true' : 'false' }};
-window.PUSHER_APP_KEY = '{{ env('PUSHER_APP_KEY') }}';
-window.PUSHER_APP_CLUSTER = '{{ env('PUSHER_APP_CLUSTER') }}';
+window.PUSHER_ENABLED = {{ Helper::isPusherEnabled() ? 'true' : 'false' }};
+@if(Helper::isPusherEnabled())
+window.PUSHER_APP_KEY = '{{ Helper::getDotEnvFileVar('PUSHER_APP_KEY') }}';
+window.PUSHER_APP_CLUSTER = '{{ Helper::getDotEnvFileVar('PUSHER_APP_CLUSTER') }}';
+@endif
 
-window.GOOGLE_RECAPTCHA_ENABLED = {{ env('GOOGLE_RECAPTCHA_ENABLED') ? 'true' : 'false' }};
+window.GOOGLE_RECAPTCHA_ENABLED = {{ Helper::isGoogleReCaptchaEnabled() ? 'true' : 'false' }};
 </script>
 <link href="https://getbootstrap.com/docs/3.3/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 

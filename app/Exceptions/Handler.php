@@ -49,7 +49,7 @@ class Handler extends ExceptionHandler
     {
         // https://stackoverflow.com/a/42975261
         if($exception instanceof NotFoundHttpException)
-          return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
+          return redirect(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
 
         // We should handle exceptions here.
         return parent::render($request, $exception);

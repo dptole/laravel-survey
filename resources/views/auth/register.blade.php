@@ -27,9 +27,12 @@
           {{ Form::password('password', ['class' => 'form-control', 'id' => 'pwd']) }}
         </div>
 
+        @if(Helper::isGoogleReCaptchaEnabled())
         <div class="form-group">
-          <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
+          <div class="g-recaptcha" data-sitekey="{{ Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
         </div>
+        {!! Helper::getGoogleReCaptchaApiAsset() !!}
+        @endif
 
         <div class="form-group">
           {{ Form::submit('Create', ['class' => 'btn btn-success btn-block', 'onclick' => 'pwdc.value=pwd.value']) }}

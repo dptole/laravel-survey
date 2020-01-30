@@ -16,7 +16,7 @@ class GoogleReCaptcha
     public function handle($request, Closure $next)
     {
         \Validator::extend('google_recaptcha', function($attribute, $value, $parameters, $validator) {
-          return (new \ReCaptcha\ReCaptcha(env('GOOGLE_RECAPTCHA_SITE_SECRET')))->verify($value)->isSuccess();
+          return Helper::isValidReCaptchaToken(Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_SITE_SECRET'), $value);
         }, 'ReCaptcha error.');
 
         return $next($request);
