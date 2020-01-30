@@ -61,6 +61,7 @@
     <?php print_r(Helper::getPendingDotEnvFileConfigs()); ?>
     </pre>
 
+    {!! Helper::getGoogleReCaptchaApiAsset() !!}
     <script src="{{ asset('js/setup.js') }}"></script>
 
   @else

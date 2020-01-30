@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use App\Helper;
 
 class ForgotPasswordController extends Controller
 {
@@ -30,6 +31,6 @@ class ForgotPasswordController extends Controller
         $this->middleware('guest');
     }
 
-    public function sendResetLinkEmail() { return redirect(env('LARAVEL_SURVEY_PREFIX_URL')); }
-    public function showLinkRequestForm() { return redirect(env('LARAVEL_SURVEY_PREFIX_URL')); }
+    public function sendResetLinkEmail() { return redirect(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL')); }
+    public function showLinkRequestForm() { return redirect(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL')); }
 }

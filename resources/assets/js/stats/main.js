@@ -2,7 +2,6 @@ import $ from 'jquery'
 import API from '../api.js'
 import {PublicSurveyStats, d3Graph} from './stats.js'
 
-const public_survey_stats = new PublicSurveyStats
 let window_width = 0
 
 const $d3_answers_options = {
@@ -103,7 +102,8 @@ function renderCountryInfo(answer_session_uuid, country_info) {
   $fetch_box.addClass('hide')
 }
 
-public_survey_stats
+PUSHER_ENABLED &&
+(new PublicSurveyStats)
   .websocket.config({
     broadcaster: 'pusher',
     key: PUSHER_APP_KEY,

@@ -18,7 +18,7 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect(env('LARAVEL_SURVEY_PREFIX_URL'));
+            return redirect(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
         }
 
         return $next($request);

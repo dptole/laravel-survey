@@ -36,7 +36,7 @@
               <li role="separator" class="divider"></li>
               <li>
                 {{ Html::linkRoute('logout', 'Logout', [], ['onclick' => 'event.preventDefault(); logout_form.submit()']) }}
-                {!! Form::open(['id' => 'logout_form', 'url' => URL::to(env('LARAVEL_SURVEY_PREFIX_URL') . '/logout')]) !!}
+                {!! Form::open(['id' => 'logout_form', 'url' => URL::to(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/logout')]) !!}
                 {!! Form::close() !!}
               </li>
             </ul>

@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use App\Helper;
 
-define('RESET_PASSWORD_REDIRECT_TO', env('LARAVEL_SURVEY_PREFIX_URL'));
+define('RESET_PASSWORD_REDIRECT_TO', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
 
 class ResetPasswordController extends Controller
 {

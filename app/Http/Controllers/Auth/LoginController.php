@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Helper;
 
-define('LOGIN_REDIRECT_TO', env('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
+define('LOGIN_REDIRECT_TO', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
 
 class LoginController extends Controller
 {
@@ -41,14 +42,13 @@ class LoginController extends Controller
     }
 
     public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []) {
+        if(Helper::isGoogleReCaptchaEnabled()):
+            $rules['g-recaptcha-response'] = 'required|google_recaptcha';
+        endif;
+
         return parent::validate(
             $request,
-            array_merge(
-                $rules,
-                [
-                    'g-recaptcha-response' => 'required|google_recaptcha'
-                ]
-            ),
+            $rules,
             $messages,
             $customAttributes
         );
