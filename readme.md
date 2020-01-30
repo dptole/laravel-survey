@@ -6,19 +6,17 @@ Custom survey app in laravel.
 Pre-requisites
 ==============
 
-- Linux (any dist)
+- Linux
 - Node.js v7+
-- MySQL v5.5+
+- MySQL v5.5+ (or MariaDB)
 - PHP v5.6+
-- Pusher
-- GoogleRecaptcha
 
 Building
 ========
 
 Inside the repo's folder.
 
-Install Node.js dependencies and generate, it will take some time.
+Install Node.js dependencies, it will take some time.
 
 ```
 $ npm i
@@ -49,7 +47,7 @@ Generate the new `APP_KEY` value on the `.env` file.
 $ php artisan key:generate
 ```
 
-You have to configure MySQL yourself.
+You'll have to configure MySQL yourself, it's not that hard.
 
 ```
 Log into your MySQL as root.
@@ -77,7 +75,7 @@ Execute laravel's migrations.
 $ php artisan migrate
 ```
 
-Run webpack's tasks to generate `app.js` and `app.css`.
+Run webpack's tasks to generate JavaScript and CSS assets.
 
 ```
 $ npm run dev
@@ -93,14 +91,17 @@ $ php artisan serve
 
 > You will have to access `http://localhost:8000/laravel/`.
 
-3rd party integrations
-======================
+Optional 3rd party integrations
+===============================
+
+I recommend you just updating the `.env` file variables `PUSHER_ENABLED=true` and `GOOGLE_RECAPTCHA_ENABLED=true` and starting up the server. The first page will tell you about missing configurations in these optional 3rd party integrations. A form will be created for input and validation of the credentials. If some error occur you'll be notified. In case all credentials are correct the `.env` file will be updated and you'll be able to proceed normally.
 
 # Pusher
 
 Create your app at [pusher's dashboard][pusher-url]. Edit the `.env` file with your credentials
 
 ```
+PUSHER_ENABLED=true
 PUSHER_APP_ID=
 PUSHER_APP_KEY=
 PUSHER_APP_SECRET=
@@ -112,6 +113,7 @@ PUSHER_APP_CLUSTER=
 Go to [Google Recaptcha's admin page][google-recaptcha-url] and register a new site. Edit the `.env` file with your keys
 
 ```
+GOOGLE_RECAPTCHA_ENABLED=true
 GOOGLE_RECAPTCHA_SITE_SECRET=
 GOOGLE_RECAPTCHA_SITE_KEY=
 ```
