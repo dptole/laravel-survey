@@ -6,6 +6,13 @@ use Illuminate\Http\Request;
 
 class ResourceController extends Controller {
   private function fromPublicPath($file_path, $headers = []) {
+    // https://bugs.php.net/bug.php?id=53035
+    if(substr($file_path, -3) === '.js'):
+      $headers['content-type'] = 'application/javascript';
+    elseif(substr($file_path, -4) === '.css'):
+      $headers['content-type'] = 'text/css';
+    endif;
+
     return response()->file(public_path() . $file_path, $headers);
   }
 

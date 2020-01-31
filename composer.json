@@ -14,6 +14,7 @@
         "laravelcollective/html": "5.4.*",
         "nesbot/carbon": "^1.22",
         "pusher/pusher-php-server": "~3.0",
+        "symfony/polyfill-iconv": "^1.13",
         "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {

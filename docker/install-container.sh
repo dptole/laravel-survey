@@ -1,7 +1,11 @@
 #!/bin/bash
 set -x
 
+# LARAVEL_HTTP_PORT=TCP_PORT
 LARAVEL_HTTP_PORT=59314
+
+# LARAVEL_SERVER_ENV=dev|production
+LARAVEL_SERVER_ENV=dev
 
 localdir="$(dirname "$0")"
 if [ "$localdir" == "." ]
@@ -17,6 +21,7 @@ $dockerdir/remove-container.sh
 sudo docker run \
   -d \
   -e LARAVEL_HTTP_PORT=$LARAVEL_HTTP_PORT \
+  -e LARAVEL_SERVER_ENV=$LARAVEL_SERVER_ENV \
   -v $(pwd):/app/ \
   -p $LARAVEL_HTTP_PORT:$LARAVEL_HTTP_PORT \
   -w /app/ \
