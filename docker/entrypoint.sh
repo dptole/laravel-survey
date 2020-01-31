@@ -71,33 +71,35 @@ rc-service php-fpm7 start
 
 # Create nginx default configuration file
 cat <<'EOF' -> /etc/nginx/conf.d/default.conf
-geoip2 /app/app/data/GeoLite2-Country_20200128/GeoLite2-Country.mmdb {
-  auto_reload 5m;
-
-  $IP_geoip2_data_country_code source=$remote_addr country iso_code;
-  $IP_geoip2_data_country_name_en source=$remote_addr country names en;
-
-  $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
-  $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
-}
-
-geoip2 /app/app/data/GeoLite2-City_20200128/GeoLite2-City.mmdb {
-  auto_reload 5m;
-
-  $IP_geoip2_data_city_name_en source=$remote_addr city names en;
-
-  $HEADER_geoip2_data_city_name_en source=$http_x_forwarded_for city names en;
-}
-
-geoip2 /app/app/data/GeoLite2-ASN_20200128/GeoLite2-ASN.mmdb {
-  auto_reload 5m;
-
-  $IP_geoip2_data_asn_code source=$remote_addr autonomous_system_number;
-  $IP_geoip2_data_asn_name source=$remote_addr autonomous_system_organization;
-
-  $HEADER_geoip2_data_asn_code source=$http_x_forwarded_for autonomous_system_number;
-  $HEADER_geoip2_data_asn_name source=$http_x_forwarded_for autonomous_system_organization;
-}
+# Disabled for the moment
+#
+# geoip2 /app/app/data/GeoLite2-Country_20200128/GeoLite2-Country.mmdb {
+#   auto_reload 5m;
+# 
+#   $IP_geoip2_data_country_code source=$remote_addr country iso_code;
+#   $IP_geoip2_data_country_name_en source=$remote_addr country names en;
+# 
+#   $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
+#   $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
+# }
+# 
+# geoip2 /app/app/data/GeoLite2-City_20200128/GeoLite2-City.mmdb {
+#   auto_reload 5m;
+# 
+#   $IP_geoip2_data_city_name_en source=$remote_addr city names en;
+# 
+#   $HEADER_geoip2_data_city_name_en source=$http_x_forwarded_for city names en;
+# }
+# 
+# geoip2 /app/app/data/GeoLite2-ASN_20200128/GeoLite2-ASN.mmdb {
+#   auto_reload 5m;
+# 
+#   $IP_geoip2_data_asn_code source=$remote_addr autonomous_system_number;
+#   $IP_geoip2_data_asn_name source=$remote_addr autonomous_system_organization;
+# 
+#   $HEADER_geoip2_data_asn_code source=$http_x_forwarded_for autonomous_system_number;
+#   $HEADER_geoip2_data_asn_name source=$http_x_forwarded_for autonomous_system_organization;
+# }
 
 server {
   listen LARAVEL_NGINX_HTTP_PORT;
@@ -128,17 +130,19 @@ server {
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
 
-    fastcgi_param MM_IP_COUNTRY_CODE            $IP_geoip2_data_country_code;
-    fastcgi_param MM_IP_EN_COUNTRY_NAME         $IP_geoip2_data_country_name_en;
-    fastcgi_param MM_IP_EN_CITY_NAME            $IP_geoip2_data_city_name_en;
-    fastcgi_param MM_IP_ASN_CODE                $IP_geoip2_data_asn_code;
-    fastcgi_param MM_IP_ASN_NAME                $IP_geoip2_data_asn_name;
+    # Disabled for the moment
 
-    fastcgi_param MM_HEADER_COUNTRY_CODE        $HEADER_geoip2_data_country_code;
-    fastcgi_param MM_HEADER_EN_COUNTRY_NAME     $HEADER_geoip2_data_country_name_en;
-    fastcgi_param MM_HEADER_EN_CITY_NAME        $HEADER_geoip2_data_city_name_en;
-    fastcgi_param MM_HEADER_ASN_CODE            $HEADER_geoip2_data_asn_code;
-    fastcgi_param MM_HEADER_ASN_NAME            $HEADER_geoip2_data_asn_name;
+    # fastcgi_param MM_IP_COUNTRY_CODE            $IP_geoip2_data_country_code;
+    # fastcgi_param MM_IP_EN_COUNTRY_NAME         $IP_geoip2_data_country_name_en;
+    # fastcgi_param MM_IP_EN_CITY_NAME            $IP_geoip2_data_city_name_en;
+    # fastcgi_param MM_IP_ASN_CODE                $IP_geoip2_data_asn_code;
+    # fastcgi_param MM_IP_ASN_NAME                $IP_geoip2_data_asn_name;
+
+    # fastcgi_param MM_HEADER_COUNTRY_CODE        $HEADER_geoip2_data_country_code;
+    # fastcgi_param MM_HEADER_EN_COUNTRY_NAME     $HEADER_geoip2_data_country_name_en;
+    # fastcgi_param MM_HEADER_EN_CITY_NAME        $HEADER_geoip2_data_city_name_en;
+    # fastcgi_param MM_HEADER_ASN_CODE            $HEADER_geoip2_data_asn_code;
+    # fastcgi_param MM_HEADER_ASN_NAME            $HEADER_geoip2_data_asn_name;
 
     include fastcgi_params;
   }
