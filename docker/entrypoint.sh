@@ -24,8 +24,13 @@ pwd_string=$(pwd)
 PWD_SAFE=${pwd_string//\//\\/}
 LARAVEL_PUBLIC_PATH=$PWD_SAFE\\/public
 
-# Install alpine packages
-apk add curl bash vim nodejs npm mariadb mariadb-client openrc nginx php7-fpm php7-json php7-session php7-openssl php7-pdo_mysql php7-pdo php7-fileinfo nginx-mod-http-geoip2
+# Install alpine packages not related to PHP
+apk add curl bash vim nodejs npm mariadb mariadb-client openrc nginx nginx-mod-http-geoip2
+
+# Install alpine PHP packages from a specific repository
+# https://github.com/codecasts/php-alpine
+curl 'https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub' -o /etc/apk/keys/php-alpine.rsa.pub
+apk add php7-curl php7-dom php7-fpm php7-json php7-session php7-openssl php7-pdo_mysql php7-pdo php7-fileinfo --repository https://dl.bintray.com/php-alpine/v3.10/php-7.4
 
 # Config ~/.vimrc file
 cat <<EOF -> ~/.vimrc
@@ -190,8 +195,7 @@ composer global require hirak/prestissimo
 composer install
 
 # Clean up so that the next command works
-php artisan config:clear
-php artisan route:clear
+php artisan optimize:clear
 
 # Generate new APP_KEY on .env file
 php artisan key:generate
@@ -276,14 +280,26 @@ EOF
   rc-service php-artisan-serve start
 
 else
+  # Create production JavaScript and CSS assets
   npm run production
-  sed -i 's/APP_ENV=local/APP_ENV=production/' .env
-  chmod -R o+w storage
-  composer install --optimize-autoloader --no-dev
-  php artisan route:cache
-  php artisan config:cache
 
-  rc-service nginx restart
+  # Not sure why...
+  sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+
+  # Nginx user requires write access
+  chmod -R o+w storage
+
+  # Perform artisan optimizations
+  composer install --optimize-autoloader --no-dev
+  php artisan optimize:clear
+  php artisan optimize
+
+  # Start the prod server
+  rc-service nginx start
+
+  # Set these services for the default runlevel
+  rc-update add php-fpm7 default
+  rc-update add nginx default
 
 fi
 

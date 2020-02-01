@@ -25,7 +25,7 @@ export default class QuestionsTable {
   }
 
   generateSessionId(survey_uuid) {
-    utils.getBattery().then(battery =>
+    return utils.getBattery().then(battery =>
       API.generateSessionId(survey_uuid, {
         window: {
           width: $(window).width(),
