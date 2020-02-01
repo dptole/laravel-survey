@@ -1,7 +1,7 @@
 Laravel survey
 ==============
 
-Custom survey app in laravel.
+Custom survey app in Laravel 6.
 
 Pre-requisites
 ==============
@@ -9,7 +9,7 @@ Pre-requisites
 - Linux
 - Node.js v7+
 - MySQL v5.5+ (or MariaDB)
-- PHP v5.6+
+- PHP v7.2+
 
 > Or you could install it via [docker][docker-install-container-url].
 

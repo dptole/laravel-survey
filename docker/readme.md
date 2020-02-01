@@ -1,7 +1,7 @@
 Laravel survey
 ==============
 
-Docker documentation for the custom survey app in laravel
+Docker documentation for the custom survey app in Laravel 6
 
 Docker
 ======
