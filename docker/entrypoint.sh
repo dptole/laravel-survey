@@ -1,13 +1,6 @@
 #!/bin/sh
 set -x
 
-# TODO
-# Show configuration screen in case not all variables were set [allow to disable]
-# - Create function to detect if all env vars are set
-# - - Return an array with the ones not set
-# - - These vars work as groups, custom configuration required
-# Set the prefix for the URL via the env file
-
 # This file contains the list of commands necessary to setup the blog
 # These commands are gonna be running inside the elm-mini-blog container
 
