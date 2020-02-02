@@ -24,7 +24,7 @@ class HomeController extends Controller {
    * @return \Illuminate\Http\Response
    */
   public function root() {
-    if(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') === '/'):
+    if(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') === ''):
       return $this->index();
     else:
       return redirect(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));

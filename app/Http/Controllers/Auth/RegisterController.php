@@ -56,7 +56,7 @@ class RegisterController extends Controller
             'password' => 'required|min:6|confirmed'
         ];
 
-        if(\Helper::isGoogleReCaptchaEnabled()):
+        if(Helper::isGoogleReCaptchaEnabled()):
             $rules['g-recaptcha-response'] = 'required|google_recaptcha';
         endif;
 
