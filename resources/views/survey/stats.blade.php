@@ -4,7 +4,7 @@
 
 @section('content')
   <h1 class="title m-b-md text-center text-warning bg-warning lar-refresh-survey hide">
-    {{ Html::linkRoute('survey.stats', 'New data available, refresh the page', [$survey->uuid], ['class' => 'btn btn-info btn-block']) }}
+    {{ Helper::linkRoute('survey.stats', 'New data available, refresh the page', [$survey->uuid], ['class' => 'btn btn-info btn-block']) }}
   </h1>
 
   <h1 class="title m-b-md text-center">
@@ -283,7 +283,7 @@
     <div class="col-xs-12">
       <div class="row">
         <div class="pull-right col-sm-4 col-xs-12 form-group">
-          {{ Html::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
+          {{ Helper::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
         </div>
       </div>
     </div>

@@ -83,7 +83,7 @@
               <td>{{ $available_survey->author_name }}</td>
               <td>
                 <div class="pull-right">
-                  {{ Html::linkRoute('public_survey.show', 'Start this survey', [$available_survey->uuid], ['class' => 'btn btn-xs btn-primary']) }}
+                  {{ Helper::linkRoute('public_survey.show', 'Start this survey', [$available_survey->uuid], ['class' => 'btn btn-xs btn-primary']) }}
                 </div>
               </td>
             </tr>

@@ -43,7 +43,7 @@
             {{ Form::submit('Update', ['class' => 'btn-block btn btn-success']) }}
           </div>
           <div class="col-xs-6">
-            {{ Html::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
+            {{ Helper::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
           </div>
         </div>
       </div>

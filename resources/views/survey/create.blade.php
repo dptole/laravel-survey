@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Helper::openForm('survey.create', [], ['autocomplete' => 'off']) !!}
+      {!! Helper::openForm('survey.create') !!}
         <div class="form-group">
           {{ Form::label('name', 'Name:') }}
           {{ Form::text('name', null, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
@@ -26,7 +26,7 @@
               {{ Form::submit('Create', ['class' => 'btn btn-success btn-block']) }}
             </div>
             <div class="col-xs-6">
-              {{ Html::linkRoute('dashboard', 'Back', [], ['class' => 'btn-block btn btn-default']) }}
+              {{ Helper::linkRoute('dashboard', 'Back', [], ['class' => 'btn-block btn btn-default']) }}
             </div>
           </div>
         </div>

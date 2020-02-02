@@ -57,6 +57,8 @@ grep DB_SOCKET .env || sed -i 's/DB_CONNECTION/DB_SOCKET=\/run\/mysqld\/mysqld.s
 # as DB_USER and DB_PASS to the ~/.bashrc
 grep DB_USERNAME .env | sed 's/DB_USERNAME/export DB_USER/' | tee -a ~/.bashrc
 grep DB_PASSWORD .env | sed 's/DB_PASSWORD/export DB_PASS/' | tee -a ~/.bashrc
+grep DB_DATABASE .env | sed 's/DB_DATABASE/export DB_NAME/' | tee -a ~/.bashrc
+grep DB_HOST .env | sed 's/DB_HOST/export DB_HOST/' | tee -a ~/.bashrc
 
 # Export the env variables
 . ~/.bashrc
@@ -163,9 +165,9 @@ mkdir -p $DB_DATA_PATH
 rc-service mariadb start
 
 # Creating default user and database
-mysql -e "CREATE USER homestead@localhost IDENTIFIED BY 'secret';"
-mysql -e "CREATE DATABASE homestead;"
-mysql -e "GRANT ALL ON homestead.* TO homestead@localhost;"
+mysql -e "CREATE USER ${DB_USER}@${DB_HOST} IDENTIFIED BY '${DB_PASS}';"
+mysql -e "CREATE DATABASE ${DB_NAME};"
+mysql -e "GRANT ALL ON ${DB_NAME}.* TO ${DB_USER}@${DB_HOST};"
 
 # Install npm dependencies
 npm i

@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Helper::openForm('question.edit', [$survey->uuid, $question->uuid], ['autocomplete' => 'off', 'data-survey-uuid' => $survey->uuid, 'data-question-options' => json_encode($question_options), 'id' => 'survey-form-question']) !!}
+      {!! Helper::openForm('question.edit', [$survey->uuid, $question->uuid], ['data-survey-uuid' => $survey->uuid, 'data-question-options' => json_encode($question_options), 'id' => 'survey-form-question']) !!}
         <div class="form-group">
           {{ Form::label('description', 'Description:') }}
           {{ Form::textarea('description', $question->description, ['class' => 'form-control', 'autofocus' => '', 'required' => '']) }}
@@ -45,7 +45,7 @@
             </div>
 
             <div class="col-xs-6">
-              {{ Html::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
+              {{ Helper::linkRoute('survey.edit', 'Back', [$survey->uuid], ['class' => 'btn-block btn btn-default']) }}
             </div>
           </div>
         </div>

@@ -3,10 +3,13 @@
 namespace App;
 
 use Collective\Html\FormFacade as Form;
+use Collective\Html\HtmlFacade as Html;
 use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\HtmlString;
 use ReCaptcha\ReCaptcha;
+use Pusher\Pusher;
 
 class Helper {
   static $pusher = null;
@@ -22,7 +25,17 @@ class Helper {
     ];
   }
 
-  public static function openForm($route, array $route_arguments = [], array $form_arguments = []) {
+  public static function linkRoute($route, $text_content, $route_args = [], $html_attrs = []) {
+    $html_string = Html::linkRoute($route, $text_content, $route_args, $html_attrs);
+
+    if(self::isSecureRequest()):
+      $html_string = str_replace('href="http:', 'href="https:', $html_string);
+    endif;
+
+    return new HtmlString($html_string);
+  }
+
+  public static function openForm($route, $route_arguments = [], $form_arguments = []) {
     return Form::open(array_merge(
       [
         'autocomplete' => 'off',
@@ -31,7 +44,9 @@ class Helper {
       is_array($form_arguments) ? $form_arguments : [],
       [
         'url' => URL::to(
-          self::urlRemoveDomain(route($route, $route_arguments))
+          self::urlRemoveDomain(route($route, $route_arguments)),
+          [],
+          self::isSecureRequest()
         )
       ]
     ));
@@ -82,7 +97,7 @@ class Helper {
 
   public static function broadcast($channel, $event, $message) {
     if(!self::$pusher)
-      self::$pusher = new \Pusher\Pusher(
+      self::$pusher = new Pusher(
         Helper::getDotEnvFileVar('PUSHER_APP_KEY'),
         Helper::getDotEnvFileVar('PUSHER_APP_SECRET'),
         Helper::getDotEnvFileVar('PUSHER_APP_ID'),

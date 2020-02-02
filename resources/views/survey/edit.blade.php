@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-xs-12">
-      {!! Helper::openForm('survey.edit', [$survey->uuid], ['autocomplete' => 'off']) !!}
+      {!! Helper::openForm('survey.edit', [$survey->uuid]) !!}
         @if($survey->is_running)
         <div class="form-group">
           {{ Form::label('version', 'Version:') }}
@@ -49,7 +49,7 @@
                   Question
                   <div class="pull-right">
                     @if((count($questions) > 1 || $questions->currentPage() > 1) && !$survey->is_running)
-                      {{ Html::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'visible-xs btn btn-default btn-xs']) }}
+                      {{ Helper::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'visible-xs btn btn-default btn-xs']) }}
                     @endif
                   </div>
                 </th>
@@ -58,7 +58,7 @@
                 @if(!$survey->is_running && count($questions) > 0)
                 <th class="hidden-xs">
                   @if(count($questions) > 1 || $questions->currentPage() > 1)
-                    {{ Html::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'btn btn-default btn-xs']) }}
+                    {{ Helper::linkRoute('question.show_change_order', 'Change order', [$survey->uuid], ['class' => 'btn btn-default btn-xs']) }}
                   @endif
                 </th>
                 @endif
@@ -70,7 +70,7 @@
                 <tr>
                   <td class="survey-first-question-line">
                     <h3 class="text-center">
-                      {{ Html::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-first-question btn btn-primary']) }} your first question.
+                      {{ Helper::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-first-question btn btn-primary']) }} your first question.
                     </h3>
                   </td>
                 </tr>
@@ -83,8 +83,8 @@
                       {{ $question->description }}
                       <div class="visible-xs">
                         @if(!$survey->is_running)
-                          {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
-                          {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
+                          {{ Helper::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
+                          {{ Helper::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
                         @endif
                       </div>
                     </td>
@@ -94,8 +94,8 @@
 
                     @if(!$survey->is_running)
                     <td class="hidden-xs">
-                      {{ Html::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
-                      {{ Html::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
+                      {{ Helper::linkRoute('question.edit', 'Edit', [$survey->uuid, $question->uuid], ['class' => 'survey-question-edit btn btn-warning btn-xs']) }}
+                      {{ Helper::linkRoute('question.delete', 'Delete', [$survey->uuid, $question->uuid], ['class' => 'survey-question-delete btn btn-danger btn-xs']) }}
                     </td>
                     @endif
                   </tr>
@@ -105,7 +105,7 @@
                 <tr>
                   <td colspan="5" class="survey-first-question-line">
                     <h3 class="text-center">
-                      {{ Html::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-another-question btn btn-primary']) }} another question.
+                      {{ Helper::linkRoute('question.create', 'Create', [$survey->uuid], ['class' => 'survey-btn-another-question btn btn-primary']) }} another question.
                     </h3>
                   </td>
                 </tr>
@@ -124,20 +124,20 @@
             @if(!$survey->is_running)
               {{ Form::submit('Update', ['class' => 'btn btn-block btn-success']) }}
             @else
-              {{ Html::linkRoute('survey.stats', 'Stats', [$survey->uuid], ['class' => 'btn btn-info btn-block']) }}
+              {{ Helper::linkRoute('survey.stats', 'Stats', [$survey->uuid], ['class' => 'btn btn-info btn-block']) }}
             @endif
           </div>
           <div class="col-sm-4 col-xs-12 form-group">
             @if(count($questions) > 0)
               @if($survey->status === 'draft')
-                {{ Html::linkRoute('survey.run', 'Run', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
+                {{ Helper::linkRoute('survey.run', 'Run', [$survey->uuid], ['class' => 'btn btn-block btn-primary']) }}
               @elseif($survey->status === 'ready')
-                {{ Html::linkRoute('survey.pause', 'Pause', [$survey->uuid], ['class' => 'btn btn-block btn-danger']) }}
+                {{ Helper::linkRoute('survey.pause', 'Pause', [$survey->uuid], ['class' => 'btn btn-block btn-danger']) }}
               @endif
             @endif
           </div>
           <div class="col-sm-4 col-xs-12 form-group">
-            {{ Html::linkRoute('dashboard', 'Back', [], ['class' => 'btn-block btn btn-default']) }}
+            {{ Helper::linkRoute('dashboard', 'Back', [], ['class' => 'btn-block btn btn-default']) }}
           </div>
         </div>
       {!! Helper::closeForm() !!}
