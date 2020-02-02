@@ -17,6 +17,12 @@ window.PUSHER_APP_CLUSTER = '{{ Helper::getDotEnvFileVar('PUSHER_APP_CLUSTER') }
 @endif
 
 window.GOOGLE_RECAPTCHA_ENABLED = {{ Helper::isGoogleReCaptchaEnabled() ? 'true' : 'false' }};
+
+window.getLaravelRootUrl = function() {
+  var url = new URL(location);
+  url.pathname = LARAVEL_SURVEY_PREFIX_URL;
+  return url.toString();
+}
 </script>
 <link href="https://getbootstrap.com/docs/3.3/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 

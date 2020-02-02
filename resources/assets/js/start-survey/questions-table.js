@@ -20,11 +20,7 @@ export default class QuestionsTable {
       return sid
     }).catch(error => {
       this.dom_survey_title.text('Try again later.')
-      return setTimeout(_ => {
-        const url = new URL(location)
-        url.pathname = LARAVEL_SURVEY_PREFIX_URL
-        location = url.toString()
-      }, 2e3)
+      return setTimeout(_ => location = getLaravelRootUrl(), 2e3)
     })
   }
 
@@ -230,6 +226,6 @@ export default class QuestionsTable {
     this.dom_start_button.remove()
     this.dom_survey_table.remove()
     this.dom_survey_title.text('Thanks for participating!')
-    setTimeout(_ => location = '/laravel', 2000)
+    setTimeout(_ => location = location = getLaravelRootUrl(), 2e3)
   }
 }
