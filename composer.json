@@ -14,14 +14,10 @@
         "laravelcollective/html": "^6",
         "nesbot/carbon": "^2",
         "pusher/pusher-php-server": "~3.0",
-        "symfony/polyfill-iconv": "^1.13",
-        "symfony/routing": "^4.4",
-        "webpatser/laravel-uuid": "2.*",
-        "fideloper/proxy": "^4.0"
+        "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "filp/whoops": "~2.0",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "^8.0"
     },
