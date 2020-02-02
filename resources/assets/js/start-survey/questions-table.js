@@ -20,7 +20,11 @@ export default class QuestionsTable {
       return sid
     }).catch(error => {
       this.dom_survey_title.text('Try again later.')
-      return setTimeout(_ => location = '/laravel', 2e3)
+      return setTimeout(_ => {
+        const url = new URL(location)
+        url.pathname = LARAVEL_SURVEY_PREFIX_URL
+        location = url.toString()
+      }, 2e3)
     })
   }
 
