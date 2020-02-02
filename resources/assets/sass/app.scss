@@ -30,6 +30,11 @@ body {
   margin-top: 20px;
 }
 
+.navbar > .container-fluid {
+  background-color: #f8f8f8;
+  border: 1px solid #e7e7e7;
+}
+
 .navbar > .container-fluid,
 .panel > .panel-footer > div:nth-child(1)
 {

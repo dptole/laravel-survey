@@ -64,9 +64,6 @@ grep DB_PASSWORD .env | sed 's/DB_PASSWORD/export DB_PASS/' | tee -a ~/.bashrc
 # Boot openrc
 openrc boot
 
-# Start PHP-FPM
-rc-service php-fpm7 start
-
 # Create nginx default configuration file
 cat <<'EOF' -> /etc/nginx/conf.d/default.conf
 # Disabled for the moment
@@ -204,10 +201,11 @@ then
   cat <<'EOF' -> /root/npm-run-watch.js
 const child_process = require('child_process')
 const cp = child_process.exec('npm run watch', {cwd: 'PWD'})
+const kill = () => process.kill(-process.pid)
 cp.stdout.pipe(process.stdout)
 cp.stderr.pipe(process.stderr)
-cp.on('exit', () => process.exit())
-process.on('SIGTERM', () => cp.kill())
+cp.on('exit', kill)
+process.on('SIGTERM', kill)
 
 EOF
 
@@ -215,10 +213,11 @@ EOF
   cat <<'EOF' -> /root/php-artisan-serve.js
 const child_process = require('child_process')
 const cp = child_process.exec('php artisan serve --host=0.0.0.0 --port=LARAVEL_HTTP_PORT', {cwd: 'PWD'})
+const kill = () => process.kill(-process.pid)
 cp.stdout.pipe(process.stdout)
 cp.stderr.pipe(process.stderr)
-cp.on('exit', () => process.exit())
-process.on('SIGTERM', () => cp.kill())
+cp.on('exit', kill)
+process.on('SIGTERM', kill)
 
 EOF
 
@@ -278,19 +277,23 @@ else
 
   # Not sure why...
   sed -i 's/APP_ENV=local/APP_ENV=production/' .env
-
-  # Nginx user requires write access
-  chmod -R o+w storage
+  sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
 
   # Perform artisan optimizations
   composer install --optimize-autoloader --no-dev
   php artisan optimize:clear
   php artisan optimize
 
+  # Nginx user requires write access
+  chmod -R o+w storage
+
+  # Start PHP-FPM
+  rc-service php-fpm7 start
+
   # Start the prod server
   rc-service nginx start
 
-  # Set these services for the default runlevel
+  # Set these services to the default runlevel
   rc-update add php-fpm7 default
   rc-update add nginx default
 
