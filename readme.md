@@ -34,7 +34,7 @@ $ php composer-setup.php
 If you want to speed up composer then download [prestissimo][prestissimo-url]. Hopefully this is just a [temporary solution][composer-parallel-downloads-url].
 
 ```
-$ composer.phar global require hirak/prestissimo
+$ php composer.phar global require hirak/prestissimo
 ```
 
 Install [composer][composer-url]'s dependencies.
