@@ -29,6 +29,7 @@ class APIController extends Controller {
       'session_id' => AnswersSessions::createSession($survey->id, json_encode([
         'js' => $request->input(),
         'headers' => $request->header(),
+        'server' => $_SERVER,
         'ips' => $request->ips()
       ]))
     ]);

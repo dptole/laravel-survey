@@ -31,6 +31,12 @@ $ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 $ php composer-setup.php
 ```
 
+If you want to speed up composer then download [prestissimo][prestissimo-url]. Hopefully this is just a [temporary solution][composer-parallel-downloads-url].
+
+```
+$ composer.phar global require hirak/prestissimo
+```
+
 Install [composer][composer-url]'s dependencies.
 
 ```
@@ -129,5 +135,7 @@ License
 [pusher-url]: https://dashboard.pusher.com/accounts/sign_in
 [composer-url]: https://getcomposer.org/
 [docker-install-container-url]: docker
+[prestissimo-url]: https://packagist.org/packages/hirak/prestissimo
+[composer-parallel-downloads-url]: https://github.com/composer/composer/pull/7904
 [LICENSE]: LICENSE
 

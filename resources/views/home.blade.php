@@ -91,6 +91,10 @@
         </tbody>
       </table>
     @endif
+
+    @if(Helper::isMaxMindGeoIpEnabled())
+    <h6 class="text-center">Uses <a href="https://dev.maxmind.com/geoip/geoip2/downloadable/" target="_blank">GeoIP2</a> from <a href="https://www.maxmind.com" target="_blank">MaxMind</a>.</h6>
+    @endif
   @endif
 @endsection
 

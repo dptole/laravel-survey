@@ -575,4 +575,20 @@ class Helper {
       $http_code === 200
     ;
   }
+
+  public static function isMaxMindGeoIpEnabled() {
+    return isset($_SERVER['MM_IP_COUNTRY_CODE']) ||
+      isset($_SERVER['MM_IP_EN_COUNTRY_NAME']) ||
+      isset($_SERVER['MM_HEADER_COUNTRY_CODE']) ||
+      isset($_SERVER['MM_HEADER_EN_COUNTRY_NAME']) ||
+
+      isset($_SERVER['MM_IP_ASN_CODE']) ||
+      isset($_SERVER['MM_IP_ASN_NAME']) ||
+      isset($_SERVER['MM_HEADER_ASN_CODE']) ||
+      isset($_SERVER['MM_HEADER_ASN_NAME']) ||
+
+      isset($_SERVER['MM_IP_EN_CITY_NAME']) ||
+      isset($_SERVER['MM_HEADER_EN_CITY_NAME'])
+    ;
+  }
 }
