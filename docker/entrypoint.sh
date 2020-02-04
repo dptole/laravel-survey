@@ -125,24 +125,22 @@ geoip2 MMDB {
 
   $IP_geoip2_data_country_code source=$remote_addr country iso_code;
   $IP_geoip2_data_country_name_en source=$remote_addr country names en;
+  $IP_geoip2_data_continent_name_en source=$remote_addr continent name en;
 
   $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
   $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
+  $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
 }
 EOF
 
   cat <<'EOF' -> $FASTCGI_COUNTRY_PARAMS_TEMPLATE
-    # var_dump($_SERVER['MM_IP_COUNTRY_CODE']);
     fastcgi_param MM_IP_COUNTRY_CODE            $IP_geoip2_data_country_code;
-
-    # var_dump($_SERVER['MM_IP_EN_COUNTRY_NAME']);
     fastcgi_param MM_IP_EN_COUNTRY_NAME         $IP_geoip2_data_country_name_en;
+    fastcgi_param MM_IP_EN_CONTINENT_NAME       $IP_geoip2_data_continent_name_en;
 
-    # var_dump($_SERVER['MM_HEADER_COUNTRY_CODE']);
     fastcgi_param MM_HEADER_COUNTRY_CODE        $HEADER_geoip2_data_country_code;
-
-    # var_dump($_SERVER['MM_HEADER_EN_COUNTRY_NAME']);
     fastcgi_param MM_HEADER_EN_COUNTRY_NAME     $HEADER_geoip2_data_country_name_en;
+    fastcgi_param MM_HEADER_EN_CONTINENT_NAME   $HEADER_geoip2_data_continent_name_en;
 
 EOF
 
@@ -169,17 +167,11 @@ geoip2 MMDB {
 EOF
 
   cat <<'EOF' -> $FASTCGI_ASN_PARAMS_TEMPLATE
-    # var_dump($_SERVER['MM_IP_ASN_CODE']);
-    fastcgi_param MM_IP_ASN_CODE                $IP_geoip2_data_asn_code;
+    fastcgi_param MM_IP_ASN_CODE      $IP_geoip2_data_asn_code;
+    fastcgi_param MM_IP_ASN_NAME      $IP_geoip2_data_asn_name;
 
-    # var_dump($_SERVER['MM_IP_ASN_NAME']);
-    fastcgi_param MM_IP_ASN_NAME                $IP_geoip2_data_asn_name;
-
-    # var_dump($_SERVER['MM_HEADER_ASN_CODE']);
-    fastcgi_param MM_HEADER_ASN_CODE            $HEADER_geoip2_data_asn_code;
-
-    # var_dump($_SERVER['MM_HEADER_ASN_NAME']);
-    fastcgi_param MM_HEADER_ASN_NAME            $HEADER_geoip2_data_asn_name;
+    fastcgi_param MM_HEADER_ASN_CODE  $HEADER_geoip2_data_asn_code;
+    fastcgi_param MM_HEADER_ASN_NAME  $HEADER_geoip2_data_asn_name;
 
 EOF
 
@@ -197,18 +189,48 @@ then
 geoip2 MMDB {
   auto_reload 5m;
 
+  $IP_geoip2_data_country_code source=$remote_addr country iso_code;
+  $IP_geoip2_data_country_name_en source=$remote_addr country names en;
   $IP_geoip2_data_city_name_en source=$remote_addr city names en;
+  $IP_geoip2_data_postal_code source=$remote_addr postal code;
+  $IP_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
+  $IP_geoip2_data_location_latitude source=$remote_addr location latitude;
+  $IP_geoip2_data_location_longitude source=$remote_addr location longitude;
+  $IP_geoip2_data_location_time_zone source=$remote_addr location time_zone;
+  $IP_geoip2_data_continent_name_en source=$remote_addr continent name en;
 
+  $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
+  $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
   $HEADER_geoip2_data_city_name_en source=$http_x_forwarded_for city names en;
+  $HEADER_geoip2_data_postal_code source=$http_x_forwarded_for postal code;
+  $HEADER_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
+  $HEADER_geoip2_data_location_latitude source=$http_x_forwarded_for location latitude;
+  $HEADER_geoip2_data_location_longitude source=$http_x_forwarded_for location longitude;
+  $HEADER_geoip2_data_location_time_zone source=$http_x_forwarded_for location time_zone;
+  $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
 }
 EOF
 
   cat <<'EOF' -> $FASTCGI_CITY_PARAMS_TEMPLATE
-    # var_dump($_SERVER['MM_IP_EN_CITY_NAME']);
-    fastcgi_param MM_IP_EN_CITY_NAME            $IP_geoip2_data_city_name_en;
+    fastcgi_param MM_IP_COUNTRY_CODE              $IP_geoip2_data_country_code;
+    fastcgi_param MM_IP_EN_COUNTRY_NAME           $IP_geoip2_data_country_name_en;
+    fastcgi_param MM_IP_EN_CITY_NAME              $IP_geoip2_data_city_name_en;
+    fastcgi_param MM_IP_POSTAL_CODE               $IP_geoip2_data_postal_code;
+    fastcgi_param MM_IP_EN_SUBDIVISIONS_NAME      $IP_geoip2_data_subdivisions_name_en;
+    fastcgi_param MM_IP_LOCATION_LATITUDE         $IP_geoip2_data_location_latitude;
+    fastcgi_param MM_IP_LOCATION_LONGITUDE        $IP_geoip2_data_location_longitude;
+    fastcgi_param MM_IP_LOCATION_TIME_ZONE        $IP_geoip2_data_location_time_zone;
+    fastcgi_param MM_IP_EN_CONTINENT_NAME         $IP_geoip2_data_continent_name_en;
 
-    # var_dump($_SERVER['MM_HEADER_EN_CITY_NAME']);
-    fastcgi_param MM_HEADER_EN_CITY_NAME        $HEADER_geoip2_data_city_name_en;
+    fastcgi_param MM_HEADER_COUNTRY_CODE          $HEADER_geoip2_data_country_code;
+    fastcgi_param MM_HEADER_EN_COUNTRY_NAME       $HEADER_geoip2_data_country_name_en;
+    fastcgi_param MM_HEADER_EN_CITY_NAME          $HEADER_geoip2_data_city_name_en;
+    fastcgi_param MM_HEADER_POSTAL_CODE           $HEADER_geoip2_data_postal_code;
+    fastcgi_param MM_HEADER_EN_SUBDIVISIONS_NAME  $HEADER_geoip2_data_subdivisions_name_en;
+    fastcgi_param MM_HEADER_LOCATION_LATITUDE     $HEADER_geoip2_data_location_latitude;
+    fastcgi_param MM_HEADER_LOCATION_LONGITUDE    $HEADER_geoip2_data_location_longitude;
+    fastcgi_param MM_HEADER_LOCATION_TIME_ZONE    $HEADER_geoip2_data_location_time_zone;
+    fastcgi_param MM_HEADER_EN_CONTINENT_NAME     $HEADER_geoip2_data_continent_name_en;
 
 EOF
 
