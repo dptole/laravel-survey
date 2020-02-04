@@ -6,6 +6,138 @@ set -x
 
 # Setup functions
 
+create_maxmind_country_fastcgi_template() {
+  cat <<'EOF' -> $1
+    fastcgi_param MM_IP_COUNTRY_CODE            $IP_geoip2_data_country_code;
+    fastcgi_param MM_IP_EN_COUNTRY_NAME         $IP_geoip2_data_country_name_en;
+    fastcgi_param MM_IP_EN_CONTINENT_NAME       $IP_geoip2_data_continent_name_en;
+
+    fastcgi_param MM_HEADER_COUNTRY_CODE        $HEADER_geoip2_data_country_code;
+    fastcgi_param MM_HEADER_EN_COUNTRY_NAME     $HEADER_geoip2_data_country_name_en;
+    fastcgi_param MM_HEADER_EN_CONTINENT_NAME   $HEADER_geoip2_data_continent_name_en;
+
+EOF
+}
+
+create_maxmind_asn_fastcgi_template() {
+  cat <<'EOF' -> $1
+    fastcgi_param MM_IP_ASN_CODE      $IP_geoip2_data_asn_code;
+    fastcgi_param MM_IP_ASN_NAME      $IP_geoip2_data_asn_name;
+
+    fastcgi_param MM_HEADER_ASN_CODE  $HEADER_geoip2_data_asn_code;
+    fastcgi_param MM_HEADER_ASN_NAME  $HEADER_geoip2_data_asn_name;
+
+EOF
+}
+
+create_maxmind_city_fastcgi_template() {
+  cat <<'EOF' -> $1
+    fastcgi_param MM_IP_COUNTRY_CODE              $IP_geoip2_data_country_code;
+    fastcgi_param MM_IP_EN_COUNTRY_NAME           $IP_geoip2_data_country_name_en;
+    fastcgi_param MM_IP_EN_CITY_NAME              $IP_geoip2_data_city_name_en;
+    fastcgi_param MM_IP_POSTAL_CODE               $IP_geoip2_data_postal_code;
+    fastcgi_param MM_IP_EN_SUBDIVISIONS_NAME      $IP_geoip2_data_subdivisions_name_en;
+    fastcgi_param MM_IP_LOCATION_LATITUDE         $IP_geoip2_data_location_latitude;
+    fastcgi_param MM_IP_LOCATION_LONGITUDE        $IP_geoip2_data_location_longitude;
+    fastcgi_param MM_IP_LOCATION_TIME_ZONE        $IP_geoip2_data_location_time_zone;
+    fastcgi_param MM_IP_EN_CONTINENT_NAME         $IP_geoip2_data_continent_name_en;
+
+    fastcgi_param MM_HEADER_COUNTRY_CODE          $HEADER_geoip2_data_country_code;
+    fastcgi_param MM_HEADER_EN_COUNTRY_NAME       $HEADER_geoip2_data_country_name_en;
+    fastcgi_param MM_HEADER_EN_CITY_NAME          $HEADER_geoip2_data_city_name_en;
+    fastcgi_param MM_HEADER_POSTAL_CODE           $HEADER_geoip2_data_postal_code;
+    fastcgi_param MM_HEADER_EN_SUBDIVISIONS_NAME  $HEADER_geoip2_data_subdivisions_name_en;
+    fastcgi_param MM_HEADER_LOCATION_LATITUDE     $HEADER_geoip2_data_location_latitude;
+    fastcgi_param MM_HEADER_LOCATION_LONGITUDE    $HEADER_geoip2_data_location_longitude;
+    fastcgi_param MM_HEADER_LOCATION_TIME_ZONE    $HEADER_geoip2_data_location_time_zone;
+    fastcgi_param MM_HEADER_EN_CONTINENT_NAME     $HEADER_geoip2_data_continent_name_en;
+
+EOF
+}
+
+create_maxmind_country_template() {
+  cat <<'EOF' -> $1
+geoip2 MMDB {
+  auto_reload 5m;
+
+  $IP_geoip2_data_country_code source=$remote_addr country iso_code;
+  $IP_geoip2_data_country_name_en source=$remote_addr country names en;
+  $IP_geoip2_data_continent_name_en source=$remote_addr continent name en;
+
+  $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
+  $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
+  $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
+}
+
+log_format geoip2-country '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code"';
+
+access_log /var/log/nginx/access.log geoip2-country;
+
+EOF
+}
+
+create_maxmind_asn_template() {
+  cat <<'EOF' -> $1
+geoip2 MMDB {
+  auto_reload 5m;
+
+  $IP_geoip2_data_asn_code source=$remote_addr autonomous_system_number;
+  $IP_geoip2_data_asn_name source=$remote_addr autonomous_system_organization;
+
+  $HEADER_geoip2_data_asn_code source=$http_x_forwarded_for autonomous_system_number;
+  $HEADER_geoip2_data_asn_name source=$http_x_forwarded_for autonomous_system_organization;
+}
+
+log_format geoip2-asn '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+
+access_log /var/log/nginx/access.log geoip2-asn;
+
+EOF
+}
+
+create_maxmind_city_template() {
+  cat <<'EOF' -> $1
+geoip2 MMDB {
+  auto_reload 5m;
+
+  $IP_geoip2_data_country_code source=$remote_addr country iso_code;
+  $IP_geoip2_data_country_name_en source=$remote_addr country names en;
+  $IP_geoip2_data_city_name_en source=$remote_addr city names en;
+  $IP_geoip2_data_postal_code source=$remote_addr postal code;
+  $IP_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
+  $IP_geoip2_data_location_latitude source=$remote_addr location latitude;
+  $IP_geoip2_data_location_longitude source=$remote_addr location longitude;
+  $IP_geoip2_data_location_time_zone source=$remote_addr location time_zone;
+  $IP_geoip2_data_continent_name_en source=$remote_addr continent name en;
+
+  $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
+  $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
+  $HEADER_geoip2_data_city_name_en source=$http_x_forwarded_for city names en;
+  $HEADER_geoip2_data_postal_code source=$http_x_forwarded_for postal code;
+  $HEADER_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
+  $HEADER_geoip2_data_location_latitude source=$http_x_forwarded_for location latitude;
+  $HEADER_geoip2_data_location_longitude source=$http_x_forwarded_for location longitude;
+  $HEADER_geoip2_data_location_time_zone source=$http_x_forwarded_for location time_zone;
+  $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
+}
+
+log_format geoip2-city '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
+  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone"';
+
+access_log /var/log/nginx/access.log geoip2-city;
+
+EOF
+}
+
 get_maxmind_folder() {
   MAXMIND_DIR="$HOME/maxmind"
   mkdir -p "$MAXMIND_DIR"
@@ -80,10 +212,17 @@ cat <<EOF -> ~/.bashrc
 export DB_DATA_PATH=/var/lib/mysql
 export DB_ROOT_PASS=root
 export MAX_ALLOWED_PACKET=200M
+
+export LARAVEL_HTTP_PORT=$LARAVEL_HTTP_PORT
+export LARAVEL_SERVER_ENV=$LARAVEL_SERVER_ENV
 export LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY=$LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY
 export LARAVEL_MAXMIND_ASN_LICENSE_KEY=$LARAVEL_MAXMIND_ASN_LICENSE_KEY
 export LARAVEL_MAXMIND_CITY_LICENSE_KEY=$LARAVEL_MAXMIND_CITY_LICENSE_KEY
 export LARAVEL_WORKDIR=$LARAVEL_WORKDIR
+export LARAVEL_MAXMIND_COUNTRY_MMDB=$LARAVEL_MAXMIND_COUNTRY_MMDB
+export LARAVEL_MAXMIND_ASN_MMDB=$LARAVEL_MAXMIND_ASN_MMDB
+export LARAVEL_MAXMIND_CITY_MMDB=$LARAVEL_MAXMIND_CITY_MMDB
+
 export LARAVEL_PUBLIC_PATH=$LARAVEL_WORKDIR/public
 
 EOF
@@ -151,182 +290,172 @@ php artisan key:generate
 # Start DB migrations
 php artisan migrate
 
-if [ "$LARAVEL_SERVER_ENV" == "dev" ]
+# Maxmind GeoIP2 Nginx module
+MAXMIND_COUNTRY_TEMPLATE="$(get_maxmind_folder)/maxmind-country-template"
+FASTCGI_COUNTRY_PARAMS_TEMPLATE="$(get_maxmind_folder)/fastcgi-country-params-template"
+touch "$MAXMIND_COUNTRY_TEMPLATE"
+touch "$FASTCGI_COUNTRY_PARAMS_TEMPLATE"
+if [ -e "$LARAVEL_MAXMIND_COUNTRY_MMDB" ]
 then
-  # http://manpages.org/openrc-run/8
+  create_maxmind_country_template $MAXMIND_COUNTRY_TEMPLATE
+  sed -i "s/MMDB/${LARAVEL_MAXMIND_COUNTRY_MMDB//\//\\/}/" $MAXMIND_COUNTRY_TEMPLATE
+  create_maxmind_country_fastcgi_template $FASTCGI_COUNTRY_PARAMS_TEMPLATE
 
-  # NPM-openrc service
-  cat <<'EOF' -> /root/npm-run-watch.js
-const child_process = require('child_process')
-const cp = child_process.exec('npm run watch', {cwd: 'PWD'})
-const kill = () => process.kill(-process.pid)
-cp.stdout.pipe(process.stdout)
-cp.stderr.pipe(process.stderr)
-cp.on('exit', kill)
-process.on('SIGTERM', kill)
+elif [ "$LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY" != "false" ]
+then
+  MAXMIND_COUNTRY_MMDB="$(get_maxmind_db GeoLite2-Country $LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY)"
 
-EOF
+  if [ -e "$MAXMIND_COUNTRY_MMDB" ]
+  then
+    create_maxmind_country_template $MAXMIND_COUNTRY_TEMPLATE
+    sed -i "s/MMDB/${MAXMIND_COUNTRY_MMDB//\//\\/}/" $MAXMIND_COUNTRY_TEMPLATE
+    create_maxmind_country_fastcgi_template $FASTCGI_COUNTRY_PARAMS_TEMPLATE
+  fi
+fi
 
-  # PHP-openrc service
-  cat <<'EOF' -> /root/php-artisan-serve.js
-const child_process = require('child_process')
-const cp = child_process.exec('php artisan serve --host=0.0.0.0 --port=LARAVEL_HTTP_PORT', {cwd: 'PWD'})
-const kill = () => process.kill(-process.pid)
-cp.stdout.pipe(process.stdout)
-cp.stderr.pipe(process.stderr)
-cp.on('exit', kill)
-process.on('SIGTERM', kill)
+MAXMIND_ASN_TEMPLATE="$(get_maxmind_folder)/maxmind-asn-template"
+FASTCGI_ASN_PARAMS_TEMPLATE="$(get_maxmind_folder)/fastcgi-asn-params-template"
+touch "$MAXMIND_ASN_TEMPLATE"
+touch "$FASTCGI_ASN_PARAMS_TEMPLATE"
+if [ -e "$LARAVEL_MAXMIND_ASN_MMDB" ]
+then
+  create_maxmind_asn_template $MAXMIND_ASN_TEMPLATE
+  sed -i "s/MMDB/${LARAVEL_MAXMIND_ASN_MMDB//\//\\/}/" $MAXMIND_ASN_TEMPLATE
+  create_maxmind_asn_fastcgi_template $FASTCGI_ASN_PARAMS_TEMPLATE
 
-EOF
+elif [ "$LARAVEL_MAXMIND_ASN_LICENSE_KEY" != "false" ]
+then
+  MAXMIND_ASN_MMDB="$(get_maxmind_db GeoLite2-ASN $LARAVEL_MAXMIND_ASN_LICENSE_KEY)"
 
-  # Run npm run watch as an openrc service
-  cat <<'EOF' -> /etc/init.d/npm-run-watch
-#!/sbin/openrc-run
+  if [ -e "$MAXMIND_ASN_MMDB" ]
+  then
+    create_maxmind_asn_template $MAXMIND_ASN_TEMPLATE
+    sed -i "s/MMDB/${MAXMIND_ASN_MMDB//\//\\/}/" $MAXMIND_ASN_TEMPLATE
+    create_maxmind_asn_fastcgi_template $FASTCGI_ASN_PARAMS_TEMPLATE
+  fi
+fi
 
-name="npm run watch"
-description="NPM watch command for rebundle the JavaScript/CSS assets"
+MAXMIND_CITY_TEMPLATE="$(get_maxmind_folder)/maxmind-city-template"
+FASTCGI_CITY_PARAMS_TEMPLATE="$(get_maxmind_folder)/fastcgi-city-params-template"
+touch "$MAXMIND_CITY_TEMPLATE"
+touch "$FASTCGI_CITY_PARAMS_TEMPLATE"
+if [ -e "$LARAVEL_MAXMIND_CITY_MMDB" ]
+then
+  create_maxmind_city_template $MAXMIND_CITY_TEMPLATE
+  sed -i "s/MMDB/${LARAVEL_MAXMIND_CITY_MMDB//\//\\/}/" $MAXMIND_CITY_TEMPLATE
+  create_maxmind_city_fastcgi_template $FASTCGI_CITY_PARAMS_TEMPLATE
 
-command="/usr/bin/node"
-command_args="/root/npm-run-watch.js"
-command_background="yes"
+elif [ "$LARAVEL_MAXMIND_CITY_LICENSE_KEY" != "false" ]
+then
+  MAXMIND_CITY_MMDB="$(get_maxmind_db GeoLite2-City $LARAVEL_MAXMIND_CITY_LICENSE_KEY)"
 
-pidfile="/run/$RC_SVCNAME.pid"
+  if [ -e "$MAXMIND_CITY_MMDB" ]
+  then
+    create_maxmind_city_template $MAXMIND_CITY_TEMPLATE
+    sed -i "s/MMDB/${MAXMIND_CITY_MMDB//\//\\/}/" $MAXMIND_CITY_TEMPLATE
+    create_maxmind_city_fastcgi_template $FASTCGI_CITY_PARAMS_TEMPLATE
+  fi
+fi
 
-output_log="/var/log/$RC_SVCNAME.log"
-error_log="/var/log/$RC_SVCNAME.log"
+# Setup Nginx installation
+NGINX_DEFAULT_CONF="/etc/nginx/nginx.conf"
+NGINX_DEFAULT_VIRTUAL_HOST="/etc/nginx/conf.d/default.conf"
 
-EOF
+addgroup -S nginx
+adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx
 
-  # Run php artisan serve an openrc service
-  cat <<'EOF' -> /etc/init.d/php-artisan-serve
-#!/sbin/openrc-run
+export GNUPGHOME="$(mktemp -d)"
 
-name="php artisan serve"
-description="Dev server for PHP using artisan"
+apk add autoconf libtool automake git g++ cmake gcc libc-dev make openssl-dev pcre-dev zlib-dev linux-headers gnupg1 libxslt-dev gd-dev perl-dev geoip-dev libmaxminddb-dev
 
-command="/usr/bin/node"
-command_args="/root/php-artisan-serve.js"
-command_background="yes"
+mkdir -p /etc/nginx/conf.d
+mkdir -p /var/log/nginx/
+mkdir -p /var/cache/nginx/client_temp
+mkdir -p /var/cache/nginx/proxy_temp
+mkdir -p /var/cache/nginx/uwsgi_temp
+mkdir -p /var/cache/nginx/scgi_temp
+mkdir -p /usr/lib/nginx/modules
+mkdir -p /usr/lib/nginx/git-modules/ngx_brotli
+mkdir -p /usr/lib/nginx/git-modules/ngx_geoip2
 
-pidfile="/run/$RC_SVCNAME.pid"
+chown -R nginx.nginx /etc/nginx/
+chown -R nginx.nginx /var/log/nginx/
+chown -R nginx.nginx /var/cache/nginx/
+chown -R nginx.nginx /usr/lib/nginx/
 
-output_log="/var/log/$RC_SVCNAME.log"
-error_log="/var/log/$RC_SVCNAME.err"
+git clone --recursive https://github.com/google/ngx_brotli.git /usr/lib/nginx/git-modules/ngx_brotli
+cd /usr/lib/nginx/git-modules/ngx_brotli
+# Try to make it stable
+git reset --hard e505dce68acc190cc5a1e780a3b0275e39f160ca
 
-EOF
+git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git /usr/lib/nginx/git-modules/ngx_geoip2
+cd /usr/lib/nginx/git-modules/ngx_geoip2
+# Try to make it stable
+git reset --hard 1cabd8a1f68ea3998f94e9f3504431970f848fbf
 
-  chmod +x /etc/init.d/npm-run-watch
-  chmod +x /etc/init.d/php-artisan-serve
+# Download nginx binary and compile its source code
+cd $HOME
+wget https://nginx.org/download/nginx-1.16.1.tar.gz
+tar xzf nginx-1.16.1.tar.gz
+rm nginx-1.16.1.tar.gz
+cd nginx-1.16.1
 
-  sed -i 's/PWD/'$PWD_SAFE'/' /root/npm-run-watch.js
+CONFIG="\
+--prefix=/etc/nginx \
+--sbin-path=/usr/sbin/nginx \
+--modules-path=/usr/lib/nginx/modules \
+--conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--pid-path=/var/run/nginx.pid \
+--lock-path=/var/run/nginx.lock \
+--http-client-body-temp-path=/var/cache/nginx/client_temp \
+--http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+--http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+--http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+--http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+--add-module=/usr/lib/nginx/git-modules/ngx_brotli \
+--add-module=/usr/lib/nginx/git-modules/ngx_geoip2 \
+--user=nginx \
+--group=nginx \
+--with-http_ssl_module \
+--with-http_realip_module \
+--with-http_addition_module \
+--with-http_sub_module \
+--with-http_dav_module \
+--with-http_flv_module \
+--with-http_mp4_module \
+--with-http_gunzip_module \
+--with-http_gzip_static_module \
+--with-http_random_index_module \
+--with-http_secure_link_module \
+--with-http_stub_status_module \
+--with-http_auth_request_module \
+--with-http_xslt_module=dynamic \
+--with-http_image_filter_module=dynamic \
+--with-http_geoip_module=dynamic \
+--with-http_perl_module=dynamic \
+--with-threads \
+--with-stream_geoip_module=dynamic \
+--with-stream \
+--with-stream_ssl_module \
+--with-stream_ssl_preread_module \
+--with-stream_realip_module \
+--with-http_slice_module \
+--with-mail \
+--with-mail_ssl_module \
+--with-compat \
+--with-file-aio \
+--with-http_v2_module"
 
-  sed -i 's/PWD/'$PWD_SAFE'/' /root/php-artisan-serve.js
-  sed -i 's/LARAVEL_HTTP_PORT/'$LARAVEL_HTTP_PORT'/' /root/php-artisan-serve.js
+echo "Compiling nginx..."
+./configure $CONFIG &>/dev/null
+make -j$(getconf _NPROCESSORS_ONLN) &>/dev/null
+make install &>/dev/null
 
-  # Watch for changes in the js/css files to rebundle
-  rc-service npm-run-watch start
+cd $LARAVEL_WORKDIR
 
-  # Start the artisan server in the background (dev)
-  rc-service php-artisan-serve start
-
-else
-  NGINX_DEFAULT_CONF="/etc/nginx/nginx.conf"
-  NGINX_DEFAULT_VIRTUAL_HOST="/etc/nginx/conf.d/default.conf"
-
-  addgroup -S nginx
-  adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx
-
-  export GNUPGHOME="$(mktemp -d)"
-
-  apk add autoconf libtool automake git g++ cmake gcc libc-dev make openssl-dev pcre-dev zlib-dev linux-headers gnupg1 libxslt-dev gd-dev perl-dev geoip-dev libmaxminddb-dev
-
-  mkdir -p /etc/nginx/conf.d
-  mkdir -p /var/log/nginx/
-  mkdir -p /var/cache/nginx/client_temp
-  mkdir -p /var/cache/nginx/proxy_temp
-  mkdir -p /var/cache/nginx/uwsgi_temp
-  mkdir -p /var/cache/nginx/scgi_temp
-  mkdir -p /usr/lib/nginx/modules
-  mkdir -p /usr/lib/nginx/git-modules/ngx_brotli
-  mkdir -p /usr/lib/nginx/git-modules/ngx_geoip2
-
-  chown -R nginx.nginx /etc/nginx/
-  chown -R nginx.nginx /var/log/nginx/
-  chown -R nginx.nginx /var/cache/nginx/
-  chown -R nginx.nginx /usr/lib/nginx/
-
-  git clone --recursive https://github.com/google/ngx_brotli.git /usr/lib/nginx/git-modules/ngx_brotli
-  cd /usr/lib/nginx/git-modules/ngx_brotli
-  # Try to make it stable
-  git reset --hard e505dce68acc190cc5a1e780a3b0275e39f160ca
-
-  git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git /usr/lib/nginx/git-modules/ngx_geoip2
-  cd /usr/lib/nginx/git-modules/ngx_geoip2
-  # Try to make it stable
-  git reset --hard 1cabd8a1f68ea3998f94e9f3504431970f848fbf
-
-  # Download nginx binary and compile its source code
-  cd $HOME
-  wget https://nginx.org/download/nginx-1.16.1.tar.gz
-  tar xzf nginx-1.16.1.tar.gz
-  rm nginx-1.16.1.tar.gz
-  cd nginx-1.16.1
-
-  CONFIG="\
-  --prefix=/etc/nginx \
-  --sbin-path=/usr/sbin/nginx \
-  --modules-path=/usr/lib/nginx/modules \
-  --conf-path=/etc/nginx/nginx.conf \
-  --error-log-path=/var/log/nginx/error.log \
-  --http-log-path=/var/log/nginx/access.log \
-  --pid-path=/var/run/nginx.pid \
-  --lock-path=/var/run/nginx.lock \
-  --http-client-body-temp-path=/var/cache/nginx/client_temp \
-  --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-  --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-  --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-  --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-  --add-module=/usr/lib/nginx/git-modules/ngx_brotli \
-  --add-module=/usr/lib/nginx/git-modules/ngx_geoip2 \
-  --user=nginx \
-  --group=nginx \
-  --with-http_ssl_module \
-  --with-http_realip_module \
-  --with-http_addition_module \
-  --with-http_sub_module \
-  --with-http_dav_module \
-  --with-http_flv_module \
-  --with-http_mp4_module \
-  --with-http_gunzip_module \
-  --with-http_gzip_static_module \
-  --with-http_random_index_module \
-  --with-http_secure_link_module \
-  --with-http_stub_status_module \
-  --with-http_auth_request_module \
-  --with-http_xslt_module=dynamic \
-  --with-http_image_filter_module=dynamic \
-  --with-http_geoip_module=dynamic \
-  --with-http_perl_module=dynamic \
-  --with-threads \
-  --with-stream_geoip_module=dynamic \
-  --with-stream \
-  --with-stream_ssl_module \
-  --with-stream_ssl_preread_module \
-  --with-stream_realip_module \
-  --with-http_slice_module \
-  --with-mail \
-  --with-mail_ssl_module \
-  --with-compat \
-  --with-file-aio \
-  --with-http_v2_module"
-
-  ./configure $CONFIG
-  make -j$(getconf _NPROCESSORS_ONLN)
-  make install
-
-  cd $LARAVEL_WORKDIR
-
-  cat <<'EOF' -> $NGINX_DEFAULT_CONF
+cat <<'EOF' -> $NGINX_DEFAULT_CONF
 # /etc/nginx/nginx.conf
 
 user nginx;
@@ -415,160 +544,9 @@ http {
 }
 EOF
 
-  # Maxmind GeoIP2 Nginx module
 
-  MAXMIND_COUNTRY_TEMPLATE="$(get_maxmind_folder)/maxmind-country-template"
-  FASTCGI_COUNTRY_PARAMS_TEMPLATE="$(get_maxmind_folder)/fastcgi-country-params-template"
-  touch "$MAXMIND_COUNTRY_TEMPLATE"
-  touch "$FASTCGI_COUNTRY_PARAMS_TEMPLATE"
-  if [ "$LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY" != "false" ]
-  then
-    MAXMIND_COUNTRY_MMDB="$(get_maxmind_db GeoLite2-Country $LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY)"
-    cat <<'EOF' -> $MAXMIND_COUNTRY_TEMPLATE
-geoip2 MMDB {
-  auto_reload 5m;
-
-  $IP_geoip2_data_country_code source=$remote_addr country iso_code;
-  $IP_geoip2_data_country_name_en source=$remote_addr country names en;
-  $IP_geoip2_data_continent_name_en source=$remote_addr continent name en;
-
-  $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
-  $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
-  $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
-}
-
-log_format geoip2-country '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code"';
-
-access_log /var/log/nginx/access.log geoip2-country;
-
-EOF
-
-    cat <<'EOF' -> $FASTCGI_COUNTRY_PARAMS_TEMPLATE
-    fastcgi_param MM_IP_COUNTRY_CODE            $IP_geoip2_data_country_code;
-    fastcgi_param MM_IP_EN_COUNTRY_NAME         $IP_geoip2_data_country_name_en;
-    fastcgi_param MM_IP_EN_CONTINENT_NAME       $IP_geoip2_data_continent_name_en;
-
-    fastcgi_param MM_HEADER_COUNTRY_CODE        $HEADER_geoip2_data_country_code;
-    fastcgi_param MM_HEADER_EN_COUNTRY_NAME     $HEADER_geoip2_data_country_name_en;
-    fastcgi_param MM_HEADER_EN_CONTINENT_NAME   $HEADER_geoip2_data_continent_name_en;
-
-EOF
-
-    sed -i "s/MMDB/${MAXMIND_COUNTRY_MMDB//\//\\/}/" $MAXMIND_COUNTRY_TEMPLATE
-  fi
-
-  MAXMIND_ASN_TEMPLATE="$(get_maxmind_folder)/maxmind-asn-template"
-  FASTCGI_ASN_PARAMS_TEMPLATE="$(get_maxmind_folder)/fastcgi-asn-params-template"
-  touch "$MAXMIND_ASN_TEMPLATE"
-  touch "$FASTCGI_ASN_PARAMS_TEMPLATE"
-  if [ "$LARAVEL_MAXMIND_ASN_LICENSE_KEY" != "false" ]
-  then
-    MAXMIND_ASN_MMDB="$(get_maxmind_db GeoLite2-ASN $LARAVEL_MAXMIND_ASN_LICENSE_KEY)"
-    cat <<'EOF' -> $MAXMIND_ASN_TEMPLATE
-geoip2 MMDB {
-  auto_reload 5m;
-
-  $IP_geoip2_data_asn_code source=$remote_addr autonomous_system_number;
-  $IP_geoip2_data_asn_name source=$remote_addr autonomous_system_organization;
-
-  $HEADER_geoip2_data_asn_code source=$http_x_forwarded_for autonomous_system_number;
-  $HEADER_geoip2_data_asn_name source=$http_x_forwarded_for autonomous_system_organization;
-}
-
-log_format geoip2-asn '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
-
-access_log /var/log/nginx/access.log geoip2-asn;
-
-EOF
-
-    cat <<'EOF' -> $FASTCGI_ASN_PARAMS_TEMPLATE
-    fastcgi_param MM_IP_ASN_CODE      $IP_geoip2_data_asn_code;
-    fastcgi_param MM_IP_ASN_NAME      $IP_geoip2_data_asn_name;
-
-    fastcgi_param MM_HEADER_ASN_CODE  $HEADER_geoip2_data_asn_code;
-    fastcgi_param MM_HEADER_ASN_NAME  $HEADER_geoip2_data_asn_name;
-
-EOF
-
-    sed -i "s/MMDB/${MAXMIND_ASN_MMDB//\//\\/}/" $MAXMIND_ASN_TEMPLATE
-  fi
-
-  MAXMIND_CITY_TEMPLATE="$(get_maxmind_folder)/maxmind-city-template"
-  FASTCGI_CITY_PARAMS_TEMPLATE="$(get_maxmind_folder)/fastcgi-city-params-template"
-  touch "$MAXMIND_CITY_TEMPLATE"
-  touch "$FASTCGI_CITY_PARAMS_TEMPLATE"
-  if [ "$LARAVEL_MAXMIND_CITY_LICENSE_KEY" != "false" ]
-  then
-    MAXMIND_CITY_MMDB="$(get_maxmind_db GeoLite2-City $LARAVEL_MAXMIND_CITY_LICENSE_KEY)"
-    cat <<'EOF' -> $MAXMIND_CITY_TEMPLATE
-geoip2 MMDB {
-  auto_reload 5m;
-
-  $IP_geoip2_data_country_code source=$remote_addr country iso_code;
-  $IP_geoip2_data_country_name_en source=$remote_addr country names en;
-  $IP_geoip2_data_city_name_en source=$remote_addr city names en;
-  $IP_geoip2_data_postal_code source=$remote_addr postal code;
-  $IP_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
-  $IP_geoip2_data_location_latitude source=$remote_addr location latitude;
-  $IP_geoip2_data_location_longitude source=$remote_addr location longitude;
-  $IP_geoip2_data_location_time_zone source=$remote_addr location time_zone;
-  $IP_geoip2_data_continent_name_en source=$remote_addr continent name en;
-
-  $HEADER_geoip2_data_country_code source=$http_x_forwarded_for country iso_code;
-  $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
-  $HEADER_geoip2_data_city_name_en source=$http_x_forwarded_for city names en;
-  $HEADER_geoip2_data_postal_code source=$http_x_forwarded_for postal code;
-  $HEADER_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
-  $HEADER_geoip2_data_location_latitude source=$http_x_forwarded_for location latitude;
-  $HEADER_geoip2_data_location_longitude source=$http_x_forwarded_for location longitude;
-  $HEADER_geoip2_data_location_time_zone source=$http_x_forwarded_for location time_zone;
-  $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
-}
-
-log_format geoip2-city '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en"'
-  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone"';
-
-access_log /var/log/nginx/access.log geoip2-city;
-
-EOF
-
-    cat <<'EOF' -> $FASTCGI_CITY_PARAMS_TEMPLATE
-    fastcgi_param MM_IP_COUNTRY_CODE              $IP_geoip2_data_country_code;
-    fastcgi_param MM_IP_EN_COUNTRY_NAME           $IP_geoip2_data_country_name_en;
-    fastcgi_param MM_IP_EN_CITY_NAME              $IP_geoip2_data_city_name_en;
-    fastcgi_param MM_IP_POSTAL_CODE               $IP_geoip2_data_postal_code;
-    fastcgi_param MM_IP_EN_SUBDIVISIONS_NAME      $IP_geoip2_data_subdivisions_name_en;
-    fastcgi_param MM_IP_LOCATION_LATITUDE         $IP_geoip2_data_location_latitude;
-    fastcgi_param MM_IP_LOCATION_LONGITUDE        $IP_geoip2_data_location_longitude;
-    fastcgi_param MM_IP_LOCATION_TIME_ZONE        $IP_geoip2_data_location_time_zone;
-    fastcgi_param MM_IP_EN_CONTINENT_NAME         $IP_geoip2_data_continent_name_en;
-
-    fastcgi_param MM_HEADER_COUNTRY_CODE          $HEADER_geoip2_data_country_code;
-    fastcgi_param MM_HEADER_EN_COUNTRY_NAME       $HEADER_geoip2_data_country_name_en;
-    fastcgi_param MM_HEADER_EN_CITY_NAME          $HEADER_geoip2_data_city_name_en;
-    fastcgi_param MM_HEADER_POSTAL_CODE           $HEADER_geoip2_data_postal_code;
-    fastcgi_param MM_HEADER_EN_SUBDIVISIONS_NAME  $HEADER_geoip2_data_subdivisions_name_en;
-    fastcgi_param MM_HEADER_LOCATION_LATITUDE     $HEADER_geoip2_data_location_latitude;
-    fastcgi_param MM_HEADER_LOCATION_LONGITUDE    $HEADER_geoip2_data_location_longitude;
-    fastcgi_param MM_HEADER_LOCATION_TIME_ZONE    $HEADER_geoip2_data_location_time_zone;
-    fastcgi_param MM_HEADER_EN_CONTINENT_NAME     $HEADER_geoip2_data_continent_name_en;
-
-EOF
-
-    sed -i "s/MMDB/${MAXMIND_CITY_MMDB//\//\\/}/" $MAXMIND_CITY_TEMPLATE
-  fi
-
-  # Create nginx default configuration file
-  cat <<'EOF' -> $NGINX_DEFAULT_VIRTUAL_HOST
+# Create nginx default configuration file
+cat <<'EOF' -> $NGINX_DEFAULT_VIRTUAL_HOST
 MAXMIND_COUNTRY_MMDB
 MAXMIND_ASN_MMDB
 MAXMIND_CITY_MMDB
@@ -619,22 +597,22 @@ FASTCGI_CITY_PARAMS
 }
 EOF
 
-  node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_COUNTRY_MMDB", fs.readFileSync("'$MAXMIND_COUNTRY_TEMPLATE'").toString()))'
-  node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_COUNTRY_PARAMS", fs.readFileSync("'$FASTCGI_COUNTRY_PARAMS_TEMPLATE'").toString()))'
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_COUNTRY_MMDB", fs.readFileSync("'$MAXMIND_COUNTRY_TEMPLATE'").toString()))'
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_COUNTRY_PARAMS", fs.readFileSync("'$FASTCGI_COUNTRY_PARAMS_TEMPLATE'").toString()))'
 
-  node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_ASN_MMDB", fs.readFileSync("'$MAXMIND_ASN_TEMPLATE'").toString()))'
-  node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_ASN_PARAMS", fs.readFileSync("'$FASTCGI_ASN_PARAMS_TEMPLATE'").toString()))'
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_ASN_MMDB", fs.readFileSync("'$MAXMIND_ASN_TEMPLATE'").toString()))'
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_ASN_PARAMS", fs.readFileSync("'$FASTCGI_ASN_PARAMS_TEMPLATE'").toString()))'
 
-  node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_CITY_MMDB", fs.readFileSync("'$MAXMIND_CITY_TEMPLATE'").toString()))'
-  node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_CITY_PARAMS", fs.readFileSync("'$FASTCGI_CITY_PARAMS_TEMPLATE'").toString()))'
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_CITY_MMDB", fs.readFileSync("'$MAXMIND_CITY_TEMPLATE'").toString()))'
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_CITY_PARAMS", fs.readFileSync("'$FASTCGI_CITY_PARAMS_TEMPLATE'").toString()))'
 
-  SAFE_LARAVEL_PUBLIC_PATH=${LARAVEL_PUBLIC_PATH//\//\\/}
+SAFE_LARAVEL_PUBLIC_PATH=${LARAVEL_PUBLIC_PATH//\//\\/}
 
-  sed -i 's/LARAVEL_NGINX_HTTP_PORT/'$LARAVEL_HTTP_PORT'/' $NGINX_DEFAULT_VIRTUAL_HOST
-  sed -i 's/LARAVEL_NGINX_ROOT/'$SAFE_LARAVEL_PUBLIC_PATH'/' $NGINX_DEFAULT_VIRTUAL_HOST
+sed -i 's/LARAVEL_NGINX_HTTP_PORT/'$LARAVEL_HTTP_PORT'/' $NGINX_DEFAULT_VIRTUAL_HOST
+sed -i 's/LARAVEL_NGINX_ROOT/'$SAFE_LARAVEL_PUBLIC_PATH'/' $NGINX_DEFAULT_VIRTUAL_HOST
 
-  # Create the main nginx config file
-  cat <<'EOF' -> $NGINX_DEFAULT_CONF
+# Create the main nginx config file
+cat <<'EOF' -> $NGINX_DEFAULT_CONF
 # /etc/nginx/nginx.conf
 
 user nginx;
@@ -720,14 +698,14 @@ http {
 }
 EOF
 
-  cat <<'EOF' -> /etc/init.d/nginx
+cat <<'EOF' -> /etc/init.d/nginx
 #!/sbin/openrc-run
 
 description="Nginx http and reverse proxy server"
 extra_commands="checkconfig"
 extra_started_commands="reload reopen upgrade"
 
-cfgfile=${cfgfile:-/etc/nginx/nginx.conf}
+cfgfile=${cfgfile-/etc/nginx/nginx.conf}
 pidfile=/var/run/nginx.pid
 command=/usr/sbin/nginx
 command_args="-c $cfgfile"
@@ -793,8 +771,52 @@ upgrade() {
 }
 
 EOF
-  chmod +x /etc/init.d/nginx
 
+# Allow the service to be executed
+chmod +x /etc/init.d/nginx
+
+if [ "$LARAVEL_SERVER_ENV" == "dev" ]
+then
+  # http://manpages.org/openrc-run/8
+
+  # NPM-openrc service
+  cat <<'EOF' -> /root/npm-run-watch.js
+const child_process = require('child_process')
+const cp = child_process.exec('npm run watch', {cwd: 'PWD'})
+const kill = () => process.kill(-process.pid)
+cp.stdout.pipe(process.stdout)
+cp.stderr.pipe(process.stderr)
+cp.on('exit', kill)
+process.on('SIGTERM', kill)
+
+EOF
+
+  # Run npm run watch as an openrc service
+  cat <<'EOF' -> /etc/init.d/npm-run-watch
+#!/sbin/openrc-run
+
+name="npm run watch"
+description="NPM watch command for rebundle the JavaScript/CSS assets"
+
+command="/usr/bin/node"
+command_args="/root/npm-run-watch.js"
+command_background="yes"
+
+pidfile="/run/$RC_SVCNAME.pid"
+
+output_log="/var/log/$RC_SVCNAME.log"
+error_log="/var/log/$RC_SVCNAME.log"
+
+EOF
+
+  chmod +x /etc/init.d/npm-run-watch
+
+  sed -i 's/PWD/'$PWD_SAFE'/' /root/npm-run-watch.js
+
+  # Watch for changes in the js/css files to rebundle
+  rc-service npm-run-watch start
+
+else
   # Create production JavaScript and CSS assets
   npm run production
 
@@ -810,17 +832,17 @@ EOF
   # Nginx user requires write access
   chmod -R o+w storage
 
-  # Start PHP-FPM
-  rc-service php-fpm7 start
-
-  # Start the prod server
-  rc-service nginx start
-
-  # Set these services to the default runlevel
-  rc-update add php-fpm7 default
-  rc-update add nginx default
-
 fi
+
+# Start PHP-FPM
+rc-service php-fpm7 start
+
+# Start the prod server
+rc-service nginx start
+
+# Set these services to the default runlevel
+rc-update add php-fpm7 default
+rc-update add nginx default
 
 # Don't stop the container on server crash
 set +x
