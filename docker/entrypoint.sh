@@ -135,7 +135,7 @@ log_format geoip2-city '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
   '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
-  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" ';
+  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" '
   '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code"';
 
 access_log /var/log/nginx/access.log geoip2-city;
