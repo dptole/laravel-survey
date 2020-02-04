@@ -36,21 +36,23 @@ create_maxmind_city_fastcgi_template() {
     fastcgi_param MM_IP_EN_COUNTRY_NAME           $IP_geoip2_data_country_name_en;
     fastcgi_param MM_IP_EN_CITY_NAME              $IP_geoip2_data_city_name_en;
     fastcgi_param MM_IP_POSTAL_CODE               $IP_geoip2_data_postal_code;
+    fastcgi_param MM_IP_EN_SUBDIVISIONS_ISO_CODE  $IP_geoip2_data_subdivisions_iso_code;
     fastcgi_param MM_IP_EN_SUBDIVISIONS_NAME      $IP_geoip2_data_subdivisions_name_en;
     fastcgi_param MM_IP_LOCATION_LATITUDE         $IP_geoip2_data_location_latitude;
     fastcgi_param MM_IP_LOCATION_LONGITUDE        $IP_geoip2_data_location_longitude;
     fastcgi_param MM_IP_LOCATION_TIME_ZONE        $IP_geoip2_data_location_time_zone;
     fastcgi_param MM_IP_EN_CONTINENT_NAME         $IP_geoip2_data_continent_name_en;
 
-    fastcgi_param MM_HEADER_COUNTRY_CODE          $HEADER_geoip2_data_country_code;
-    fastcgi_param MM_HEADER_EN_COUNTRY_NAME       $HEADER_geoip2_data_country_name_en;
-    fastcgi_param MM_HEADER_EN_CITY_NAME          $HEADER_geoip2_data_city_name_en;
-    fastcgi_param MM_HEADER_POSTAL_CODE           $HEADER_geoip2_data_postal_code;
-    fastcgi_param MM_HEADER_EN_SUBDIVISIONS_NAME  $HEADER_geoip2_data_subdivisions_name_en;
-    fastcgi_param MM_HEADER_LOCATION_LATITUDE     $HEADER_geoip2_data_location_latitude;
-    fastcgi_param MM_HEADER_LOCATION_LONGITUDE    $HEADER_geoip2_data_location_longitude;
-    fastcgi_param MM_HEADER_LOCATION_TIME_ZONE    $HEADER_geoip2_data_location_time_zone;
-    fastcgi_param MM_HEADER_EN_CONTINENT_NAME     $HEADER_geoip2_data_continent_name_en;
+    fastcgi_param MM_HEADER_COUNTRY_CODE              $HEADER_geoip2_data_country_code;
+    fastcgi_param MM_HEADER_EN_COUNTRY_NAME           $HEADER_geoip2_data_country_name_en;
+    fastcgi_param MM_HEADER_EN_CITY_NAME              $HEADER_geoip2_data_city_name_en;
+    fastcgi_param MM_HEADER_POSTAL_CODE               $HEADER_geoip2_data_postal_code;
+    fastcgi_param MM_HEADER_EN_SUBDIVISIONS_ISO_CODE  $HEADER_geoip2_data_subdivisions_iso_code;
+    fastcgi_param MM_HEADER_EN_SUBDIVISIONS_NAME      $HEADER_geoip2_data_subdivisions_name_en;
+    fastcgi_param MM_HEADER_LOCATION_LATITUDE         $HEADER_geoip2_data_location_latitude;
+    fastcgi_param MM_HEADER_LOCATION_LONGITUDE        $HEADER_geoip2_data_location_longitude;
+    fastcgi_param MM_HEADER_LOCATION_TIME_ZONE        $HEADER_geoip2_data_location_time_zone;
+    fastcgi_param MM_HEADER_EN_CONTINENT_NAME         $HEADER_geoip2_data_continent_name_en;
 
 EOF
 }
@@ -110,7 +112,8 @@ geoip2 MMDB {
   $IP_geoip2_data_country_name_en source=$remote_addr country names en;
   $IP_geoip2_data_city_name_en source=$remote_addr city names en;
   $IP_geoip2_data_postal_code source=$remote_addr postal code;
-  $IP_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
+  $IP_geoip2_data_subdivisions_iso_code source=$remote_addr subdivisions 0 iso_code;
+  $IP_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions 0 names en;
   $IP_geoip2_data_location_latitude source=$remote_addr location latitude;
   $IP_geoip2_data_location_longitude source=$remote_addr location longitude;
   $IP_geoip2_data_location_time_zone source=$remote_addr location time_zone;
@@ -120,7 +123,8 @@ geoip2 MMDB {
   $HEADER_geoip2_data_country_name_en source=$http_x_forwarded_for country names en;
   $HEADER_geoip2_data_city_name_en source=$http_x_forwarded_for city names en;
   $HEADER_geoip2_data_postal_code source=$http_x_forwarded_for postal code;
-  $HEADER_geoip2_data_subdivisions_name_en source=$remote_addr subdivisions names en;
+  $HEADER_geoip2_data_subdivisions_iso_code source=$http_x_forwarded_for subdivisions 0 iso_code;
+  $HEADER_geoip2_data_subdivisions_name_en source=$http_x_forwarded_for subdivisions 0 names en;
   $HEADER_geoip2_data_location_latitude source=$http_x_forwarded_for location latitude;
   $HEADER_geoip2_data_location_longitude source=$http_x_forwarded_for location longitude;
   $HEADER_geoip2_data_location_time_zone source=$http_x_forwarded_for location time_zone;
@@ -131,7 +135,8 @@ log_format geoip2-city '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
   '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
-  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone"';
+  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" ';
+  '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code"';
 
 access_log /var/log/nginx/access.log geoip2-city;
 
@@ -550,6 +555,9 @@ cat <<'EOF' -> $NGINX_DEFAULT_VIRTUAL_HOST
 MAXMIND_COUNTRY_MMDB
 MAXMIND_ASN_MMDB
 MAXMIND_CITY_MMDB
+
+variables_hash_bucket_size 128;
+variables_hash_max_size 2048;
 
 server {
   listen LARAVEL_NGINX_HTTP_PORT;
