@@ -8,7 +8,7 @@ LARAVEL_HTTP_PORT=59314
 LARAVEL_SERVER_ENV=dev
 
 # Workdir when you access the container
-LARAVEL_WORKDIR=/app/
+LARAVEL_WORKDIR=/app
 
 localdir="$(dirname "$0")"
 if [ "$localdir" == "." ]
@@ -62,7 +62,7 @@ sudo docker run \
   --restart always \
   --name php-laravel-survey \
   php:7-alpine \
-  ${LARAVEL_WORKDIR}docker/entrypoint.sh
+  $LARAVEL_WORKDIR/docker/entrypoint.sh
 
 sudo docker logs -f --tail 10 php-laravel-survey
 
