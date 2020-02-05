@@ -28,13 +28,11 @@ dockerdir="$(pwd)/$localdir"
 # https://dev.maxmind.com/geoip/geoipupdate/
 # The keys bellow will be provided to PHP via fastcgi and nginx's nginx-mod-http-geoip2 module
 
-# LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY=false|<A LICENSE KEY ASSOCIATED WITH YOUR ACCOUNT>
+# Don't change these variables, they are here to provide a default value
+# in case they were not set
+# Create a new docker/.env file from docker/.env.example and edit their values instead
 LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY=${LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY-false}
-
-# LARAVEL_MAXMIND_ASN_LICENSE_KEY=false|<A LICENSE KEY ASSOCIATED WITH YOUR ACCOUNT>
 LARAVEL_MAXMIND_ASN_LICENSE_KEY=${LARAVEL_MAXMIND_ASN_LICENSE_KEY-false}
-
-# LARAVEL_MAXMIND_CITY_LICENSE_KEY=false|<A LICENSE KEY ASSOCIATED WITH YOUR ACCOUNT>
 LARAVEL_MAXMIND_CITY_LICENSE_KEY=${LARAVEL_MAXMIND_CITY_LICENSE_KEY-false}
 
 if [ -e "$LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY" ] && [ "mmdb" == "${LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY##*.}" ]
