@@ -6,6 +6,77 @@ set -x
 
 # Setup functions
 
+city_log_format() {
+  cat <<'EOF' -> $1
+
+log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
+  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" '
+  '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code"';
+
+access_log /var/log/nginx/access.log main;
+
+EOF
+}
+
+city_asn_log_format() {
+  cat <<'EOF' -> $1
+
+log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
+  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" '
+  '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code" '
+  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+
+access_log /var/log/nginx/access.log main;
+
+EOF
+}
+
+country_log_format() {
+  cat <<'EOF' -> $1
+
+log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code"';
+
+access_log /var/log/nginx/access.log main;
+
+EOF
+}
+
+country_asn_log_format() {
+  cat <<'EOF' -> $1
+
+log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code" '
+  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+
+access_log /var/log/nginx/access.log main;
+
+EOF
+}
+
+asn_log_format() {
+  cat <<'EOF' -> $1
+
+log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" '
+  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+
+access_log /var/log/nginx/access.log main;
+
+EOF
+}
+
 create_maxmind_country_fastcgi_template() {
   cat <<'EOF' -> $1
     fastcgi_param MM_IP_COUNTRY_CODE            $IP_geoip2_data_country_code;
@@ -71,13 +142,6 @@ geoip2 MMDB {
   $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
 }
 
-log_format geoip2-country '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code"';
-
-access_log /var/log/nginx/access.log geoip2-country;
-
 EOF
 }
 
@@ -92,13 +156,6 @@ geoip2 MMDB {
   $HEADER_geoip2_data_asn_code source=$http_x_forwarded_for autonomous_system_number;
   $HEADER_geoip2_data_asn_name source=$http_x_forwarded_for autonomous_system_organization;
 }
-
-log_format geoip2-asn '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
-
-access_log /var/log/nginx/access.log geoip2-asn;
 
 EOF
 }
@@ -130,15 +187,6 @@ geoip2 MMDB {
   $HEADER_geoip2_data_location_time_zone source=$http_x_forwarded_for location time_zone;
   $HEADER_geoip2_data_continent_name_en source=$http_x_forwarded_for continent name en;
 }
-
-log_format geoip2-city '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
-  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" '
-  '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code"';
-
-access_log /var/log/nginx/access.log geoip2-city;
 
 EOF
 }
@@ -473,9 +521,6 @@ worker_processes auto;
 # Enables the use of JIT for regular expressions to speed-up their processing.
 pcre_jit on;
 
-# Configures default error logger.
-error_log /var/log/nginx/error.log warn;
-
 # Includes files with directives to load dynamic modules.
 include /etc/nginx/modules/*.conf;
 
@@ -551,9 +596,14 @@ EOF
 
 # Create nginx default configuration file
 cat <<'EOF' -> $NGINX_DEFAULT_VIRTUAL_HOST
+LOG_FORMAT
+
 MAXMIND_COUNTRY_MMDB
 MAXMIND_ASN_MMDB
 MAXMIND_CITY_MMDB
+
+# Configures default error logger.
+error_log /var/log/nginx/error.log debug;
 
 variables_hash_bucket_size 128;
 variables_hash_max_size 2048;
@@ -616,6 +666,37 @@ node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NG
 
 node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_CITY_MMDB", fs.readFileSync("'$MAXMIND_CITY_TEMPLATE'").toString()))'
 node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_CITY_PARAMS", fs.readFileSync("'$FASTCGI_CITY_PARAMS_TEMPLATE'").toString()))'
+
+LOG_FORMAT="$(mktemp)"
+
+if [ ! -z "$FASTCGI_CITY_PARAMS_TEMPLATE" ]
+then
+  if [ ! -z "$FASTCGI_ASN_PARAMS_TEMPLATE" ]
+  then
+    city_asn_log_format $LOG_FORMAT
+
+  else
+    city_log_format $LOG_FORMAT
+
+  fi
+elif [ ! -z "$FASTCGI_COUNTRY_PARAMS_TEMPLATE" ]
+then
+  if [ ! -z "$FASTCGI_ASN_PARAMS_TEMPLATE" ]
+  then
+    country_asn_log_format $LOG_FORMAT
+
+  else
+    country_log_format $LOG_FORMAT
+
+  fi
+elif [ ! -z "$FASTCGI_ASN_PARAMS_TEMPLATE" ]
+then
+  asn_log_format $LOG_FORMAT
+
+fi
+
+node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("LOG_FORMAT", fs.readFileSync("'$LOG_FORMAT'").toString()))'
+rm $LOG_FORMAT
 
 SAFE_LARAVEL_PUBLIC_PATH=${LARAVEL_PUBLIC_PATH//\//\\/}
 
@@ -703,20 +784,6 @@ http {
 
   # Enables a shared SSL cache with size that can hold around 8000 sessions.
   ssl_session_cache shared:SSL:2m;
-
-  # Set the Vary HTTP header as defined in the RFC 2616.
-  gzip_vary on;
-
-  # Enable checking the existence of precompressed files.
-  gzip_static on;
-
-  # Specifies the main log format.
-  log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-  '$status $body_bytes_sent "$http_referer" '
-  '"$http_user_agent" "$http_x_forwarded_for"';
-
-  # Sets the path, format, and configuration for a buffered log write.
-  access_log /var/log/nginx/access.log main;
 
   # Includes virtual hosts configs.
   include /etc/nginx/conf.d/*.conf;
