@@ -246,6 +246,8 @@ grep DB_USERNAME .env | sed 's/DB_USERNAME/export DB_USER/' | tee -a ~/.bashrc
 grep DB_PASSWORD .env | sed 's/DB_PASSWORD/export DB_PASS/' | tee -a ~/.bashrc
 grep DB_DATABASE .env | sed 's/DB_DATABASE/export DB_NAME/' | tee -a ~/.bashrc
 grep DB_HOST .env | sed 's/DB_HOST/export DB_HOST/' | tee -a ~/.bashrc
+grep BROTLI_STATIC_ON .env | sed 's/BROTLI_STATIC/export BROTLI_STATIC/' | tee -a ~/.bashrc
+grep GZIP_STATIC_ON .env | sed 's/GZIP_STATIC/export BROTLI_STATIC/' | tee -a ~/.bashrc
 
 # Export the env variables
 . ~/.bashrc
@@ -533,9 +535,6 @@ http {
   # Set the Vary HTTP header as defined in the RFC 2616.
   gzip_vary on;
 
-  # Enable checking the existence of precompressed files.
-  gzip_static on;
-
   # Specifies the main log format.
   log_format main '$remote_addr - $remote_user [$time_local] "$request" '
   		'$status $body_bytes_sent "$http_referer" '
@@ -569,9 +568,13 @@ server {
   add_header X-Content-Type-Options "nosniff";
 
   gzip on;
+  GZIP_STATIC
+  gzip_comp_level 9;
   gzip_types text/plain text/css text/javascript text/x-javascript application/javascript application/x-javascript;
 
   brotli on;
+  BROTLI_STATIC
+  brotli_comp_level 11;
   brotli_types text/plain text/css text/javascript text/x-javascript application/javascript application/x-javascript;
 
   index index.html index.htm index.php;
@@ -618,6 +621,20 @@ SAFE_LARAVEL_PUBLIC_PATH=${LARAVEL_PUBLIC_PATH//\//\\/}
 
 sed -i 's/LARAVEL_NGINX_HTTP_PORT/'$LARAVEL_HTTP_PORT'/' $NGINX_DEFAULT_VIRTUAL_HOST
 sed -i 's/LARAVEL_NGINX_ROOT/'$SAFE_LARAVEL_PUBLIC_PATH'/' $NGINX_DEFAULT_VIRTUAL_HOST
+
+if [ "$GZIP_STATIC_ON" == "true" ]
+then
+  sed -i 's/GZIP_STATIC/gzip_static on;/' $NGINX_DEFAULT_VIRTUAL_HOST
+else
+  sed -i 's/GZIP_STATIC//' $NGINX_DEFAULT_VIRTUAL_HOST
+fi
+
+if [ "$BROTLI_STATIC_ON" == "true" ]
+then
+  sed -i 's/BROTLI_STATIC/brotli_static on;/' $NGINX_DEFAULT_VIRTUAL_HOST
+else
+  sed -i 's/BROTLI_STATIC//' $NGINX_DEFAULT_VIRTUAL_HOST
+fi
 
 # Create the main nginx config file
 cat <<'EOF' -> $NGINX_DEFAULT_CONF
