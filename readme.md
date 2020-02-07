@@ -1,5 +1,5 @@
-Laravel survey
-==============
+Laravel 6 survey
+================
 
 Custom survey app in Laravel 6.
 

@@ -12,9 +12,9 @@ city_log_format() {
 log_format main '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
-  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" '
-  '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code"';
+  'COUNTRY="$HEADER_geoip2_data_country_name_en" CITY="$HEADER_geoip2_data_city_name_en" SUBDIV0="$HEADER_geoip2_data_subdivisions_name_en" '
+  'LAT="$HEADER_geoip2_data_location_latitude" LONG="$HEADER_geoip2_data_location_longitude" TZ="$HEADER_geoip2_data_location_time_zone" '
+  'SUBDIVISO="$HEADER_geoip2_data_subdivisions_iso_code" POSTAL="$HEADER_geoip2_data_postal_code"';
 
 access_log /var/log/nginx/access.log main;
 
@@ -27,10 +27,11 @@ city_asn_log_format() {
 log_format main '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_city_name_en" "$HEADER_geoip2_data_subdivisions_name_en" '
-  '"$HEADER_geoip2_data_location_latitude" "$HEADER_geoip2_data_location_longitude" "$HEADER_geoip2_data_location_time_zone" '
-  '"$HEADER_geoip2_data_subdivisions_iso_code" "$HEADER_geoip2_data_postal_code" '
-  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+  'COUNTRY="$HEADER_geoip2_data_country_name_en" COUNTRYCODE="$HEADER_geoip2_data_country_code" CITY="$HEADER_geoip2_data_city_name_en" '
+  'SUBDIV0="$HEADER_geoip2_data_subdivisions_name_en" '
+  'LAT="$HEADER_geoip2_data_location_latitude" LONG="$HEADER_geoip2_data_location_longitude" TZ="$HEADER_geoip2_data_location_time_zone" '
+  'SUBDIVISO="$HEADER_geoip2_data_subdivisions_iso_code" POSTAL="$HEADER_geoip2_data_postal_code" '
+  'ASNCODE="$HEADER_geoip2_data_asn_code" ASNNAME="$HEADER_geoip2_data_asn_name"';
 
 access_log /var/log/nginx/access.log main;
 
@@ -43,7 +44,7 @@ country_log_format() {
 log_format main '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code"';
+  'COUNTRY="$HEADER_geoip2_data_country_name_en" COUNTRYCODE="$HEADER_geoip2_data_country_code"';
 
 access_log /var/log/nginx/access.log main;
 
@@ -56,8 +57,8 @@ country_asn_log_format() {
 log_format main '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_country_name_en" "$HEADER_geoip2_data_country_code" '
-  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+  'COUNTRY="$HEADER_geoip2_data_country_name_en" COUNTRYCODE="$HEADER_geoip2_data_country_code" '
+  'ASNCODE="$HEADER_geoip2_data_asn_code" ASNNAME="$HEADER_geoip2_data_asn_name"';
 
 access_log /var/log/nginx/access.log main;
 
@@ -70,7 +71,7 @@ asn_log_format() {
 log_format main '$remote_addr - $remote_user [$time_local] "$request" '
   '$status $body_bytes_sent "$http_referer" '
   '"$http_user_agent" "$http_x_forwarded_for" '
-  '"$HEADER_geoip2_data_asn_code" "$HEADER_geoip2_data_asn_name"';
+  'ASNCODE="$HEADER_geoip2_data_asn_code" ASNNAME="$HEADER_geoip2_data_asn_name"';
 
 access_log /var/log/nginx/access.log main;
 
@@ -618,6 +619,7 @@ server {
   add_header X-Content-Type-Options "nosniff";
 
   gzip on;
+  gzip_vary on;
   GZIP_STATIC
   gzip_comp_level 9;
   gzip_types text/plain text/css text/javascript text/x-javascript application/javascript application/x-javascript;

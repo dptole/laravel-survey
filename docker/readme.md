@@ -1,5 +1,5 @@
-Laravel survey
-==============
+Laravel 6 survey
+================
 
 Docker documentation for the custom survey app in Laravel 6
 
