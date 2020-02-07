@@ -413,6 +413,10 @@ then
   fi
 fi
 
+# Don't expose PHP
+# https://stackoverflow.com/a/2661807
+sed -i 's/expose_php = on/expose_php = off/i' /etc/php7/php.ini
+
 # Setup Nginx installation
 NGINX_DEFAULT_CONF="/etc/nginx/nginx.conf"
 NGINX_DEFAULT_VIRTUAL_HOST="/etc/nginx/conf.d/default.conf"
@@ -455,6 +459,11 @@ wget https://nginx.org/download/nginx-1.16.1.tar.gz
 tar xzf nginx-1.16.1.tar.gz
 rm nginx-1.16.1.tar.gz
 cd nginx-1.16.1
+
+# Completely removes the annoying "server: nginx" header
+# Without requiring you to download another module just to remove 1 line
+# https://stackoverflow.com/questions/246227/how-do-you-change-the-server-header-returned-by-nginx
+sed -i 's/static u_char ngx_http_server_string\[\] = "Server: nginx" CRLF;/static u_char ngx_http_server_string[] = "";/' src/http/ngx_http_header_filter_module.c
 
 CONFIG="\
 --prefix=/etc/nginx \
@@ -597,6 +606,8 @@ EOF
 
 # Create nginx default configuration file
 cat <<'EOF' -> $NGINX_DEFAULT_VIRTUAL_HOST
+# NGINX_DEFAULT_VIRTUAL_HOST
+
 LOG_FORMAT
 
 MAXMIND_COUNTRY_MMDB
@@ -659,6 +670,8 @@ FASTCGI_CITY_PARAMS
   }
 }
 EOF
+
+sed -i 's/NGINX_DEFAULT_VIRTUAL_HOST/'${NGINX_DEFAULT_VIRTUAL_HOST//\//\\/}'/' $NGINX_DEFAULT_VIRTUAL_HOST
 
 node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("MAXMIND_COUNTRY_MMDB", fs.readFileSync("'$MAXMIND_COUNTRY_TEMPLATE'").toString()))'
 node -e 'fs.writeFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'", fs.readFileSync("'$NGINX_DEFAULT_VIRTUAL_HOST'").toString().replace("FASTCGI_COUNTRY_PARAMS", fs.readFileSync("'$FASTCGI_COUNTRY_PARAMS_TEMPLATE'").toString()))'
