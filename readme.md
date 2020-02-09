@@ -133,6 +133,7 @@ License
 =======
 
 [MIT][LICENSE]
+
 [gh-issues]: https://github.com/dptole/laravel-survey/issues
 [gh-issues-badge]: https://img.shields.io/github/issues-raw/dptole/laravel-survey.svg
 [circle-ci]: https://circleci.com/gh/dptole/laravel-survey
@@ -144,4 +145,3 @@ License
 [prestissimo-url]: https://packagist.org/packages/hirak/prestissimo
 [composer-parallel-downloads-url]: https://github.com/composer/composer/pull/7904
 [LICENSE]: LICENSE
-
