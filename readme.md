@@ -1,6 +1,9 @@
 Laravel 6 survey
 ================
 
+  [![Build status][circle-ci-badge]][circle-ci]
+  [![Issue status][gh-issues-badge]][gh-issues]
+
 Custom survey app in Laravel 6.
 
 Pre-requisites
@@ -130,7 +133,10 @@ License
 =======
 
 [MIT][LICENSE]
-
+[gh-issues]: https://github.com/dptole/laravel-survey/issues
+[gh-issues-badge]: https://img.shields.io/github/issues-raw/dptole/laravel-survey.svg
+[circle-ci]: https://circleci.com/gh/dptole/laravel-survey
+[circle-ci-badge]: https://img.shields.io/circleci/project/dptole/laravel-survey.svg
 [google-recaptcha-url]: https://www.google.com/recaptcha/admin#list
 [pusher-url]: https://dashboard.pusher.com/accounts/sign_in
 [composer-url]: https://getcomposer.org/

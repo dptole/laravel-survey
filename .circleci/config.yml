@@ -21,6 +21,7 @@ jobs:
     branches:
       only:
         - dev
+        - master
 
     steps:
       - checkout
@@ -42,8 +43,6 @@ jobs:
           paths:
             - ./vendor
 
-      - run: php artisan key:generate
-
       #- restore_cache:
       #    keys:
       #      - node-v1-{{ checksum "package.json" }}
@@ -60,5 +59,6 @@ jobs:
 
       # run tests with phpunit or codecept
       - run: ./vendor/bin/phpunit
+
       #- run: ./vendor/bin/codecept build
       #- run: ./vendor/bin/codecept run
