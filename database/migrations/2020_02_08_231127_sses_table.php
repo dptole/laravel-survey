@@ -19,7 +19,7 @@ class SsesTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('channel');
             $table->string('event');
-            $table->string('message');
+            $table->text('message');
             $table->timestamps();
         });
     }

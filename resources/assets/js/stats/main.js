@@ -102,17 +102,25 @@ function renderCountryInfo(answer_session_uuid, country_info) {
   $fetch_box.addClass('hide')
 }
 
-PUSHER_ENABLED &&
-(new PublicSurveyStats)
-  .websocket.config({
-    broadcaster: 'pusher',
-    key: PUSHER_APP_KEY,
-    cluster: PUSHER_APP_CLUSTER,
-    encrypted: true
-  })
-  .channel('public-survey-' + $survey_uuid)
-    .on('new-user', data => window.jQuery('.lar-refresh-survey').removeClass('hide'))
-    .on('user-answer', data => websocketQuestionAnswered(data))
+if(PUSHER_ENABLED) {
+  (new PublicSurveyStats)
+    .websocket.config({
+      broadcaster: 'pusher',
+      key: PUSHER_APP_KEY,
+      cluster: PUSHER_APP_CLUSTER,
+      encrypted: true
+    })
+    .channel('public-survey-' + $survey_uuid)
+      .on('new-user', data => window.jQuery('.lar-refresh-survey').removeClass('hide'))
+      .on('user-answer', data => websocketQuestionAnswered(data))
+} else {
+  -function es() {
+    const sse = new EventSource(LARAVEL_SURVEY_PREFIX_URL + '/sse/public-survey-' + $survey_uuid, {withCredentials: true})
+    sse.addEventListener('new-user', e => window.jQuery('.lar-refresh-survey').removeClass('hide'))
+    sse.addEventListener('user-answer', e => websocketQuestionAnswered(JSON.parse(e.data)))
+    sse.addEventListener('error', e => e.target.readyState === EventSource.CLOSED && setTimeout(es, 1e3))
+  }()
+}
 
 $(window).on('resize', _ => {
   if(window_width !== window.innerWidth) {

@@ -20,8 +20,6 @@ Route::group(['prefix' => '/', 'middleware' => ['setup']], function() {
 
   Route::group(['prefix' => Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL')], function() {
     Route::group(['prefix' =>'sse'], function() {
-      Route::get('/', ['uses' => 'ServerSentEventController', 'as' => 'sse-root']);
-      Route::get('/example', ['uses' => 'ServerSentEventController@example', 'as' => 'sse-example']);
       Route::get('/{channel}', ['uses' => 'ServerSentEventController@channel', 'as' => 'sse-channel']);
     });
   });

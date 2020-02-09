@@ -106,7 +106,8 @@ class Helper {
         );
 
       self::$pusher->trigger($channel, $event, $message);
-    }
+    } else
+      Sse::trigger($channel, $event, $message);
   }
 
   public static function isPositiveInteger($value) {

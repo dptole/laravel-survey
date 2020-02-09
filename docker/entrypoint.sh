@@ -417,6 +417,14 @@ fi
 # https://stackoverflow.com/a/2661807
 sed -i 's/expose_php = on/expose_php = off/i' /etc/php7/php.ini
 
+# Don't buffer responses
+sed -i 's/output_buffering = 4096/output_buffering = off/i' /etc/php7/php.ini
+
+# Maximum amount of time each script may spend parsing request data. It's a good
+# idea to limit this time on productions servers in order to eliminate unexpectedly
+# long running scripts
+sed -i 's/max_input_time = 60/max_input_time = 5/i' /etc/php7/php.ini
+
 # Setup Nginx installation
 NGINX_DEFAULT_CONF="/etc/nginx/nginx.conf"
 NGINX_DEFAULT_VIRTUAL_HOST="/etc/nginx/conf.d/default.conf"
@@ -655,6 +663,12 @@ server {
 
   location ~ \.php$ {
     fastcgi_pass localhost:9000;
+
+    # Just in case
+    # https://github.com/wodby/docker4drupal/issues/335
+    # https://serverfault.com/a/938042
+    fastcgi_pass_header "x-accel-buffering";
+
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
 

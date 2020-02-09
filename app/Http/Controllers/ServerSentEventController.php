@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use Closure;
+use Illuminate\Http\Request;
+use App\Sse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ServerSentEventController extends Controller {
+  const CHUNK_SEPARATOR = "\n\n";
+
   private function parsePayload($payload) {
     $parsed_payload = "";
 
@@ -21,53 +26,74 @@ class ServerSentEventController extends Controller {
       $parsed_payload = join("\n", $lines);
     }
 
-    return $parsed_payload . "\n\n";
+    return $parsed_payload . self::CHUNK_SEPARATOR;
   }
 
-  private function mainLoop(Closure $main_loop, $timeout_seconds = 2) {
-    header('content-type: text/event-stream');
-    $id = 0;
-
-    while(1) {
-      $payload = $main_loop($id);
-
-      if($payload === false)
-        break;
-
-      else
-        print($this->parsePayload($payload));
-
-      if(ob_get_level() > 0) ob_end_flush();
-      flush();
-
-      if(connection_aborted()) break;
-
-      sleep($timeout_seconds);
-      $id++;
-    }
+  private function sendIdleEvent($id) {
+    print($this->parsePayload([
+      'id' => $id,
+      'event' => 'idle',
+      'data' => '{}'
+    ]));
   }
 
-  public function __invoke() {
-    
+  private function sendPayload($payload) {
+    print($this->parsePayload($payload));
   }
 
-  public function channel($channel) {
-    
+  private function mainLoop(Request $request, Closure $main_loop, $timeout_seconds = 2) {
+    // https://chrisblackwell.me/server-sent-events-using-laravel-vue/
+    $response = new StreamedResponse(function() use ($request, $main_loop, $timeout_seconds) {
+      $id = 0;
+
+      while(1) {
+        if(connection_aborted()) break;
+
+        $payload = $main_loop($id);
+
+        if($payload === null) {
+          $this->sendIdleEvent($id);
+
+        } elseif($payload === false)
+          break;
+
+        else
+          $this->sendPayload($payload);
+
+        if(ob_get_level() > 0) {
+          ob_flush();
+          ob_end_flush();
+        }
+
+        flush();
+
+        sleep($timeout_seconds);
+        $id++;
+      }
+    });
+
+    $response->headers->set('content-type', 'text/event-stream');
+    // https://serverfault.com/questions/937665/does-nginx-show-x-accel-headers-in-response
+    $response->headers->set('x-accel-buffering', 'no');
+    $response->headers->set('cache-control', 'no-cache');
+
+    return $response;
   }
 
-  public function example() {
-    $this->mainLoop(function($id) {
-      if($id & 1)
-        return 'data:{"example":"example raw json data. triggers message event"}';
+  public function channel(Request $request, $channel) {
+    $listener = Sse::listen($channel);
 
-      $payload = [
-        'date' => date(DATE_ISO8601),
-        'example' => 'example json data with date. trigger example event'
-      ];
+    return $this->mainLoop($request, function($id) use ($listener) {
+      $event = $listener();
+
+      if(!$event):
+        return null;
+      endif;
 
       return [
-        'event' => 'example',
-        'data' => json_encode($payload)
+        'id' => $id,
+        'event' => $event->event,
+        'data' => $event->message
       ];
     });
   }
