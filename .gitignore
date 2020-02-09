@@ -16,3 +16,4 @@ composer-setup.php
 package-lock.json
 composer.phar
 composer.lock
+.phpunit.result.cache

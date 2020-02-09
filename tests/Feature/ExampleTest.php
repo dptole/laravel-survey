@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
+use App\Helper;
+
 class ExampleTest extends TestCase
 {
     /**
@@ -16,7 +18,7 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
-        $response = $this->get('/');
+        $response = $this->get(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
 
         $response->assertStatus(200);
     }
