@@ -25,6 +25,11 @@ jobs:
     steps:
       - checkout
 
+      - run: sudo docker-php-ext-install pdo pdo_mysql
+      - run: composer global require hirak/prestissimo
+      - run: cp .env.testing .env
+      - run: php artisan key:generate
+
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -38,21 +43,21 @@ jobs:
           paths:
             - ./vendor
 
-      - restore_cache:
-          keys:
-            - node-v1-{{ checksum "package.json" }}
-            - node-v1-
-      - run: yarn install
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}
-          paths:
-            - node_modules
+      #- restore_cache:
+      #    keys:
+      #      - node-v1-{{ checksum "package.json" }}
+      #      - node-v1-
+      #- run: yarn install
+      #- save_cache:
+      #    key: node-v1-{{ checksum "package.json" }}
+      #    paths:
+      #      - node_modules
 
       # prepare the database
       - run: touch storage/testing.sqlite
       - run: php artisan migrate --env=testing --database=sqlite_testing --force
 
       # run tests with phpunit or codecept
-      - run: cp .env.testing .env && ./vendor/bin/phpunit
+      - run: ./vendor/bin/phpunit
       #- run: ./vendor/bin/codecept build
       #- run: ./vendor/bin/codecept run
