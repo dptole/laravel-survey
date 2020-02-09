@@ -18,6 +18,10 @@ jobs:
       #
       # - image: redis:2.8.19
 
+    branches:
+      only:
+        - dev
+
     steps:
       - checkout
 
