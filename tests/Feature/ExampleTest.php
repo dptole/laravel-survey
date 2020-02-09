@@ -11,15 +11,15 @@ use App\Helper;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testBasicTest()
-    {
-        $response = $this->get(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
+  /**
+   * A basic test example.
+   *
+   * @return void
+   */
+  public function testBasicTest()
+  {
+    $response = $this->get(Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
 
-        $response->assertStatus(200);
-    }
+    $response->assertStatus(200);
+  }
 }
