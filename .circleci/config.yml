@@ -15,6 +15,7 @@ jobs:
 
       - run: sudo apt update && sudo apt install libsqlite3-dev
       - run: sudo docker-php-ext-install pdo pdo_mysql
+      - run: cp .env.testing .env
 
       - restore_cache:
           keys:
