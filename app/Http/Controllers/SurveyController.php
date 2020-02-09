@@ -206,7 +206,47 @@ class SurveyController extends Controller {
     $global_answers_sessions = 0;
     $global_answers = 0;
 
+    $maxmind_props = [
+      'Timezone' => 'LOCATION_TIME_ZONE',
+      'Longitude' => 'LOCATION_LONGITUDE',
+      'Latitude' => 'LOCATION_LATITUDE',
+      'Subdivision ISO code' => 'EN_SUBDIVISIONS_ISO_CODE',
+      'Postal code' => 'POSTAL_CODE',
+      'City' => 'EN_CITY_NAME',
+      'ASN name' => 'ASN_NAME',
+      'ASN code' => 'ASN_CODE',
+      'Continent' => 'EN_CONTINENT_NAME',
+      'Country name' => 'EN_COUNTRY_NAME',
+      'Country code' => 'COUNTRY_CODE'
+    ];
+
+    $maxmind = [];
+
     foreach($versions as &$version):
+      foreach($version['answers_sessions'] as $answer_session):
+        if(property_exists($answer_session->request_info, 'server')):
+          $maxmind[$answer_session->id] = [];
+          foreach($maxmind_props as $name => $key):
+            $ip_key = 'MM_IP_' . $key;
+            $header_key = 'MM_HEADER_' . $key;
+
+            if(
+              property_exists($answer_session->request_info->server, $header_key) &&
+              strlen($answer_session->request_info->server->$header_key) > 0
+            ):
+              $maxmind[$answer_session->id][$name] = $answer_session->request_info->server->$header_key;
+
+            elseif(
+              property_exists($answer_session->request_info->server, $ip_key) &&
+              strlen($answer_session->request_info->server->$ip_key) > 0
+            ):
+              $maxmind[$answer_session->id][$name] = $answer_session->request_info->server->$ip_key;
+
+            endif;
+          endforeach;
+        endif;
+      endforeach;
+
       $questions = $version['questions'];
       $total_questions = count($version['questions']);
       $global_answers_sessions += count($version['answers_sessions']);
@@ -300,7 +340,8 @@ class SurveyController extends Controller {
       'd3_platform_data' => json_encode($d3_platform_data),
       'd3_browsers_data' => json_encode($d3_browsers_data),
       'd3_answers_data' => json_encode($d3_answers_data),
-      'd3_dates_data' => json_encode($d3_dates_data)
+      'd3_dates_data' => json_encode($d3_dates_data),
+      'maxmind' => $maxmind
     ]);
   }
 }

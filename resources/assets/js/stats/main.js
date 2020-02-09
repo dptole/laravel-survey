@@ -112,7 +112,6 @@ PUSHER_ENABLED &&
   })
   .channel('public-survey-' + $survey_uuid)
     .on('new-user', data => window.jQuery('.lar-refresh-survey').removeClass('hide'))
-    .on('user-done-survey', data => window.jQuery('.lar-refresh-survey').removeClass('hide'))
     .on('user-answer', data => websocketQuestionAnswered(data))
 
 $(window).on('resize', _ => {
@@ -221,7 +220,7 @@ $(_ => {
           })
         )
         .filter(c =>
-          !/0, +0/.test(c.c)
+          c.c && !/0, +0/.test(c.c)
         )
         .map(c => {
           const coords = c.c.match(/^([^,]+),(.+)$/) && [parseFloat(RegExp.$1.trim()), parseFloat(RegExp.$2.trim())]

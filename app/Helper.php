@@ -96,15 +96,17 @@ class Helper {
   }
 
   public static function broadcast($channel, $event, $message) {
-    if(!self::$pusher)
-      self::$pusher = new Pusher(
-        Helper::getDotEnvFileVar('PUSHER_APP_KEY'),
-        Helper::getDotEnvFileVar('PUSHER_APP_SECRET'),
-        Helper::getDotEnvFileVar('PUSHER_APP_ID'),
-        self::getPusherOptions()
-      );
+    if(self::isPusherEnabled()) {
+      if(!self::$pusher)
+        self::$pusher = new Pusher(
+          Helper::getDotEnvFileVar('PUSHER_APP_KEY'),
+          Helper::getDotEnvFileVar('PUSHER_APP_SECRET'),
+          Helper::getDotEnvFileVar('PUSHER_APP_ID'),
+          self::getPusherOptions()
+        );
 
-    self::$pusher->trigger($channel, $event, $message);
+      self::$pusher->trigger($channel, $event, $message);
+    }
   }
 
   public static function isPositiveInteger($value) {
@@ -303,9 +305,9 @@ class Helper {
               break;
             endif;
 
-            $props['Security / Crawler'] = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(0)->textContent)) === 'Yes';
-            $props['Security / Proxy'] = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(1)->textContent)) === 'Yes';
-            $props['Security / Attack source'] = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(2)->textContent)) === 'Yes';
+            $props['Security / Crawler'] = self::htmlTrim($td->item(0)->textContent);
+            $props['Security / Proxy'] = self::htmlTrim($td->item(1)->textContent);
+            $props['Security / Attack source'] = self::htmlTrim($td->item(2)->textContent);
           endif;
         endforeach;
       else:
@@ -317,8 +319,8 @@ class Helper {
             continue;
           endif;
 
-          $text_th = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($th->item(0)->textContent));
-          $text_td = preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($td->item(0)->textContent));
+          $text_th = self::htmlTrim($th->item(0)->textContent);
+          $text_td = self::htmlTrim($td->item(0)->textContent);
 
           if($text_th && $text_td):
             $props[$text_th] = $text_td;
@@ -339,6 +341,10 @@ class Helper {
 
     $ip_info->Elapsed = $start_time + self::ms();
     return self::$db_ip_html_ips_info[$ip] = self::dbIpDecorateResponse($ip_info, $ip);
+  }
+
+  public static function htmlTrim($data) {
+    return preg_replace('#^[\x09\xa0\xc2]*|[\x09\xa0\xc2]*$#', '', trim($data));
   }
 
   public static function ms() {
@@ -436,7 +442,7 @@ class Helper {
 
     $envs = self::getDotEnvFile();
 
-    if($envs['PUSHER_ENABLED'] === 'true' && !(
+    if(self::isPusherEnabled() && !(
       isset($envs['PUSHER_APP_ID']) &&
       !empty($envs['PUSHER_APP_ID']) &&
 

@@ -142,7 +142,7 @@
                     </tr>
                     
                     <tr>
-                      <th>Country info</th>
+                      <th>DB-IP Country info</th>
                       <td class="lar-country-info-box" data-answer-session-uuid="{{ $answer_session->session_uuid }}">
                         <table class="table bordered lar-has-country-info hide"></table>
 
@@ -152,7 +152,25 @@
                         </div>
                       </td>
                     </tr>
-                    
+
+                    @if(isset($maxmind[$answer_session->id]) && count($maxmind[$answer_session->id]) > 0)
+                    <tr>
+                      <th>Maxmind GeoIP2</th>
+                      <td>
+                        <table class="table bordered">
+                          <tbody>
+                            @foreach($maxmind[$answer_session->id] as $key => $value)
+                            <tr>
+                              <th>{{ $key }}</th>
+                              <td>{{ $value }}</td>
+                            </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    @endif
+
                     @if(property_exists($answer_session->request_info->headers, 'dnt'))
                     <tr>
                       <th>Do not track?</th>

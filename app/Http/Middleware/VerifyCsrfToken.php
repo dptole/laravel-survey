@@ -8,6 +8,7 @@ use App\Helper;
 define('VERIFY_CSRF_TOKEN_ROUTE_PREFIX', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
 define('VERIFY_CSRF_TOKEN_API_ROUTE_POST_SAVE_ANSWER', VERIFY_CSRF_TOKEN_ROUTE_PREFIX . '/api/save_answer');
 define('VERIFY_CSRF_TOKEN_API_ROUTE_POST_SESSION_ID', VERIFY_CSRF_TOKEN_ROUTE_PREFIX . '/*/session_id');
+define('VERIFY_CSRF_TOKEN_API_ROUTE_FETCH_COUNTRY_INFO', VERIFY_CSRF_TOKEN_ROUTE_PREFIX . '/api/fetch_country_info');
 
 
 class VerifyCsrfToken extends BaseVerifier
@@ -19,6 +20,7 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         VERIFY_CSRF_TOKEN_API_ROUTE_POST_SESSION_ID,
-        VERIFY_CSRF_TOKEN_API_ROUTE_POST_SAVE_ANSWER
+        VERIFY_CSRF_TOKEN_API_ROUTE_POST_SAVE_ANSWER,
+        VERIFY_CSRF_TOKEN_API_ROUTE_FETCH_COUNTRY_INFO
     ];
 }
