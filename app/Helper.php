@@ -128,13 +128,13 @@ class Helper {
 
   public static function loadLSR() {
     if(!self::$lsr)
-      self::$lsr = json_decode(file_get_contents(getcwd() . '/../app/data/iana-language-subtag-registry.json'));
+      self::$lsr = json_decode(file_get_contents(__DIR__ . '/../app/data/iana-language-subtag-registry.json'));
   }
 
   public static function loadTimezones() {
     // https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
     if(!self::$tzs)
-      self::$tzs = json_decode(file_get_contents(getcwd() . '/../app/data/list-of-utc-time-offset.json'));
+      self::$tzs = json_decode(file_get_contents(__DIR__ . '/../app/data/list-of-utc-time-offset.json'));
   }
 
   public static function lsrGetLanguageRegions($accept_language) {
@@ -246,10 +246,14 @@ class Helper {
 
   public static function getRequestIp() {
     $headers = getallheaders();
-    return is_array($headers) && isset($headers['x-forwarded-for'])
-      ? $headers['x-forwarded-for']
-      : $_SERVER['REMOTE_ADDR']
-    ;
+
+    if(is_array($headers) && isset($headers['x-forwarded-for']))
+      return $headers['x-forwarded-for'];
+
+    if(isset($_SERVER['REMOTE_ADDR']))
+      return $_SERVER['REMOTE_ADDR'];
+
+    return false;
   }
 
   public static function dbIpDecorateResponse($ip_info, $ip) {

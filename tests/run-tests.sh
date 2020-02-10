@@ -1,6 +1,12 @@
 #!/bin/bash
 set -x
 
+# CREATE_DB=<true|false>
+CREATE_DB=true
+
+# CLEAR_CONFIG_CACHE=<true|false>
+CLEAR_CONFIG_CACHE=true
+
 [ -e vendor/bin/phpunit ] ||
 ( echo 'PHPUnit is not installed' &&
   exit 1
@@ -26,20 +32,29 @@ cp .env /tmp/.env.not.testing
 # Create .env file for the testing
 cp .env.testing .env
 
-# Temporary sqlite database
-touch storage/testing.sqlite ||
-( echo 'Unable to create storage/testing.sqlite' &&
-  exit 2
-)
+if [ "$CREATE_DB" == "true" ]
+then
+  # Temporary sqlite database
+  touch storage/testing.sqlite ||
+  ( echo 'Unable to create storage/testing.sqlite' &&
+    exit 2
+  )
 
-# Perform migration using the storage/testing.sqlite file
-php artisan migrate --env=testing --database=sqlite_testing --force
+  # Perform migration using the storage/testing.sqlite file
+  php artisan migrate --env=testing --database=sqlite_testing --force
+fi
 
-# Clear cache to avoid issues with the testing
-php artisan config:clear ||
-( echo 'Error removing cache' &&
-  exit 3
-)
+# https://laravel.com/docs/6.x/testing#environment
+# The testing environment variables may be configured in the phpunit.xml
+# file, but make sure to clear your configuration cache using the
+# config:clear Artisan command before running your tests!
+if [ "$CLEAR_CONFIG_CACHE" == "true" ]
+then
+  php artisan config:clear ||
+  ( echo 'Error removing cache' &&
+    exit 3
+  )
+fi
 
 # Run the tests (using the .env file & phpunit.xml)
 vendor/bin/phpunit
@@ -54,22 +69,28 @@ then
   # There was a .env file before the tests started
   cp /tmp/.env.not.testing .env
 
-  # Recreate the cache using the .env file
-  php artisan config:cache ||
-  ( echo 'Error creating cache' &&
-    exit 4
-  )
-
 elif grep APP_ENV=testing .env &> /dev/null
 then
   # Remove the .env file because its made for testing
   rm .env
 fi
 
-# Clean up
-rm storage/testing.sqlite ||
-( echo 'Unable to remove storage/testing.sqlite' &&
-  exit 5
-)
+if [ "$CLEAR_CONFIG_CACHE" == "true" ]
+then
+  # Recreate the cache using the .env file
+  php artisan config:cache ||
+  ( echo 'Error creating cache' &&
+    exit 4
+  )
+fi
+
+if [ -e storage/testing.sqlite ]
+then
+  # Clean up
+  rm storage/testing.sqlite ||
+  ( echo 'Unable to remove storage/testing.sqlite' &&
+    exit 5
+  )
+fi
 
 exit $(cat /tmp/phpunit-testing-error-code)
