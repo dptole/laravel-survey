@@ -49,17 +49,8 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover"
         ],
-        "t": [
-            "[ -e vendor/bin/phpunit ] || ( echo 'PHPUnit is not installed' && exit 1 )",
-            "touch storage/testing.sqlite || ( echo 'Unable to create storage/testing.sqlite' && exit 2 )",
-            "php artisan migrate --env=testing --database=sqlite_testing --force",
-            "php artisan config:clear || ( echo 'Error removing cache' && exit 3 )",
-            "[ -e .env ] && mv .env .env.active && cp .env.testing .env",
-            "vendor/bin/phpunit; echo $? > /tmp/phpunit-testing-error-code",
-            "[ -e .env.active ] && mv .env.active .env",
-            "php artisan config:cache || ( echo 'Error creating cache' && exit 4 )",
-            "rm storage/testing.sqlite || ( echo 'Unable to remove storage/testing.sqlite' && exit 5 )",
-            "e=$(cat /tmp/phpunit-testing-error-code); exit $e"
+        "test": [
+            "bash tests/run-tests.sh"
         ]
     },
     "config": {

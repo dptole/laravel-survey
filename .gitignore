@@ -17,3 +17,5 @@ package-lock.json
 composer.phar
 composer.lock
 .phpunit.result.cache
+/tests/_output
+/tests/_support/_generated
