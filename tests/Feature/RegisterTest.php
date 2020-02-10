@@ -24,10 +24,7 @@ class RegisterTest extends TestCase
 
     $response = $this->post(
       Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/register',
-      $user_input,
-      [
-        'content-type' => 'application/x-www-form-urlencoded'
-      ]
+      $user_input
     );
 
     $response->assertStatus(302);
@@ -39,15 +36,16 @@ class RegisterTest extends TestCase
   public function testUserRegistered($user_input) {
     $users = User::where('email', '=', $user_input['email'])->limit(1)->get();
     $this->assertCount(1, $users);
+    $user = $users[0];
 
-    $this->assertIsNumeric($users[0]['id']);
-    $this->assertEquals($user_input['name'], $users[0]['name']);
-    $this->assertEquals($user_input['email'], $users[0]['email']);
-    $this->assertTrue(password_verify($user_input['password'], $users[0]['password']));
-    $this->assertTrue(Uuid::validate($users[0]['uuid']));
-    $this->assertNull($users[0]['remember_token']);
-    $this->assertInstanceOf(Carbon::class, $users[0]['created_at']);
-    $this->assertInstanceOf(Carbon::class, $users[0]['updated_at']);
-    $this->assertEquals($users[0]['updated_at'] . '', $users[0]['created_at'] . '');
+    $this->assertIsNumeric($user['id']);
+    $this->assertEquals($user_input['name'], $user['name']);
+    $this->assertEquals($user_input['email'], $user['email']);
+    $this->assertTrue(password_verify($user_input['password'], $user['password']));
+    $this->assertTrue(Uuid::validate($user['uuid']));
+    $this->assertNull($user['remember_token']);
+    $this->assertInstanceOf(Carbon::class, $user['created_at']);
+    $this->assertInstanceOf(Carbon::class, $user['updated_at']);
+    $this->assertEquals($user['updated_at'] . '', $user['created_at'] . '');
   }
 }

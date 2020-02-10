@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x
 
+localdir=$(cd "${0%/*}"; pwd)
+localdirname="$(dirname "$localdir")"
+
 # CREATE_DB=<true|false>
 CREATE_DB=true
 
@@ -61,6 +64,9 @@ fi
 
 # Run the tests (using the .env file & phpunit.xml)
 vendor/bin/phpunit
+
+# Run the code coverage analysis
+# vendor/bin/phpunit --coverage-html $localdirname/public
 
 # Store the error code from the previous command because
 # clean up is necessary

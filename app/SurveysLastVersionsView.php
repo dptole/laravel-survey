@@ -1,9 +1,10 @@
 <?php
 
 namespace App;
-use Eloquent;
 
-class SurveysLastVersionsView extends Eloquent {
+use Illuminate\Database\Eloquent\Model;
+
+class SurveysLastVersionsView extends Model {
   protected $table = 'surveys_last_version_view';
 
   public static function getById($survey_id) {

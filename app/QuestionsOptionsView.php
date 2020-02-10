@@ -1,9 +1,10 @@
 <?php
 
 namespace App;
-use Eloquent;
 
-class QuestionsOptionsView extends Eloquent {
+use Illuminate\Database\Eloquent\Model;
+
+class QuestionsOptionsView extends Model {
   protected $table = 'questions_options_view';
 
   public static function getById($question_id) {
