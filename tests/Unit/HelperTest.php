@@ -384,14 +384,8 @@ class HelperTest extends TestCase
   }
 
   public function testGetGoogleReCaptchaApiAsset() {
-    ob_end_clean();
-    ob_start();
-    $asset_return = Helper::getGoogleReCaptchaApiAsset();
-    $asset_html = ob_get_contents();
-    ob_end_clean();
-
-    $this->assertNull($asset_return);
-    $this->assertEquals('<script async src="https://www.google.com/recaptcha/api.js"></script>', $asset_html);
+    $this->expectOutputString('<script async src="https://www.google.com/recaptcha/api.js"></script>');
+    $this->assertNull(Helper::getGoogleReCaptchaApiAsset());
   }
 
   public function testGetDotEnvFilePath() {

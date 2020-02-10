@@ -7,10 +7,11 @@ CREATE_DB=true
 # CLEAR_CONFIG_CACHE=<true|false>
 CLEAR_CONFIG_CACHE=true
 
-[ -e vendor/bin/phpunit ] ||
-( echo 'PHPUnit is not installed' &&
+if [ ! -e vendor/bin/phpunit ]
+then
+  echo 'PHPUnit is not installed' &&
   exit 1
-)
+fi
 
 if [ ! -e .env ]
 then
@@ -35,10 +36,11 @@ cp .env.testing .env
 if [ "$CREATE_DB" == "true" ]
 then
   # Temporary sqlite database
-  touch storage/testing.sqlite ||
-  ( echo 'Unable to create storage/testing.sqlite' &&
+  if ! touch storage/testing.sqlite
+  then
+    echo 'Unable to create storage/testing.sqlite' &&
     exit 2
-  )
+  fi
 
   # Perform migration using the storage/testing.sqlite file
   php artisan migrate --env=testing --database=sqlite_testing --force
@@ -50,10 +52,11 @@ fi
 # config:clear Artisan command before running your tests!
 if [ "$CLEAR_CONFIG_CACHE" == "true" ]
 then
-  php artisan config:clear ||
-  ( echo 'Error removing cache' &&
+  if ! php artisan config:clear
+  then
+    echo 'Error removing cache' &&
     exit 3
-  )
+  fi
 fi
 
 # Run the tests (using the .env file & phpunit.xml)
@@ -69,28 +72,30 @@ then
   # There was a .env file before the tests started
   cp /tmp/.env.not.testing .env
 
+  if [ "$CLEAR_CONFIG_CACHE" == "true" ]
+  then
+    # Recreate the cache using the .env file
+    if ! php artisan config:cache
+    then
+      echo 'Error creating cache'
+      exit 4
+    fi
+  fi
+
 elif grep APP_ENV=testing .env &> /dev/null
 then
   # Remove the .env file because its made for testing
   rm .env
 fi
 
-if [ "$CLEAR_CONFIG_CACHE" == "true" ]
-then
-  # Recreate the cache using the .env file
-  php artisan config:cache ||
-  ( echo 'Error creating cache' &&
-    exit 4
-  )
-fi
-
 if [ -e storage/testing.sqlite ]
 then
   # Clean up
-  rm storage/testing.sqlite ||
-  ( echo 'Unable to remove storage/testing.sqlite' &&
+  if ! rm storage/testing.sqlite
+  then
+    echo 'Unable to remove storage/testing.sqlite' &&
     exit 5
-  )
+  fi
 fi
 
 exit $(cat /tmp/phpunit-testing-error-code)
