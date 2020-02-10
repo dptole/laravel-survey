@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Helper;
-
-define('LOGIN_REDIRECT_TO', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
 
 class LoginController extends Controller
 {
@@ -27,39 +26,48 @@ class LoginController extends Controller
     }
 
     // https://stackoverflow.com/a/40887817
-    public function logout(Request $request)
-    {
+    public function logout(Request $request) {
+        $user = \Auth::user();
+        $farewell = 'See you later!';
+        if($user):
+            $farewell = 'See you later ' . $user->name . '!';
+        endif;
+
         $this->performLogout($request);
+
+        $request->session()->flash('success', $farewell);
         return redirect()->route('home');
     }
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = LOGIN_REDIRECT_TO;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('guest', ['except' => 'logout']);
     }
 
-    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []) {
-        if(Helper::isGoogleReCaptchaEnabled()):
-            $rules['g-recaptcha-response'] = 'required|google_recaptcha';
+    protected function sendLoginResponse(Request $request) {
+        if(!Helper::isGoogleReCaptchaEnabled()):
+            return $this->goToDashboard();
         endif;
 
-        return parent::validate(
-            $request,
-            $rules,
-            $messages,
-            $customAttributes
+        $validator = Validator::make(
+          $request->all(),
+          [
+              'g-recaptcha-response' => 'required|google_recaptcha'
+          ]
         );
+
+        if($validator->fails()):
+            return $this->logout($request)->withErrors($validator)->withInput();
+        endif;
+
+        return $this->goToDashboard();
+    }
+
+    protected function goToDashboard() {
+        return redirect()->route('dashboard');
     }
 }

@@ -27,14 +27,17 @@ jobs:
           paths:
             - ./vendor
 
-      - restore_cache:
-          keys:
-            - node-v1-{{ checksum "package.json" }}
-            - node-v1-
-      - run: yarn install
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}
-          paths:
-            - node_modules
+      # Disable these steps for the moment
+      # There are no tests that require javascript
+      #
+      #- restore_cache:
+      #    keys:
+      #      - node-v1-{{ checksum "package.json" }}
+      #      - node-v1-
+      #- run: yarn install
+      #- save_cache:
+      #    key: node-v1-{{ checksum "package.json" }}
+      #    paths:
+      #      - node_modules
 
       - run: composer test
