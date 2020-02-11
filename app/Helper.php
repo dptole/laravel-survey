@@ -245,7 +245,10 @@ class Helper {
   }
 
   public static function getRequestIp() {
-    $headers = getallheaders();
+    if(env('APP_ENV') === 'testing' && isset($GLOBALS['getRequestIp_getallheaders']) && is_array($GLOBALS['getRequestIp_getallheaders']))
+      $headers = $GLOBALS['getRequestIp_getallheaders'];
+    else
+      $headers = getallheaders();
 
     if(is_array($headers) && isset($headers['x-forwarded-for']))
       return $headers['x-forwarded-for'];

@@ -12,7 +12,10 @@ class HelperTest extends TestCase
   public function lsrGetLanguageRegionsProvider() {
     return [
       [ 'pt-BR,en-US',
-        'English/United States, Portuguese/Brazil'
+        'English/United States, Portuguese/Brazil',
+      ],
+      [ '-', // invalid language
+        ''   // no region
       ]
     ];
   }
@@ -285,10 +288,14 @@ class HelperTest extends TestCase
     $rip2 = Helper::getRequestIp();
     $this->assertEquals($_SERVER['REMOTE_ADDR'], $rip2);
 
-    // This function calls https://www.php.net/getallheaders
-    $nothing_from_apache = getallheaders();
-    $this->assertIsArray($nothing_from_apache);
-    $this->assertEmpty($nothing_from_apache);
+    $GLOBALS['getRequestIp_getallheaders'] = [
+      'x-forwarded-for' => '192.168.0.2'
+    ];
+
+    $rip3 = Helper::getRequestIp();
+    $this->assertEquals($GLOBALS['getRequestIp_getallheaders']['x-forwarded-for'], $rip3);
+
+    unset($GLOBALS['getRequestIp_getallheaders']);
   }
 
   public function testDbIpDecorateResponse() { // ($ip_info, $ip) {
@@ -397,6 +404,9 @@ class HelperTest extends TestCase
   public function testGetDotEnvFileVar() {
     $value = Helper::getDotEnvFileVar('APP_ENV');
     $this->assertEquals('testing', $value);
+
+    $value = Helper::getDotEnvFileVar('INVALID_VAR');
+    $this->assertNull($value);
   }
 
   public function testGetDotEnvFile() {
@@ -455,7 +465,23 @@ class HelperTest extends TestCase
   }
 
   public function testGetPendingDotEnvFileConfigs() {
-    $this->assertIsArray(Helper::getPendingDotEnvFileConfigs());
+    $this->assertCount(0, Helper::getPendingDotEnvFileConfigs());
+
+    $old_prefix = Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL');
+
+    $written_bytes = Helper::updateDotEnvFileVars([
+      'PUSHER_ENABLED' => 'true',
+      'GOOGLE_RECAPTCHA_ENABLED' => 'true',
+      'LARAVEL_SURVEY_PREFIX_URL' => '/ invalid /'
+    ]);
+
+    $this->assertCount(3, Helper::getPendingDotEnvFileConfigs());
+
+    $written_bytes = Helper::updateDotEnvFileVars([
+      'PUSHER_ENABLED' => 'false',
+      'GOOGLE_RECAPTCHA_ENABLED' => 'false',
+      'LARAVEL_SURVEY_PREFIX_URL' => $old_prefix
+    ]);
   }
 
   public function testHasPendingDotEnvFileConfigs() {
