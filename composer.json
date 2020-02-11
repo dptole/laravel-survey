@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.0",
         "laravelcollective/html": "^6",
         "nesbot/carbon": "^2",
+        "php-coveralls/php-coveralls": "^2.2",
         "pusher/pusher-php-server": "~3.0",
         "webpatser/laravel-uuid": "2.*"
     },

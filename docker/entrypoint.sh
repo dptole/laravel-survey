@@ -247,9 +247,9 @@ apk add curl bash vim nodejs npm mariadb mariadb-client openrc
 curl 'https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub' -o /etc/apk/keys/php-alpine.rsa.pub
 apk add php7-curl php7-dom php7-fpm php7-json php7-session php7-openssl php7-pdo_mysql php7-pdo php7-fileinfo --repository https://dl.bintray.com/php-alpine/v3.10/php-7.4
 
-# Install Xdebug for code coverage
-# pecl install xdebug
-# docker-php-ext-enable xdebug
+# Install and enable Xdebug for code coverage with coveralls
+pecl install xdebug
+docker-php-ext-enable xdebug
 
 # Config ~/.vimrc file
 cat <<EOF -> ~/.vimrc

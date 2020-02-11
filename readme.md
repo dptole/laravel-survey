@@ -2,6 +2,7 @@ Laravel 6 survey
 ================
 
   [![Build status][circle-ci-badge]][circle-ci]
+  [![Coverage Status][coveralls-badge]][coveralls]
   [![Issue status][gh-issues-badge]][gh-issues]
 
 Custom survey app in Laravel 6.
@@ -134,6 +135,8 @@ License
 
 [MIT][LICENSE]
 
+[coveralls-badge]: https://coveralls.io/repos/github/dptole/laravel-survey/badge.svg?branch=master
+[coveralls]: https://coveralls.io/github/dptole/laravel-survey
 [gh-issues]: https://github.com/dptole/laravel-survey/issues
 [gh-issues-badge]: https://img.shields.io/github/issues-raw/dptole/laravel-survey.svg
 [circle-ci]: https://circleci.com/gh/dptole/laravel-survey

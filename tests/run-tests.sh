@@ -10,6 +10,9 @@ CREATE_DB=true
 # CLEAR_CONFIG_CACHE=<true|false>
 CLEAR_CONFIG_CACHE=true
 
+# UPLOAD_COVERALLS=<true|false>
+UPLOAD_COVERALLS=false
+
 if [ ! -e vendor/bin/phpunit ]
 then
   echo 'PHPUnit is not installed' &&
@@ -62,11 +65,22 @@ then
   fi
 fi
 
-# Run the tests (using the .env file & phpunit.xml)
-vendor/bin/phpunit
+# Clean up
+rm -rf $localdirname/build/
 
-# Run the code coverage analysis
-# vendor/bin/phpunit --coverage-html $localdirname/public
+if [ "$UPLOAD_COVERALLS" == "true" ]
+then
+  # Run unit and feature tests and output coverage data
+  vendor/bin/phpunit --coverage-clover "$localdirname/build/logs/clover.xml"
+
+  # Run the code coverage analysis
+  vendor/bin/php-coveralls -v
+
+else
+  # Run unit and feature tests and output html data
+  vendor/bin/phpunit --coverage-html "$localdirname/build/logs/html"
+
+fi
 
 # Store the error code from the previous command because
 # clean up is necessary

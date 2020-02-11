@@ -20,6 +20,34 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./app</directory>
+            <exclude>
+                <directory>./build</directory>
+                <directory>./composer</directory>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+                <directory>./.git</directory>
+                <directory>./.circleci</directory>
+                <directory>./config</directory>
+                <directory>./database</directory>
+                <directory>./docker</directory>
+                <directory>./node_modules</directory>
+                <directory>./public</directory>
+                <directory>./resources</directory>
+                <directory>./routes</directory>
+                <directory>./storage</directory>
+                <directory>./app/Exceptions</directory>
+                <directory>./app/Console</directory>
+                <directory>./app/Providers</directory>
+                <file>./server.php</file>
+                <file>./composer-setup.php</file>
+                <file>./app/Http/Kernel.php</file>
+                <file>./app/Http/Middleware/TrimStrings.php</file>
+                <file>./app/Http/Middleware/VerifyCsrfToken.php</file>
+                <file>./app/Http/Middleware/EncryptCookies.php</file>
+                <file>./app/Http/Controllers/Controller.php</file>
+                <file>./app/Http/Controllers/Auth/ForgotPasswordController.php</file>
+                <file>./app/Http/Controllers/Auth/ResetPasswordController.php</file>
+            </exclude>
         </whitelist>
     </filter>
     <php>
@@ -29,4 +57,7 @@
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="DB_CONNECTION" value="sqlite_testing"/>
     </php>
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
 </phpunit>

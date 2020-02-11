@@ -19,3 +19,6 @@ composer.lock
 .phpunit.result.cache
 /tests/_output
 /tests/_support/_generated
+/tests/coveralls
+.coveralls.yml
+/build
