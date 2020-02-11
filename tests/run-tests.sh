@@ -11,7 +11,7 @@ CREATE_DB=true
 CLEAR_CONFIG_CACHE=true
 
 # UPLOAD_COVERALLS=<true|false>
-UPLOAD_COVERALLS=true
+UPLOAD_COVERALLS=${UPLOAD_COVERALLS-true}
 
 if [ ! -e vendor/bin/phpunit ]
 then
@@ -68,17 +68,13 @@ fi
 # Clean up
 rm -rf $localdirname/build/
 
+# Run unit and feature tests
+vendor/bin/phpunit -v
+
 if [ "$UPLOAD_COVERALLS" == "true" ]
 then
-  # Run unit and feature tests and output coverage data
-  vendor/bin/phpunit --coverage-clover "$localdirname/build/logs/clover.xml"
-
   # Run the code coverage analysis
   vendor/bin/php-coveralls -v
-
-else
-  # Run unit and feature tests and output html data
-  vendor/bin/phpunit --coverage-html "$localdirname/build/logs/html"
 
 fi
 

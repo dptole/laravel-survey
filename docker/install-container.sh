@@ -65,6 +65,7 @@ $dockerdir/remove-container.sh
 # Install container
 sudo docker run \
   -d \
+  -e UPLOAD_COVERALLS=false \
   -e LARAVEL_HTTP_PORT=$LARAVEL_HTTP_PORT \
   -e LARAVEL_SERVER_ENV=$LARAVEL_SERVER_ENV \
   -e LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY=$LARAVEL_MAXMIND_COUNTRY_LICENSE_KEY \
