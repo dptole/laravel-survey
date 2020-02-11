@@ -11,7 +11,7 @@ CREATE_DB=true
 CLEAR_CONFIG_CACHE=true
 
 # UPLOAD_COVERALLS=<true|false>
-UPLOAD_COVERALLS=false
+UPLOAD_COVERALLS=true
 
 if [ ! -e vendor/bin/phpunit ]
 then
