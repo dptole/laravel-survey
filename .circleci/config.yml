@@ -7,7 +7,6 @@ jobs:
 
     branches:
       only:
-        - dev
         - master
 
     steps:
