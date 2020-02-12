@@ -75,7 +75,10 @@ class Helper {
   }
 
   public static function isGoogleReCaptchaEnabled() {
-    return Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_ENABLED') === 'true';
+    return self::getTestEnvMockVar(
+      'isGoogleReCaptchaEnabled',
+      Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_ENABLED') === 'true'
+    );
   }
 
   public static function isPusherEnabled() {

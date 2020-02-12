@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Helper;
 
+// @codeCoverageIgnoreStart
 define('REGISTER_REDIRECT_TO', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/dashboard');
+// @codeCoverageIgnoreEnd
 
 class RegisterController extends Controller
 {

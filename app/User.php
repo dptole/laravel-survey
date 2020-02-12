@@ -32,7 +32,7 @@ class User extends Authenticatable
      * Wrapper for the uuid.
      */
     public function save(array $options = []) {
-        $this->uuid = property_exists($this, 'uuid') && is_string($this->uuid) && preg_match('#^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$#', $this->uuid)
+        $this->uuid = property_exists($this, 'uuid') && is_string($this->uuid) && Uuid::validate($this->uuid)
           ? $this->uuid
           : Uuid::generate(4)
         ;

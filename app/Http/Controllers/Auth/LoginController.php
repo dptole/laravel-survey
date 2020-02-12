@@ -28,14 +28,16 @@ class LoginController extends Controller
     // https://stackoverflow.com/a/40887817
     public function logout(Request $request) {
         $user = \Auth::user();
-        $farewell = 'See you later!';
-        if($user):
-            $farewell = 'See you later ' . $user->name . '!';
-        endif;
+
+        $farewell = $user
+            ? 'See you later ' . $user->name . '!'
+            : 'See you later!'
+        ;
 
         $this->performLogout($request);
 
         $request->session()->flash('success', $farewell);
+
         return redirect()->route('home');
     }
 
@@ -60,7 +62,12 @@ class LoginController extends Controller
           ]
         );
 
-        if($validator->fails()):
+        $failed_to_validate = Helper::getTestEnvMockVar(
+          'googleReCaptchaFailed',
+          $validator->fails()
+        );
+
+        if($failed_to_validate):
             return $this->logout($request)->withErrors($validator)->withInput();
         endif;
 

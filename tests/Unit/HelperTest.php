@@ -245,9 +245,9 @@ class HelperTest extends TestCase
   }
 
   /** @dataProvider lsrGetLanguageRegionsProvider */
-  public function testLsrGetLanguageRegions($regions1, $regions2) {
-    $regions = Helper::lsrGetLanguageRegions($regions1);
-    $this->assertEquals($regions2, $regions);
+  public function testLsrGetLanguageRegions($languages, $expected_regions) {
+    $response_regions = Helper::lsrGetLanguageRegions($languages);
+    $this->assertEquals($expected_regions, $response_regions);
   }
 
   /** @dataProvider tzGetCountriesProvider */
