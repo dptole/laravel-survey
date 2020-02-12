@@ -135,7 +135,7 @@ License
 
 [MIT][LICENSE]
 
-[coveralls-badge]: https://coveralls.io/repos/github/dptole/laravel-survey/badge.svg?branch=master
+[coveralls-badge]: https://img.shields.io/coveralls/github/dptole/laravel-survey/master
 [coveralls]: https://coveralls.io/github/dptole/laravel-survey
 [gh-issues]: https://github.com/dptole/laravel-survey/issues
 [gh-issues-badge]: https://img.shields.io/github/issues-raw/dptole/laravel-survey.svg

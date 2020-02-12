@@ -66,7 +66,12 @@ class Helper {
   }
 
   public static function isSecureRequest() {
-    return Request::secure() || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO']);
+    $is_secure_by_header = self::getTestEnvMockVar(
+      'isSecureRequest',
+      isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO']
+    );
+
+    return Request::secure() || $is_secure_by_header;
   }
 
   public static function isGoogleReCaptchaEnabled() {
@@ -244,11 +249,15 @@ class Helper {
     return false;
   }
 
+  public static function getTestEnvMockVar($var_name, $fallback) {
+    if(env('APP_ENV') === 'testing' && isset($GLOBALS[$var_name]))
+      return $GLOBALS[$var_name];
+
+    return $fallback;
+  }
+
   public static function getRequestIp() {
-    if(env('APP_ENV') === 'testing' && isset($GLOBALS['getRequestIp_getallheaders']) && is_array($GLOBALS['getRequestIp_getallheaders']))
-      $headers = $GLOBALS['getRequestIp_getallheaders'];
-    else
-      $headers = getallheaders();
+    $headers = self::getTestEnvMockVar('getRequestIp_headers', getallheaders());
 
     if(is_array($headers) && isset($headers['x-forwarded-for']))
       return $headers['x-forwarded-for'];
@@ -309,10 +318,6 @@ class Helper {
               break;
             endif;
           else:
-            if(!($th->length === 0 && $td->length === 3)):
-              break;
-            endif;
-
             $props['Security / Crawler'] = self::htmlTrim($td->item(0)->textContent);
             $props['Security / Proxy'] = self::htmlTrim($td->item(1)->textContent);
             $props['Security / Attack source'] = self::htmlTrim($td->item(2)->textContent);
@@ -322,10 +327,6 @@ class Helper {
         foreach($trs as $tr_index => $tr):
           $th = $tr->getElementsByTagName('th');
           $td = $tr->getElementsByTagName('td');
-
-          if(!($th->length === 1 && $td->length === 1)):
-            continue;
-          endif;
 
           $text_th = self::htmlTrim($th->item(0)->textContent);
           $text_td = self::htmlTrim($td->item(0)->textContent);
