@@ -9,43 +9,12 @@ use Tests\TestCase;
 use Webpatser\Uuid\Uuid;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestResponse;
+use Tests\TestsHelper;
 use App\Helper;
 use App\User;
 
-class RegisterTest extends TestCase
+class AuthTest extends TestCase
 {
-  static $laravel_session = null;
-
-  public function setUp():void {
-    parent::setUp();
-
-    $this->app['session']->setDefaultDriver('file');
-  }
-
-  public static function getLaravelSessionCookieName() {
-    return app('session')->getSessionConfig()['cookie'];
-  }
-
-  public static function getLaravelSession(TestResponse $response) {
-    foreach($response->headers->getCookies() as $cookie):
-      if(self::getLaravelSessionCookieName() !== $cookie->getName())
-        continue;
-
-      return $cookie->getValue();
-    endforeach;
-  }
-
-  public static function storeLaravelSession(TestResponse $response) {
-    $laravel_session = self::getLaravelSession($response);
-
-    if(!$laravel_session)
-      return false;
-
-    self::$laravel_session = $laravel_session;
-
-    return true;
-  }
-
   public function getUserInputsProvider() {
     $user_input1 = [
       'name' => 'test@user.com',
@@ -134,6 +103,8 @@ class RegisterTest extends TestCase
       Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
       $user_input1
     );
+
+    TestsHelper::storeLaravelSession($response);
 
     $response->assertStatus(302);
 
