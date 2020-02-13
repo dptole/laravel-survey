@@ -10,71 +10,70 @@ use App\Helper;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
+  /*
+  |--------------------------------------------------------------------------
+  | Login Controller
+  |--------------------------------------------------------------------------
+  |
+  | This controller handles authenticating users for the application and
+  | redirecting them to your home screen. The controller uses a trait
+  | to conveniently provide its functionality to your applications.
+  |
+  */
 
-    use AuthenticatesUsers {
-      logout as performLogout;
-    }
+  use AuthenticatesUsers {
+    logout as performLogout;
+    validateLogin as parentValidateLogin;
+  }
 
-    // https://stackoverflow.com/a/40887817
-    public function logout(Request $request) {
-        $user = \Auth::user();
+  /**
+   * Create a new controller instance.
+   *
+   * @return void
+   */
+  public function __construct() {
+    $this->middleware('guest', ['except' => 'logout']);
+  }
 
-        $farewell = $user
-            ? 'See you later ' . $user->name . '!'
-            : 'See you later!'
-        ;
+  protected function sendLoginResponse(Request $request) {
+    $request->session()->regenerate();
+    $this->clearLoginAttempts($request);
+    return redirect()->route('dashboard');
+  }
 
-        $this->performLogout($request);
+  // https://stackoverflow.com/a/40887817
+  protected function logout(Request $request) {
+    $user = \Auth::user();
 
-        $request->session()->flash('success', $farewell);
+    $farewell = $user
+        ? 'See you later ' . $user->name . '!'
+        : 'See you later!'
+    ;
 
-        return redirect()->route('home');
-    }
+    $this->performLogout($request);
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct() {
-        $this->middleware('guest', ['except' => 'logout']);
-    }
+    $request->session()->flash('success', $farewell);
 
-    protected function sendLoginResponse(Request $request) {
-        if(!Helper::isGoogleReCaptchaEnabled()):
-            return $this->goToDashboard();
-        endif;
+    return redirect()->route('home');
+  }
 
-        $validator = Validator::make(
-          $request->all(),
-          [
-              'g-recaptcha-response' => 'required|google_recaptcha'
-          ]
-        );
+  protected function validateLogin(Request $request) {
+    $this->parentValidateLogin($request);
 
-        $failed_to_validate = Helper::getTestEnvMockVar(
-          'googleReCaptchaFailed',
-          $validator->fails()
-        );
+    if(!Helper::isGoogleReCaptchaEnabled())
+      return;
 
-        if($failed_to_validate):
-            return $this->logout($request)->withErrors($validator)->withInput();
-        endif;
+    $rule = [
+      'g-recaptcha-response' => 'required|google_recaptcha'
+    ];
 
-        return $this->goToDashboard();
-    }
+    $mocked_response = Helper::getTestEnvMockVar('googleReCaptchaFailed', 0);
 
-    protected function goToDashboard() {
-        return redirect()->route('dashboard');
-    }
+    if($mocked_response === true)
+      Validator::make([], $rule)->validate();
+    elseif($mocked_response === false)
+      Validator::make([], [])->validate();
+
+    Validator::make($request->all(), $rule)->validate();
+  }
 }

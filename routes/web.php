@@ -28,7 +28,15 @@ Route::group(['prefix' => '/', 'middleware' => ['setup']], function() {
     Route::get('/', ['uses' => 'HomeController@index', 'as' => 'home']);
 
     Route::get('/s/{s_link}', ['uses' => 'PublicSurveyController@shareableLink', 'as' => 'public_survey.shareable_link']);
-    Auth::routes();
+
+    // https://stackoverflow.com/a/35298383
+    Route::get('/register', ['uses' => '\App\Http\Controllers\Auth\RegisterController@showRegistrationForm', 'as' => 'register']);
+    Route::post('/register', ['uses' => '\App\Http\Controllers\Auth\RegisterController@register', 'as' => 'register.create']);
+
+    Route::get('/login', ['uses' => '\App\Http\Controllers\Auth\LoginController@showLoginForm', 'as' => 'login']);
+    Route::post('/login', ['uses' => '\App\Http\Controllers\Auth\LoginController@login', 'as' => 'login.create']);
+
+    Route::post('/logout', ['uses' => '\App\Http\Controllers\Auth\LoginController@logout', 'as' => 'logout']);
 
     Route::group(['prefix' => 'fonts'], function() {
       Route::get('/{font_file}', ['uses' => 'ResourceController@fonts', 'as' => 'fonts']);
@@ -52,9 +60,9 @@ Route::group(['prefix' => '/', 'middleware' => ['setup']], function() {
     });
 
     Route::group(['prefix' => 'api', 'middleware' => 'api'], function() {
-      Route::post('/{s_uuid}/session_id', ['uses' => 'APIController@getSessionId']);
-      Route::post('/save_answer', ['uses' => 'APIController@saveSurveyAnswer']);
-      Route::post('/fetch_country_info', ['uses' => 'APIController@fetchCountryInfo']);
+      Route::post('/{s_uuid}/session_id', ['uses' => 'APIController@getSessionId', 'as' => 'api.get_session_id']);
+      Route::post('/save_answer', ['uses' => 'APIController@saveSurveyAnswer', 'as' => 'api.save_survey_answer']);
+      Route::post('/fetch_country_info', ['uses' => 'APIController@fetchCountryInfo', 'as' => 'api.fetch_country_info']);
     });
 
     Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function() {

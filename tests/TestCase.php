@@ -8,6 +8,12 @@ abstract class TestCase extends BaseTestCase
 {
   use CreatesApplication;
 
+  protected function setUp():void {
+    parent::setUp();
+
+    app('session')->setDefaultDriver('file');
+  }
+
   # https://github.com/laravel/framework/issues/9733#issuecomment-479055459
   protected function tearDown():void {
     $instances_names = ['config', 'url', 'request', 'html', 'form', 'Illuminate\Contracts\Http\Kernel'];
@@ -22,11 +28,5 @@ abstract class TestCase extends BaseTestCase
     foreach($instances as $instance_name => $instance):
       app()->instance($instance_name, $instance);
     endforeach;
-  }
-
-  protected function setUp():void {
-    parent::setUp();
-
-    app('session')->setDefaultDriver('file');
   }
 }

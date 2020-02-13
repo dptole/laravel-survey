@@ -32,10 +32,17 @@ class User extends Authenticatable
      * Wrapper for the uuid.
      */
     public function save(array $options = []) {
-        $this->uuid = property_exists($this, 'uuid') && is_string($this->uuid) && Uuid::validate($this->uuid)
-          ? $this->uuid
-          : Uuid::generate(4)
-        ;
+        if(
+          isset($this->attributes['uuid']) &&
+          is_string($this->attributes['uuid']) &&
+          Uuid::validate($this->attributes['uuid'])
+        )
+          $uuid = $this->attributes['uuid'];
+        else
+          $uuid = Uuid::generate(4);
+
+        $this->uuid = $uuid;
+
         return parent::save($options);
     }
 }

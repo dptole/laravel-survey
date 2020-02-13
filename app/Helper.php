@@ -11,7 +11,8 @@ use Illuminate\Support\HtmlString;
 use ReCaptcha\ReCaptcha;
 use Pusher\Pusher;
 
-class Helper {
+class Helper
+{
   static $pusher = null;
   static $lsr = null;
   static $tzs = null;

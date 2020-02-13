@@ -10,171 +10,205 @@ use Webpatser\Uuid\Uuid;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestsHelper;
-use App\Helper;
 use App\User;
 
-class AuthTest extends TestCase
+class AuthTestCase extends TestCase
 {
-  public function getUserInputsProvider() {
-    $user_input1 = [
-      'name' => 'test@user.com',
-      'email' => 'test@user.com',
-      'password' => 'test@user.com',
-      'password_confirmation' => 'test@user.com'
-    ];
+  public function testRegister() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    $user_input2 = [
-      'name' => 'test2@user.com',
-      'email' => 'test2@user.com',
-      'password' => 'test2@user.com',
-      'password_confirmation' => 'test2@user.com'
-    ];
+      $response1 = $this->post(
+        TestsHelper::getRoutePath('register.create'),
+        $user_input1
+      );
 
-    $user_recaptcha = [
-      'name' => 'recaptcha@user.com',
-      'email' => 'recaptcha@user.com',
-      'password' => 'recaptcha@user.com',
-      'password_confirmation' => 'recaptcha@user.com'
-    ];
+      $response1->assertStatus(302);
 
-    return [
-      [$user_input1, $user_input2, $user_recaptcha]
-    ];
+      $response2 = $this->followingRedirects()->post(
+        TestsHelper::getRoutePath('register.create'),
+        $user_input2
+      );
+
+      $response2->assertStatus(200);
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testRegister($user_input1, $user_input2, $user_recaptcha) {
-    $response1 = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/register',
-      $user_input1
-    );
+  /** @depends testRegister */
+  public function testUserAfterRegistered($_) {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    $response1->assertStatus(302);
+      $users = User::where('email', '=', $user_input['email'])->limit(1)->get();
+      $this->assertCount(1, $users);
+      $user_db = $users[0];
 
-    // Following redirects
-    $response2 = $this->followingRedirects()->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/register',
-      $user_input2
-    );
+      TestsHelper::$shared_objects['auth']['logged_in'] = $user_db;
 
-    $response2->assertStatus(200);
+      $this->assertIsNumeric($user_db->id);
+      $this->assertEquals($user_input['name'], $user_db->name);
+      $this->assertEquals($user_input['email'], $user_db->email);
+      $this->assertTrue(password_verify($user_input['password'], $user_db->password));
+      $this->assertTrue(Uuid::validate($user_db->uuid));
+      $this->assertNull($user_db->remember_token);
+      $this->assertInstanceOf(Carbon::class, $user_db->created_at);
+      $this->assertInstanceOf(Carbon::class, $user_db->updated_at);
+      $this->assertEquals($user_db->updated_at . '', $user_db->created_at . '');
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testUserAfterRegistered($user_input, $user_input2, $user_recaptcha) {
-    $users = User::where('email', '=', $user_input['email'])->limit(1)->get();
-    $this->assertCount(1, $users);
-    $user_db = $users[0];
+  public function testRegisterWithGoogleReCaptchaEnabled() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    $this->assertIsNumeric($user_db['id']);
-    $this->assertEquals($user_input['name'], $user_db['name']);
-    $this->assertEquals($user_input['email'], $user_db['email']);
-    $this->assertTrue(password_verify($user_input['password'], $user_db['password']));
-    $this->assertTrue(Uuid::validate($user_db['uuid']));
-    $this->assertNull($user_db['remember_token']);
-    $this->assertInstanceOf(Carbon::class, $user_db['created_at']);
-    $this->assertInstanceOf(Carbon::class, $user_db['updated_at']);
-    $this->assertEquals($user_db['updated_at'] . '', $user_db['created_at'] . '');
+      $GLOBALS['isGoogleReCaptchaEnabled'] = true;
+
+      $response = $this->post(
+        TestsHelper::getRoutePath('register.create'),
+        $user_recaptcha
+      );
+
+      $response->assertStatus(302);
+
+      unset($GLOBALS['isGoogleReCaptchaEnabled']);
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testRegisterWithGoogleReCaptchaEnabled($user_input1, $user_input2, $user_recaptcha) {
-    $GLOBALS['isGoogleReCaptchaEnabled'] = true;
+  public function testNotRegisteredWithGoogleReCaptchaEnabled() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/register',
-      $user_recaptcha
-    );
-
-    $response->assertStatus(302);
-
-    unset($GLOBALS['isGoogleReCaptchaEnabled']);
+      $users = User::where('email', '=', $user_recaptcha['email'])->limit(1)->get();
+      $this->assertCount(0, $users);
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testNotRegisteredWithGoogleReCaptchaEnabled($user_input1, $user_input2, $user_recaptcha) {
-    $users = User::where('email', '=', $user_recaptcha['email'])->limit(1)->get();
-    $this->assertCount(0, $users);
+  public function testLogin() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
+
+      $response = $this->post(
+        TestsHelper::getRoutePath('login.create'),
+        $user_input1
+      );
+
+      $response->assertStatus(302);
+
+      $response = $this->post(
+        TestsHelper::getRoutePath('login.create'),
+        $user_input2
+      );
+
+      $response->assertStatus(302);
+
+      TestsHelper::storeLaravelSession($response);
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testLogin($user_input1, $user_input2, $user_recaptcha) {
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
-      $user_input1
-    );
+  public function testLoginWithGoogleReCaptchaFailed() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    TestsHelper::storeLaravelSession($response);
+      $GLOBALS['isGoogleReCaptchaEnabled'] = true;
 
-    $response->assertStatus(302);
+      $response = $this->post(
+        TestsHelper::getRoutePath('login.create'),
+        $user_input1
+      );
 
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
-      $user_input2
-    );
+      $response->assertStatus(302);
 
-    $response->assertStatus(302);
+      $response = $this->post(
+        TestsHelper::getRoutePath('login.create'),
+        $user_input2
+      );
+
+      $response->assertStatus(302);
+
+      unset($GLOBALS['isGoogleReCaptchaEnabled']);
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testLoginWithGoogleReCaptchaFailed($user_input1, $user_input2, $user_recaptcha) {
-    $GLOBALS['isGoogleReCaptchaEnabled'] = true;
+  public function testLoginWithGoogleReCaptchaSucceeded() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
-      $user_input1
-    );
+      $GLOBALS['isGoogleReCaptchaEnabled'] = true;
+      $GLOBALS['googleReCaptchaFailed'] = false;
 
-    $response->assertStatus(302);
+      $response = $this->post(
+        TestsHelper::getRoutePath('login.create'),
+        $user_input1
+      );
 
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
-      $user_input2
-    );
+      $response->assertStatus(302);
 
-    $response->assertStatus(302);
+      $response = $this->post(
+        TestsHelper::getRoutePath('login.create'),
+        $user_input2
+      );
 
-    unset($GLOBALS['isGoogleReCaptchaEnabled']);
+      $response->assertStatus(302);
+
+      unset($GLOBALS['isGoogleReCaptchaEnabled']);
+      unset($GLOBALS['googleReCaptchaFailed']);
+    endforeach;
   }
 
-  /** @dataProvider getUserInputsProvider */
-  public function testLoginWithGoogleReCaptchaSucceeded($user_input1, $user_input2, $user_recaptcha) {
-    $GLOBALS['isGoogleReCaptchaEnabled'] = true;
-    $GLOBALS['googleReCaptchaFailed'] = false;
+  public function testLogout() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
-      $user_input1
-    );
+      $response = $this->post(
+        TestsHelper::getRoutePath('logout'),
+        $user_input1
+      );
 
-    $response->assertStatus(302);
+      $response->assertStatus(302);
 
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/login',
-      $user_input2
-    );
+      $response = $this->post(
+        TestsHelper::getRoutePath('logout'),
+        $user_input2
+      );
 
-    $response->assertStatus(302);
-
-    unset($GLOBALS['isGoogleReCaptchaEnabled']);
-    unset($GLOBALS['googleReCaptchaFailed']);
-  }
-
-  /** @dataProvider getUserInputsProvider */
-  public function testLogout($user_input1, $user_input2, $user_recaptcha) {
-    $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/logout',
-      $user_input1
-    );
-
-    $response->assertStatus(302);
+      $response->assertStatus(302);
+    endforeach;
   }
 
   public function testLogoutUnnamed() {
     $response = $this->post(
-      Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL') . '/logout'
+      TestsHelper::getRoutePath('logout')
     );
 
     $response->assertStatus(302);
+  }
+
+  public function testRegisteringDirectly() {
+    foreach(TestsHelper::$shared_objects['auth']['user_inputs'] as $ui):
+      list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
+
+      $generated_uuid = Uuid::generate(4) . '';
+      $encrypted_password = bcrypt($user_direct['password']);
+
+      $user_db = new User;
+      $user_db->name = $user_direct['name'];
+      $user_db->uuid = $generated_uuid;
+      $user_db->email = $user_direct['email'];
+      $user_db->password = $encrypted_password;
+
+      $user_db->save();
+
+      $this->assertIsNumeric($user_db->id);
+      $this->assertEquals($user_direct['name'], $user_db->name);
+      $this->assertEquals($user_direct['email'], $user_db->email);
+      $this->assertEquals($encrypted_password, $user_db->password);
+      $this->assertTrue(password_verify($user_direct['password'], $user_db->password));
+      $this->assertTrue(Uuid::validate($user_db->uuid));
+      $this->assertEquals($generated_uuid, $user_db->uuid);
+      $this->assertNull($user_db->remember_token);
+      $this->assertInstanceOf(Carbon::class, $user_db->created_at);
+      $this->assertInstanceOf(Carbon::class, $user_db->updated_at);
+      $this->assertEquals($user_db->updated_at . '', $user_db->created_at . '');
+    endforeach;
   }
 }
