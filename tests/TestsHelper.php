@@ -78,9 +78,10 @@ class TestsHelper
         ],
     ];
 
-    public static function getSessionCookies() {
+    public static function getSessionCookies()
+    {
         return [
-            'laravel_session' => self::$laravel_session
+            'laravel_session' => self::$laravel_session,
         ];
     }
 

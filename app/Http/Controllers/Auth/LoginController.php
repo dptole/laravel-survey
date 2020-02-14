@@ -79,7 +79,8 @@ class LoginController extends Controller
         }
 
         Validator::make($request->all(), $rule)->validate();
-    // @codeCoverageIgnoreStart
+        // @codeCoverageIgnoreStart
     }
+
     // @codeCoverageIgnoreEnd
 }

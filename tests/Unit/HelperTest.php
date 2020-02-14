@@ -20,12 +20,12 @@ class HelperTest extends TestCase
             // Invalid language...
             '-',
             // I don't know where you might be from...
-            ''
+            '',
         ];
 
         return [
             $valid,
-            $invalid
+            $invalid,
         ];
     }
 
@@ -35,7 +35,7 @@ class HelperTest extends TestCase
         $plus3gmt = 'Bahrain, Belarus, Comoros, Djibouti, Eritrea, Ethiopia, Iraq, Kenya, Kuwait, Madagascar, Qatar, Russia (Moscow), Saudi Arabia, Somalia, South Sudan, Tanzania, Turkey, Uganda, Yemen';
 
         return [
-            [$minus3gmt, $plus3gmt]
+            [$minus3gmt, $plus3gmt],
         ];
     }
 
