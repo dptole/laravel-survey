@@ -9,12 +9,13 @@ class DashboardTest extends TestCase
 {
     public function testEnterDashboard()
     {
-        $response = $this->call(
-      'GET',
-      TestsHelper::getRoutePath('dashboard'),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('dashboard');
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }

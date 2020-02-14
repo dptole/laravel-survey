@@ -11,10 +11,13 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Feature Tests">
+            <file>./tests/Feature/HomeTest.php</file>
             <file>./tests/Feature/AuthTest.php</file>
             <file>./tests/Feature/DashboardTest.php</file>
             <file>./tests/Feature/SurveyTest.php</file>
+<!--
             <file>./tests/Feature/QuestionTest.php</file>
+-->
         </testsuite>
 
         <testsuite name="Unit Tests">

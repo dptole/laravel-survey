@@ -11,22 +11,31 @@ class HelperTest extends TestCase
 {
     public function lsrGetLanguageRegionsProvider()
     {
+        $valid = [
+            'pt-BR,en-US',
+            'English/United States, Portuguese/Brazil',
+        ];
+
+        $invalid = [
+            // Invalid language...
+            '-',
+            // I don't know where you might be from...
+            ''
+        ];
+
         return [
-            ['pt-BR,en-US',
-                'English/United States, Portuguese/Brazil',
-            ],
-            ['-', // invalid language
-                '',   // no region
-            ],
+            $valid,
+            $invalid
         ];
     }
 
     public function tzGetCountriesProvider()
     {
+        $minus3gmt = 'Argentina, Brazil (Brasilia), Falkland Islands, French Guiana, Greenland (Nuuk), Saint Pierre and Miquelon, Suriname, Uruguay';
+        $plus3gmt = 'Bahrain, Belarus, Comoros, Djibouti, Eritrea, Ethiopia, Iraq, Kenya, Kuwait, Madagascar, Qatar, Russia (Moscow), Saudi Arabia, Somalia, South Sudan, Tanzania, Turkey, Uganda, Yemen';
+
         return [
-            ['Argentina, Brazil (Brasilia), Falkland Islands, French Guiana, Greenland (Nuuk), Saint Pierre and Miquelon, Suriname, Uruguay',
-                'Bahrain, Belarus, Comoros, Djibouti, Eritrea, Ethiopia, Iraq, Kenya, Kuwait, Madagascar, Qatar, Russia (Moscow), Saudi Arabia, Somalia, South Sudan, Tanzania, Turkey, Uganda, Yemen',
-            ],
+            [$minus3gmt, $plus3gmt]
         ];
     }
 

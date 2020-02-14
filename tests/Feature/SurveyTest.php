@@ -12,26 +12,26 @@ class SurveyTest extends TestCase
 {
     public function testShowCreateSurveyPage()
     {
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.create'),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.create');
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
 
     public function testCreateSurvey()
     {
+        $url = TestsHelper::getRoutePath('survey.create');
+
+        $cookies = TestsHelper::getSessionCookies();
+
         foreach (TestsHelper::$shared_objects['survey']['samples'] as $samples) {
-            foreach ($samples as $survey1) {
-                $response = $this->followingRedirects()->call(
-          'POST',
-          TestsHelper::getRoutePath('survey.store'),
-          $survey1,
-          ['laravel_session' => TestsHelper::$laravel_session]
-        );
+            foreach ($samples as $survey) {
+                $response = $this->followingRedirects()->call('POST', $url, $survey, $cookies);
 
                 $response->assertStatus(200);
             }
@@ -45,17 +45,17 @@ class SurveyTest extends TestCase
 
         list($samples) = TestsHelper::$shared_objects['survey']['samples'];
 
-        foreach ($samples as $survey1) {
-            $surveys_db = Surveys::where('name', '=', $survey1['name'])->get();
+        foreach ($samples as $survey) {
+            $surveys_db = Surveys::where('name', '=', $survey['name'])->get();
             $this->assertCount(1, $surveys_db);
 
             $survey_db = $surveys_db[0];
 
             TestsHelper::$shared_objects['survey']['samples_db'][] = $survey_db;
 
-            $this->assertEquals($survey1['name'], $survey_db->name);
-            $this->assertEquals($survey1['description'], $survey_db->description);
-            $this->assertEquals($survey1['status'], $survey_db->status);
+            $this->assertEquals($survey['name'], $survey_db->name);
+            $this->assertEquals($survey['description'], $survey_db->description);
+            $this->assertEquals($survey['status'], $survey_db->status);
             $this->assertEquals(TestsHelper::$shared_objects['auth']['logged_in']->id, $survey_db->user_id);
             $this->assertTrue(Uuid::validate($survey_db->uuid));
             $this->assertInstanceOf(Carbon::class, $survey_db->created_at);
@@ -66,12 +66,13 @@ class SurveyTest extends TestCase
 
     public function testCreatedSurveyHtml()
     {
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('dashboard'),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('dashboard');
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $dom = new \DOMDocument();
         @$dom->loadHtml($response->content());
@@ -88,12 +89,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.destroy', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.destroy', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -108,12 +110,13 @@ class SurveyTest extends TestCase
 
     public function testDeletedSurveyHtml()
     {
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('dashboard'),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('dashboard');
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $dom = new \DOMDocument();
         @$dom->loadHtml($response->content());
@@ -130,12 +133,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.destroy', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.destroy', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -144,12 +148,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.stats', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.stats', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -158,12 +163,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.edit', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.edit', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -172,12 +178,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.edit', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.edit', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -186,12 +193,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.run', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.run', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -200,12 +208,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.run', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.run', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -214,12 +223,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.pause', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.pause', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -228,12 +238,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $response = $this->followingRedirects()->call(
-      'GET',
-      TestsHelper::getRoutePath('survey.pause', [$sample_db->uuid]),
-      [],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.pause', [$sample_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -242,12 +253,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $response = $this->followingRedirects()->call(
-      'POST',
-      TestsHelper::getRoutePath('survey.update', [$sample_db->uuid]),
-      TestsHelper::$shared_objects['survey']['samples'][0][0],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.update', [$sample_db->uuid]);
+
+        $data = TestsHelper::$shared_objects['survey']['samples'][0][0];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('POST', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }
@@ -256,12 +268,13 @@ class SurveyTest extends TestCase
     {
         $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $response = $this->followingRedirects()->call(
-      'POST',
-      TestsHelper::getRoutePath('survey.update', [$sample_db->uuid]),
-      TestsHelper::$shared_objects['survey']['samples'][0][1],
-      ['laravel_session' => TestsHelper::$laravel_session]
-    );
+        $url = TestsHelper::getRoutePath('survey.update', [$sample_db->uuid]);
+
+        $data = TestsHelper::$shared_objects['survey']['samples'][0][1];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('POST', $url, $data, $cookies);
 
         $response->assertStatus(200);
     }

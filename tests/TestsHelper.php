@@ -78,6 +78,12 @@ class TestsHelper
         ],
     ];
 
+    public static function getSessionCookies() {
+        return [
+            'laravel_session' => self::$laravel_session
+        ];
+    }
+
     public static function getLaravelSessionCookieName()
     {
         return app('session')->getSessionConfig()['cookie'];

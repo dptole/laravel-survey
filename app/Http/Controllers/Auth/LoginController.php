@@ -49,9 +49,7 @@ class LoginController extends Controller
     {
         $user = \Auth::user();
 
-        $farewell = $user
-        ? 'See you later '.$user->name.'!'
-        : 'See you later!';
+        $farewell = $user ? 'See you later '.$user->name.'!' : 'See you later!';
 
         $this->performLogout($request);
 
@@ -81,5 +79,7 @@ class LoginController extends Controller
         }
 
         Validator::make($request->all(), $rule)->validate();
+    // @codeCoverageIgnoreStart
     }
+    // @codeCoverageIgnoreEnd
 }
