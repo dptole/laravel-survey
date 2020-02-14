@@ -34,10 +34,7 @@ class QuestionController extends Controller
      */
     public function create($uuid, Request $request)
     {
-        $survey = Surveys::where('user_id', '=', $request->user()->id)
-      ->where('uuid', '=', $uuid)
-      ->limit(1)
-      ->get();
+        $survey = Surveys::where('user_id', '=', $request->user()->id)->where('uuid', '=', $uuid)->limit(1)->get();
 
         if (count($survey) !== 1) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" not found.');
@@ -79,10 +76,9 @@ class QuestionController extends Controller
             'order'       => Questions::getNextInOrder($survey->id),
         ]);
 
-        Questions::createQuestionOptions(
-      $question,
-      $request->input('questions_options')
-    );
+        $questions_options = $request->input('questions_options');
+
+        Questions::createQuestionOptions($question, $questions_options);
 
         $request->session()->flash('success', 'Question '.$question->uuid.' successfully created!');
 
@@ -141,11 +137,6 @@ class QuestionController extends Controller
         }
 
         $question_options = QuestionsOptions::getAllByQuestionIdAsJSON($question->id);
-        if (!is_array($question_options)) {
-            $request->session()->flash('warning', 'Question "'.$q_uuid.'" is bad formatted, delete it and start over again.');
-
-            return redirect()->route('survey.edit', $s_uuid);
-        }
 
         return view('question.edit')->with([
             'survey'           => $survey,
@@ -165,7 +156,7 @@ class QuestionController extends Controller
 
         $survey = Surveys::getByOwner($s_uuid, $request->user()->id);
         if (!$survey) {
-            $request->session()->flash('warning', 'Survey "'.$uuid.'" not found.');
+            $request->session()->flash('warning', 'Survey "'.$s_uuid.'" not found.');
 
             return redirect()->route('dashboard');
         }
@@ -214,11 +205,6 @@ class QuestionController extends Controller
         }
 
         $questions = Questions::getAllBySurveyIdUnpaginated($survey->id);
-        if (!(is_array($questions) && count($questions) > 0)) {
-            $request->session()->flash('warning', 'Survey "'.$s_uuid.'" questions were not found.');
-
-            return redirect()->route('survey.edit', $s_uuid);
-        }
 
         return view('question.change_order')->with([
             'survey'    => $survey,

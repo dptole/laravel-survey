@@ -17,11 +17,11 @@ class AuthTest extends TestCase
         foreach (TestsHelper::$shared_objects['auth']['user_inputs'] as $ui) {
             list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-            $response1 = $this->followingRedirects()->post($url, $user_input1);
+            $response1 = $this->followingRedirects()->call('POST', $url, $user_input1);
 
             $response1->assertStatus(200);
 
-            $response2 = $this->followingRedirects()->post($url, $user_input2);
+            $response2 = $this->followingRedirects()->call('POST', $url, $user_input2);
 
             $response2->assertStatus(200);
         }
@@ -59,7 +59,7 @@ class AuthTest extends TestCase
 
             $url = TestsHelper::getRoutePath('register.create');
 
-            $response = $this->followingRedirects()->post($url, $user_recaptcha);
+            $response = $this->followingRedirects()->call('POST', $url, $user_recaptcha);
 
             $response->assertStatus(200);
 
@@ -84,11 +84,11 @@ class AuthTest extends TestCase
         foreach (TestsHelper::$shared_objects['auth']['user_inputs'] as $ui) {
             list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
 
-            $response = $this->followingRedirects()->post($url, $user_input1);
+            $response = $this->followingRedirects()->call('POST', $url, $user_input1);
 
             $response->assertStatus(200);
 
-            $response = $this->followingRedirects()->post($url, $user_input2);
+            $response = $this->followingRedirects()->call('POST', $url, $user_input2);
 
             $response->assertStatus(200);
 
@@ -106,11 +106,11 @@ class AuthTest extends TestCase
             $GLOBALS['isGoogleReCaptchaEnabled'] = true;
             $GLOBALS['googleReCaptchaFailed'] = true;
 
-            $response = $this->followingRedirects()->post($url, $user_input1);
+            $response = $this->followingRedirects()->call('POST', $url, $user_input1);
 
             $response->assertStatus(200);
 
-            $response = $this->followingRedirects()->post($url, $user_input2);
+            $response = $this->followingRedirects()->call('POST', $url, $user_input2);
 
             $response->assertStatus(200);
 
@@ -129,11 +129,11 @@ class AuthTest extends TestCase
             $GLOBALS['isGoogleReCaptchaEnabled'] = true;
             $GLOBALS['googleReCaptchaFailed'] = false;
 
-            $response = $this->followingRedirects()->post($url, $user_input1);
+            $response = $this->followingRedirects()->call('POST', $url, $user_input1);
 
             $response->assertStatus(200);
 
-            $response = $this->followingRedirects()->post($url, $user_input2);
+            $response = $this->followingRedirects()->call('POST', $url, $user_input2);
 
             $response->assertStatus(200);
 
@@ -160,36 +160,6 @@ class AuthTest extends TestCase
         $response = $this->followingRedirects()->call('POST', $url);
 
         $response->assertStatus(200);
-    }
-
-    public function testRegisteringDirectly()
-    {
-        foreach (TestsHelper::$shared_objects['auth']['user_inputs'] as $ui) {
-            list($user_input1, $user_input2, $user_recaptcha, $user_direct) = $ui;
-
-            $generated_uuid = Uuid::generate(4).'';
-            $encrypted_password = bcrypt($user_direct['password']);
-
-            $user_db = new User();
-            $user_db->name = $user_direct['name'];
-            $user_db->uuid = $generated_uuid;
-            $user_db->email = $user_direct['email'];
-            $user_db->password = $encrypted_password;
-
-            $user_db->save();
-
-            $this->assertIsNumeric($user_db->id);
-            $this->assertEquals($user_direct['name'], $user_db->name);
-            $this->assertEquals($user_direct['email'], $user_db->email);
-            $this->assertEquals($encrypted_password, $user_db->password);
-            $this->assertTrue(password_verify($user_direct['password'], $user_db->password));
-            $this->assertTrue(Uuid::validate($user_db->uuid));
-            $this->assertEquals($generated_uuid, $user_db->uuid);
-            $this->assertNull($user_db->remember_token);
-            $this->assertInstanceOf(Carbon::class, $user_db->created_at);
-            $this->assertInstanceOf(Carbon::class, $user_db->updated_at);
-            $this->assertEquals($user_db->updated_at.'', $user_db->created_at.'');
-        }
     }
 
     public function testFinalLogin()

@@ -37,11 +37,10 @@ abstract class TestCase extends BaseTestCase
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
         $last_func_called = debug_backtrace()[1];
+
         $klass = $last_func_called['class'];
 
-        $response = parent::call(
-      $method, $uri, $parameters, $cookies, $files, $server, $content
-    );
+        $response = parent::call($method, $uri, $parameters, $cookies, $files, $server, $content);
 
         $content = $response->content();
 
@@ -59,6 +58,14 @@ abstract class TestCase extends BaseTestCase
             $filename = $klass.'-'.$last_func_called['function'].'-'.$this->fs[$func].'.html';
 
             $pathname = dirname(__FILE__).'/../storage/logs/'.$filename;
+
+            $json = json_encode($parameters);
+
+            $content_header = $method.PHP_EOL.$uri.PHP_EOL.$json;
+
+            $content_header_wrapper = '<pre style="white-space:pre-wrap;word-break:break-all">'.$content_header.'</pre>';
+
+            $content = $content_header_wrapper.$content;
 
             file_put_contents($pathname, $content);
         }

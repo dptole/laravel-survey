@@ -71,16 +71,16 @@ rm -rf $localdirname/build/
 # Run unit and feature tests
 vendor/bin/phpunit -v
 
+# Store the error code from the previous command because
+# clean up is necessary
+echo $? > /tmp/phpunit-testing-error-code
+
 if [ "$UPLOAD_COVERALLS" == "true" ]
 then
   # Run the code coverage analysis
   vendor/bin/php-coveralls -v
 
 fi
-
-# Store the error code from the previous command because
-# clean up is necessary
-echo $? > /tmp/phpunit-testing-error-code
 
 if [ -e /tmp/.env.not.testing ]
 then

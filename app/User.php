@@ -33,17 +33,7 @@ class User extends Authenticatable
      */
     public function save(array $options = [])
     {
-        if (
-          isset($this->attributes['uuid']) &&
-          is_string($this->attributes['uuid']) &&
-          Uuid::validate($this->attributes['uuid'])
-        ) {
-            $uuid = $this->attributes['uuid'];
-        } else {
-            $uuid = Uuid::generate(4);
-        }
-
-        $this->uuid = $uuid;
+        $this->uuid = Uuid::generate(4);
 
         return parent::save($options);
     }

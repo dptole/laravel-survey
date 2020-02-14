@@ -87,9 +87,9 @@ class SurveyTest extends TestCase
 
     public function testDeleteSurvey()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $url = TestsHelper::getRoutePath('survey.destroy', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.destroy', [$survey_db->uuid]);
 
         $data = [];
 
@@ -102,9 +102,9 @@ class SurveyTest extends TestCase
 
     public function testDeletedSurvey()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $surveys_db = Surveys::where('id', $sample_db->id)->get();
+        $surveys_db = Surveys::where('id', $survey_db->id)->get();
         $this->assertCount(0, $surveys_db);
     }
 
@@ -131,9 +131,24 @@ class SurveyTest extends TestCase
 
     public function testDeleteInvalidSurvey()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $url = TestsHelper::getRoutePath('survey.destroy', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.destroy', [$survey_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
+
+        $response->assertStatus(200);
+    }
+
+    public function testSurveyStatsInvalid()
+    {
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+
+        $url = TestsHelper::getRoutePath('survey.stats', [$survey_db->uuid]);
 
         $data = [];
 
@@ -146,9 +161,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyStatsBeforeRun()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $url = TestsHelper::getRoutePath('survey.stats', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.stats', [$survey_db->uuid]);
 
         $data = [];
 
@@ -161,9 +176,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyEdit()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $url = TestsHelper::getRoutePath('survey.edit', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.edit', [$survey_db->uuid]);
 
         $data = [];
 
@@ -176,9 +191,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyEditInvalid()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $url = TestsHelper::getRoutePath('survey.edit', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.edit', [$survey_db->uuid]);
 
         $data = [];
 
@@ -191,9 +206,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyRunInvalid()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $url = TestsHelper::getRoutePath('survey.run', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.run', [$survey_db->uuid]);
 
         $data = [];
 
@@ -206,9 +221,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyRunZeroQuestions()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $url = TestsHelper::getRoutePath('survey.run', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.run', [$survey_db->uuid]);
 
         $data = [];
 
@@ -221,9 +236,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyPauseInvalid()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $url = TestsHelper::getRoutePath('survey.pause', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.pause', [$survey_db->uuid]);
 
         $data = [];
 
@@ -236,9 +251,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyPauseZeroQuestionsInvalidStatus()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $url = TestsHelper::getRoutePath('survey.pause', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.pause', [$survey_db->uuid]);
 
         $data = [];
 
@@ -251,9 +266,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyUpdateInvalid()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
-        $url = TestsHelper::getRoutePath('survey.update', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.update', [$survey_db->uuid]);
 
         $data = TestsHelper::$shared_objects['survey']['samples'][0][0];
 
@@ -266,9 +281,9 @@ class SurveyTest extends TestCase
 
     public function testSurveyUpdate()
     {
-        $sample_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $url = TestsHelper::getRoutePath('survey.update', [$sample_db->uuid]);
+        $url = TestsHelper::getRoutePath('survey.update', [$survey_db->uuid]);
 
         $data = TestsHelper::$shared_objects['survey']['samples'][0][1];
 

@@ -51,10 +51,7 @@ class Questions extends Model
             'survey_id' => $s_id,
             'active'    => '1',
             'version'   => self::getLastVersion($s_id),
-        ])
-      ->orderBy('order', 'asc')
-      ->get()
-      ->all();
+        ])->orderBy('order', 'asc')->get()->all();
     }
 
     public static function getAllBySurveyId($s_id, $start_from = 0)

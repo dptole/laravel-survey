@@ -44,6 +44,34 @@ class TestsHelper
             'logged_in' => null,
         ],
 
+        'question' => [
+            'samples' => [
+                'free' => [
+                    'description'       => 'question description 1',
+                    'questions_options' => [
+                        [
+                            'type'  => 'free',
+                            'value' => '.',
+                        ],
+                    ],
+                ],
+                'check' => [
+                    'description'       => 'question description 2',
+                    'questions_options' => [
+                        [
+                            'type'  => 'check',
+                            'value' => 'answer 1',
+                        ],
+                        [
+                            'type'  => 'check',
+                            'value' => 'answer 2',
+                        ],
+                    ],
+                ],
+            ],
+            'samples_db' => []
+        ],
+
         'survey' => [
             'samples' => [
                 [

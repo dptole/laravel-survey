@@ -15,13 +15,11 @@
             <file>./tests/Feature/AuthTest.php</file>
             <file>./tests/Feature/DashboardTest.php</file>
             <file>./tests/Feature/SurveyTest.php</file>
-<!--
             <file>./tests/Feature/QuestionTest.php</file>
--->
         </testsuite>
 
         <testsuite name="Unit Tests">
-            <directory suffix="Test.php">./tests/Unit</directory>
+            <file>./tests/Unit/HelperTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

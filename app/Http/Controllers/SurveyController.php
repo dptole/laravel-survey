@@ -155,15 +155,19 @@ class SurveyController extends Controller
 
         $status = Surveys::run($uuid, $request->user()->id);
 
-        if ($status === Surveys::ERR_RUN_SURVEY_NOT_FOUND) {
+        $mocked_survey_not_found = Helper::getTestEnvMockVar('Surveys::ERR_RUN_SURVEY_NOT_FOUND', $status === Surveys::ERR_RUN_SURVEY_NOT_FOUND);
+        $mocked_survey_invalid_status = Helper::getTestEnvMockVar('Surveys::ERR_RUN_SURVEY_INVALID_STATUS', $status === Surveys::ERR_RUN_SURVEY_INVALID_STATUS);
+        $mocked_survey_already_running = Helper::getTestEnvMockVar('Surveys::ERR_RUN_SURVEY_ALREADY_RUNNING', $status === Surveys::ERR_RUN_SURVEY_ALREADY_RUNNING);
+
+        if ($mocked_survey_not_found) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" not found.');
 
             return redirect()->route('dashboard');
-        } elseif ($status === Surveys::ERR_RUN_SURVEY_INVALID_STATUS) {
+        } elseif ($mocked_survey_invalid_status) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" invalid status, it should be "draft".');
 
             return redirect()->route('survey.edit', $uuid);
-        } elseif ($status === Surveys::ERR_RUN_SURVEY_ALREADY_RUNNING) {
+        } elseif ($mocked_survey_already_running) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" already running.');
 
             return redirect()->route('survey.edit', $uuid);
@@ -190,18 +194,20 @@ class SurveyController extends Controller
 
         $questions_next_version = Surveys::generateQuestionsNextVersion($survey);
         foreach ($questions_next_version as $question_next_version) {
-            Questions::createQuestionOptions(
-        Questions::createQuestion($question_next_version),
-        $question_next_version['questions_options']
-      );
+            $question_created = Questions::createQuestion($question_next_version);
+
+            Questions::createQuestionOptions($question_created, $question_next_version['questions_options']);
         }
 
         $status = Surveys::pause($uuid, $request->user()->id);
+
+        $mocked_survey_already_paused = Helper::getTestEnvMockVar('Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED', $status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED);
+
         if ($status === Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" invalid status, it should be "ready".');
 
             return redirect()->route('survey.edit', $uuid);
-        } elseif ($status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED) {
+        } elseif ($mocked_survey_already_paused) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" is already paused.');
 
             return redirect()->route('survey.edit', $uuid);
