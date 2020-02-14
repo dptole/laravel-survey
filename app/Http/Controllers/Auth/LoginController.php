@@ -70,14 +70,6 @@ class LoginController extends Controller
             'g-recaptcha-response' => 'required|google_recaptcha',
         ];
 
-        $mocked_response = Helper::getTestEnvMockVar('googleReCaptchaFailed', 0);
-
-        if ($mocked_response === true) {
-            Validator::make([], $rule)->validate();
-        } elseif ($mocked_response === false) {
-            Validator::make([], [])->validate();
-        }
-
         Validator::make($request->all(), $rule)->validate();
         // @codeCoverageIgnoreStart
     }

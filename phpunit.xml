@@ -16,6 +16,7 @@
             <file>./tests/Feature/DashboardTest.php</file>
             <file>./tests/Feature/SurveyTest.php</file>
             <file>./tests/Feature/QuestionTest.php</file>
+            <file>./tests/Feature/PublicSurveyTest.php</file>
         </testsuite>
 
         <testsuite name="Unit Tests">

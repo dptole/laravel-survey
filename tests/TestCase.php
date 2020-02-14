@@ -8,6 +8,8 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected $fs = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,8 +33,6 @@ abstract class TestCase extends BaseTestCase
             app()->instance($instance_name, $instance);
         }
     }
-
-    protected $fs = [];
 
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {

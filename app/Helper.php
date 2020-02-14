@@ -75,20 +75,18 @@ class Helper
 
     public static function isSecureRequest()
     {
-        $is_secure_by_header = self::getTestEnvMockVar(
-      'isSecureRequest',
-      isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO']
-    );
+        $secure_by_header = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'];
 
-        return Request::secure() || $is_secure_by_header;
+        $mocked_secure_by_header = self::getTestEnvMockVar('isSecureRequest', $secure_by_header);
+
+        return Request::secure() || $mocked_secure_by_header;
     }
 
     public static function isGoogleReCaptchaEnabled()
     {
-        return self::getTestEnvMockVar(
-      'isGoogleReCaptchaEnabled',
-      self::getDotEnvFileVar('GOOGLE_RECAPTCHA_ENABLED') === 'true'
-    );
+        $recaptcha_enabled_by_env = self::getDotEnvFileVar('GOOGLE_RECAPTCHA_ENABLED') === 'true';
+
+        return self::getTestEnvMockVar('isGoogleReCaptchaEnabled', $recaptcha_enabled_by_env);
     }
 
     public static function isPusherEnabled()
