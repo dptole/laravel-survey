@@ -202,6 +202,12 @@ class SurveyController extends Controller {
 
     $survey->total_answers = AnswersSessions::countBySurveyId($survey->id);
     $versions = Surveys::getVersions($survey);
+
+    if(count($versions) < 1):
+      $request->session()->flash('warning', 'No data available for survey "' . $s_uuid . '".');
+      return redirect()->route('dashboard');
+    endif;
+
     $country_info = [];
     $global_answers_sessions = 0;
     $global_answers = 0;

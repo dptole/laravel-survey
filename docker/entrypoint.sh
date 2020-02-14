@@ -338,7 +338,10 @@ composer global require hirak/prestissimo
 composer install
 
 # Clean up so that the next command works
-php artisan optimize:clear
+php artisan config:clear
+php artisan event:clear
+php artisan route:clear
+php artisan view:clear
 
 # Generate new APP_KEY on .env file
 php artisan key:generate
@@ -947,8 +950,10 @@ else
 
   # Perform artisan optimizations
   composer install --optimize-autoloader --no-dev
-  php artisan optimize:clear
-  php artisan optimize
+  php artisan config:cache
+  php artisan event:cache
+  php artisan route:cache
+  php artisan view:cache
 
   # Nginx user requires write access
   chmod -R o+w storage

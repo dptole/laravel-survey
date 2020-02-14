@@ -186,13 +186,18 @@ class Surveys extends Model {
   /************************************************/
 
   public static function getVersions(Surveys $survey) {
+    $version = SurveysLastVersionsView::getById($survey->id);
+
+    if(!$version)
+      return [];
+
     return array_map(function($version) use ($survey) {
       return [
         'version' => $version,
         'answers_sessions' => AnswersSessions::getBySurveyId($survey->id, $version),
         'questions' => Questions::getAllByVersion($survey->id, $version)
       ];
-    }, range(1, SurveysLastVersionsView::getById($survey->id)->last_version));
+    }, range(1, $version->last_version));
   }
 
   /************************************************/

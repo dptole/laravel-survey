@@ -49,12 +49,33 @@ class TestsHelper
       'samples' => [
         [
           [
-            'name' => 'survey1 name',
-            'description' => 'survey1 description',
+            'name' => 'survey name 1',
+            'description' => 'survey description 1',
+            'status' => 'draft'
+          ],
+          [
+            'name' => 'survey name 2',
+            'description' => 'survey description 2',
+            'status' => 'draft'
+          ],
+          [
+            'name' => 'survey name 3',
+            'description' => 'survey description 3',
+            'status' => 'draft'
+          ],
+          [
+            'name' => 'survey name 4',
+            'description' => 'survey description 4',
+            'status' => 'draft'
+          ],
+          [
+            'name' => 'survey name 5',
+            'description' => 'survey description 5',
             'status' => 'draft'
           ]
         ]
-      ]
+      ],
+      'samples_db' => []
     ]
   ];
 

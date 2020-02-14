@@ -29,4 +29,37 @@ abstract class TestCase extends BaseTestCase
       app()->instance($instance_name, $instance);
     endforeach;
   }
+
+  protected $fs = [];
+
+  public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null) {
+    $last_func_called = debug_backtrace()[1];
+    $klass = $last_func_called['class'];
+
+    $response = parent::call(
+      $method, $uri, $parameters, $cookies, $files, $server, $content
+    );
+
+    $content = $response->content();
+
+    if('Illuminate\Foundation\Testing\TestCase' !== $klass):
+      $klass = basename(preg_replace('/\\\\/', '/', $klass));
+
+      $func = $last_func_called['function'];
+
+      if(!isset($this->fs[$func])):
+        $this->fs[$func] = 0;
+      endif;
+
+      $this->fs[$func]++;
+
+      $filename = $klass . '-' . $last_func_called['function'] . '-' . $this->fs[$func] . '.html';
+
+      $pathname = dirname(__FILE__) . '/../storage/logs/' . $filename;
+
+      file_put_contents($pathname, $content);
+    endif;
+
+    return $response;
+  }
 }
