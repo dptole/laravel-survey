@@ -32,12 +32,19 @@ class TestsHelper
                         'email'                 => 'recaptcha@user.com',
                         'password'              => 'recaptcha@user.com',
                         'password_confirmation' => 'recaptcha@user.com',
+                        'g-recaptcha-response'  => '.',
                     ],
 
                     [
                         'name'     => 'direct@user.com',
                         'email'    => 'direct@user.com',
                         'password' => 'direct@user.com',
+                    ],
+
+                    [
+                        'name'     => 'invalid-email',
+                        'email'    => 'invalid-email',
+                        'password' => 'invalid-email',
                     ],
                 ],
             ],

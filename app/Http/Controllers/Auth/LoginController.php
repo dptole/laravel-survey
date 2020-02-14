@@ -21,10 +21,7 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers {
-    logout as performLogout;
-    validateLogin as parentValidateLogin;
-  }
+    use AuthenticatesUsers { logout as performLogout; validateLogin as parentValidateLogin; }
 
     /**
      * Create a new controller instance.
@@ -71,8 +68,5 @@ class LoginController extends Controller
         ];
 
         Validator::make($request->all(), $rule)->validate();
-        // @codeCoverageIgnoreStart
     }
-
-    // @codeCoverageIgnoreEnd
 }

@@ -17,6 +17,10 @@
             <file>./tests/Feature/SurveyTest.php</file>
             <file>./tests/Feature/QuestionTest.php</file>
             <file>./tests/Feature/PublicSurveyTest.php</file>
+            <file>./tests/Feature/APITest.php</file>
+            <file>./tests/Feature/ResourceTest.php</file>
+            <file>./tests/Feature/ServerSentEventTest.php</file>
+            <file>./tests/Feature/SetupTest.php</file>
         </testsuite>
 
         <testsuite name="Unit Tests">

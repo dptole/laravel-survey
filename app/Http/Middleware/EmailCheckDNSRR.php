@@ -18,7 +18,7 @@ class EmailCheckDNSRR
     {
         \Validator::extend('email_checkdnsrr', function ($attribute, $value, $parameters, $validator) {
             $at_index = strpos($value, '@');
-            if (!~$at_index) {
+            if ($at_index === false) {
                 return false;
             }
             $host = substr($value, 1 + $at_index);
