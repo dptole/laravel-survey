@@ -11,12 +11,14 @@ class QuestionsOptions extends Model
     {
         $last_version = QuestionsOptionsView::where('question_id', '=', $id)->limit(1)->get()->all();
 
-        return is_array($last_version) && count($last_version) === 1
-      ? self::where([
-          'question_id' => $id,
-          'version'     => $last_version[0]->last_version,
-      ])->get()->all()
-      : [];
+        if (is_array($last_version) && count($last_version) === 1) {
+            return self::where([
+                'question_id' => $id,
+                'version'     => $last_version[0]->last_version,
+            ])->get()->all();
+        }
+
+        return [];
     }
 
     public static function getAllByQuestionIdAsJSON($id)
