@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AnswersSessionsTable extends Migration
 {
@@ -14,7 +14,7 @@ class AnswersSessionsTable extends Migration
     public function up()
     {
         Schema::defaultStringLength(191);
-        Schema::create('answers_sessions', function(Blueprint $table) {
+        Schema::create('answers_sessions', function (Blueprint $table) {
             $table->engine = 'InnoDB';
 
             $table->increments('id')->unsigned();
@@ -25,7 +25,7 @@ class AnswersSessionsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('answers_sessions', function(Blueprint $table) {
+        Schema::table('answers_sessions', function (Blueprint $table) {
             $table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
         });
     }
@@ -37,7 +37,7 @@ class AnswersSessionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('answers_sessions', function(Blueprint $table) {
+        Schema::table('answers_sessions', function (Blueprint $table) {
             $table->dropForeign(['survey_id']);
         });
         Schema::dropIfExists('answers_sessions');

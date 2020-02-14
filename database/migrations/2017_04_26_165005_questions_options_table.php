@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class QuestionsOptionsTable extends Migration
 {
@@ -13,7 +13,7 @@ class QuestionsOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('questions_options', function(Blueprint $table) {
+        Schema::create('questions_options', function (Blueprint $table) {
             $table->engine = 'InnoDB';
 
             $table->increments('id')->unsigned();
@@ -25,7 +25,7 @@ class QuestionsOptionsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('questions_options', function(Blueprint $table) {
+        Schema::table('questions_options', function (Blueprint $table) {
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
 
@@ -39,7 +39,7 @@ class QuestionsOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('questions_options', function(Blueprint $table) {
+        Schema::table('questions_options', function (Blueprint $table) {
             $table->dropForeign(['question_id']);
         });
         Schema::dropIfExists('questions_options');

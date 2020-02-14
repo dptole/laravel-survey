@@ -39,11 +39,11 @@ class Kernel extends HttpKernel
         'api' => [
             //'throttle:60,1',
             'bindings',
-            \App\Http\Middleware\Api::class
+            \App\Http\Middleware\Api::class,
         ],
 
         'google_recaptcha' => [
-            \App\Http\Middleware\GoogleReCaptcha::class
+            \App\Http\Middleware\GoogleReCaptcha::class,
         ],
 
         'email_checkdnsrr' => [
@@ -52,7 +52,7 @@ class Kernel extends HttpKernel
 
         'setup' => [
             \App\Http\Middleware\SetupCheck::class,
-        ]
+        ],
     ];
 
     /**
@@ -63,11 +63,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth'       => \Illuminate\Auth\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'bindings'   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can'        => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'      => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle'   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];
 }

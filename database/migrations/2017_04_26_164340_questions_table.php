@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class QuestionsTable extends Migration
 {
@@ -13,7 +13,7 @@ class QuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('questions', function(Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->engine = 'InnoDB';
 
             $table->increments('id')->unsigned();
@@ -26,7 +26,7 @@ class QuestionsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('questions', function(Blueprint $table) {
+        Schema::table('questions', function (Blueprint $table) {
             $table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
         });
 
@@ -40,7 +40,7 @@ class QuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('questions', function(Blueprint $table) {
+        Schema::table('questions', function (Blueprint $table) {
             $table->dropForeign(['survey_id']);
         });
         Schema::dropIfExists('questions');
@@ -48,4 +48,3 @@ class QuestionsTable extends Migration
         DB::statement('DROP VIEW surveys_last_version_view;');
     }
 }
-

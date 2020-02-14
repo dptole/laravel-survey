@@ -2,78 +2,84 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helper;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use App\Helper;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-  /*
-  |--------------------------------------------------------------------------
-  | Login Controller
-  |--------------------------------------------------------------------------
-  |
-  | This controller handles authenticating users for the application and
-  | redirecting them to your home screen. The controller uses a trait
-  | to conveniently provide its functionality to your applications.
-  |
-  */
+    /*
+    |--------------------------------------------------------------------------
+    | Login Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles authenticating users for the application and
+    | redirecting them to your home screen. The controller uses a trait
+    | to conveniently provide its functionality to your applications.
+    |
+    */
 
-  use AuthenticatesUsers {
+    use AuthenticatesUsers {
     logout as performLogout;
     validateLogin as parentValidateLogin;
   }
 
-  /**
-   * Create a new controller instance.
-   *
-   * @return void
-   */
-  public function __construct() {
-    $this->middleware('guest', ['except' => 'logout']);
-  }
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest', ['except' => 'logout']);
+    }
 
-  protected function sendLoginResponse(Request $request) {
-    $request->session()->regenerate();
-    $this->clearLoginAttempts($request);
-    return redirect()->route('dashboard');
-  }
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+        $this->clearLoginAttempts($request);
 
-  // https://stackoverflow.com/a/40887817
-  protected function logout(Request $request) {
-    $user = \Auth::user();
+        return redirect()->route('dashboard');
+    }
 
-    $farewell = $user
-        ? 'See you later ' . $user->name . '!'
-        : 'See you later!'
-    ;
+    // https://stackoverflow.com/a/40887817
+    protected function logout(Request $request)
+    {
+        $user = \Auth::user();
 
-    $this->performLogout($request);
+        $farewell = $user
+        ? 'See you later '.$user->name.'!'
+        : 'See you later!';
 
-    $request->session()->flash('success', $farewell);
+        $this->performLogout($request);
 
-    return redirect()->route('home');
-  }
+        $request->session()->flash('success', $farewell);
 
-  protected function validateLogin(Request $request) {
-    $this->parentValidateLogin($request);
+        return redirect()->route('home');
+    }
 
-    if(!Helper::isGoogleReCaptchaEnabled())
-      return;
+    protected function validateLogin(Request $request)
+    {
+        $this->parentValidateLogin($request);
 
-    $rule = [
-      'g-recaptcha-response' => 'required|google_recaptcha'
-    ];
+        if (!Helper::isGoogleReCaptchaEnabled()) {
+            return;
+        }
 
-    $mocked_response = Helper::getTestEnvMockVar('googleReCaptchaFailed', 0);
+        $rule = [
+            'g-recaptcha-response' => 'required|google_recaptcha',
+        ];
 
-    if($mocked_response === true)
-      Validator::make([], $rule)->validate();
-    elseif($mocked_response === false)
-      Validator::make([], [])->validate();
+        $mocked_response = Helper::getTestEnvMockVar('googleReCaptchaFailed', 0);
 
-    Validator::make($request->all(), $rule)->validate();
-  }
+        if ($mocked_response === true) {
+            Validator::make([], $rule)->validate();
+        } elseif ($mocked_response === false) {
+            Validator::make([], [])->validate();
+        }
+
+        Validator::make($request->all(), $rule)->validate();
+    }
 }

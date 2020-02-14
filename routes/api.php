@@ -13,8 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
-if(0): // I don't need this...
-  Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-  });
-endif;
+if (0) { // I don't need this...
+    Route::middleware('auth:api')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+}

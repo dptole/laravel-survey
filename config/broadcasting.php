@@ -33,17 +33,17 @@ return [
     'connections' => [
 
         'pusher' => [
-            'driver' => 'pusher',
-            'key' => Helper::getDotEnvFileVar('PUSHER_APP_KEY'),
-            'secret' => Helper::getDotEnvFileVar('PUSHER_APP_SECRET'),
-            'app_id' => Helper::getDotEnvFileVar('PUSHER_APP_ID'),
+            'driver'  => 'pusher',
+            'key'     => Helper::getDotEnvFileVar('PUSHER_APP_KEY'),
+            'secret'  => Helper::getDotEnvFileVar('PUSHER_APP_SECRET'),
+            'app_id'  => Helper::getDotEnvFileVar('PUSHER_APP_ID'),
             'options' => [
                 //
             ],
         ],
 
         'redis' => [
-            'driver' => 'redis',
+            'driver'     => 'redis',
             'connection' => 'default',
         ],
 

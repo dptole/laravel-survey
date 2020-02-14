@@ -34,4 +34,3 @@ class SsesTable extends Migration
         Schema::dropIfExists('sses');
     }
 }
-

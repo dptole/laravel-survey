@@ -2,17 +2,18 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\ApiErrors;
 use App\Helper;
+use Closure;
 
 class Api
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -23,7 +24,6 @@ class Api
         $response_type = Helper::isSuccessHTTPStatus($status_code) ? 'success' : 'error';
 
         return response(json_encode([$response_type => $response->original]), $status_code)
-          ->header('content-type', 'application/json;charset=utf-8')
-        ;
+          ->header('content-type', 'application/json;charset=utf-8');
     }
 }

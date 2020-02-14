@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helper;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use App\Helper;
 
 define('RESET_PASSWORD_REDIRECT_TO', Helper::getDotEnvFileVar('LARAVEL_SURVEY_PREFIX_URL'));
 
@@ -40,6 +40,13 @@ class ResetPasswordController extends Controller
         $this->middleware('guest');
     }
 
-    public function reset() { return redirect($this->redirectTo); }
-    public function showResetForm() { return redirect($this->redirectTo); }
+    public function reset()
+    {
+        return redirect($this->redirectTo);
+    }
+
+    public function showResetForm()
+    {
+        return redirect($this->redirectTo);
+    }
 }
