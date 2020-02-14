@@ -69,7 +69,7 @@ class TestsHelper
                     ],
                 ],
             ],
-            'samples_db' => []
+            'samples_db' => [],
         ],
 
         'survey' => [

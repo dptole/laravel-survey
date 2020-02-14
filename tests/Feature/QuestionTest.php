@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Questions;
-use App\Surveys;
 use Tests\TestCase;
 use Tests\TestsHelper;
 
