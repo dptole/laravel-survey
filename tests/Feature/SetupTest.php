@@ -6,11 +6,13 @@ use Tests\TestCase;
 
 class SetupTest extends TestCase
 {
-    public function testUpdateMissingConfigsIncorrectly() {
+    public function testUpdateMissingConfigsIncorrectly()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testUpdateMissingConfigs() {
+    public function testUpdateMissingConfigs()
+    {
         $this->markTestIncomplete();
     }
 }

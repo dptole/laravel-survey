@@ -6,35 +6,43 @@ use Tests\TestCase;
 
 class ResourceTest extends TestCase
 {
-    public function testQuestionsJs() {
+    public function testQuestionsJs()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testStartSurveyJs() {
+    public function testStartSurveyJs()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testAppJs() {
+    public function testAppJs()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testManageSurveyJs() {
+    public function testManageSurveyJs()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testStatsJs() {
+    public function testStatsJs()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testAppCss() {
+    public function testAppCss()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testFonts() {
+    public function testFonts()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testJpgImages() {
+    public function testJpgImages()
+    {
         $this->markTestIncomplete();
     }
 }

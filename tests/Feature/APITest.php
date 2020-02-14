@@ -8,7 +8,8 @@ use Webpatser\Uuid\Uuid;
 
 class APITest extends TestCase
 {
-    public function testGetSessionIdInvalidSurvey() {
+    public function testGetSessionIdInvalidSurvey()
+    {
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][0];
 
         $url = TestsHelper::getRoutePath('api.get_session_id', [$survey_db->uuid]);
@@ -40,7 +41,8 @@ class APITest extends TestCase
         $this->assertEquals(400, $json->error->status);
     }
 
-    public function testGetSessionIdSurvey() {
+    public function testGetSessionIdSurvey()
+    {
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
         $url = TestsHelper::getRoutePath('api.get_session_id', [$survey_db->uuid]);
@@ -50,19 +52,23 @@ class APITest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testSaveSurvey() {
+    public function testSaveSurvey()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testFetchCountryInfoSessionUuid() {
+    public function testFetchCountryInfoSessionUuid()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testFetchCountryInfoSessionId() {
+    public function testFetchCountryInfoSessionId()
+    {
         $this->markTestIncomplete();
     }
 
-    public function testFetchCountryInvalidSession() {
+    public function testFetchCountryInvalidSession()
+    {
         $this->markTestIncomplete();
     }
 }

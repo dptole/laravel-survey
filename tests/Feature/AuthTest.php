@@ -75,7 +75,7 @@ class AuthTest extends TestCase
 
             $old_secret = Helper::getDotEnvFileVar('GOOGLE_RECAPTCHA_SITE_SECRET');
 
-            $written_bytes = Helper::updateDotEnvFileVars(['GOOGLE_RECAPTCHA_SITE_SECRET' => $old_secret . '.']);
+            $written_bytes = Helper::updateDotEnvFileVars(['GOOGLE_RECAPTCHA_SITE_SECRET' => $old_secret.'.']);
 
             $this->assertIsNumeric($written_bytes);
 
