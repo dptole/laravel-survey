@@ -4,6 +4,7 @@ Laravel 6 survey
   [![Build status][circle-ci-badge]][circle-ci]
   [![Coverage Status][coveralls-badge]][coveralls]
   [![Issue status][gh-issues-badge]][gh-issues]
+  [![StyleCI status][styleci-badge]][style-ci]
 
 Custom survey app in Laravel 6.
 
@@ -35,11 +36,11 @@ $ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 $ php composer-setup.php
 ```
 
-If you want to speed up composer then download [prestissimo][prestissimo-url]. Hopefully this is just a [temporary solution][composer-parallel-downloads-url].
-
-```
-$ php composer.phar global require hirak/prestissimo
-```
+> If you want to speed up composer then download [prestissimo][prestissimo-url]. Hopefully this is just a [temporary solution][composer-parallel-downloads-url].
+>
+> ```
+> $ php composer.phar global require hirak/prestissimo
+> ```
 
 Install [composer][composer-url]'s dependencies.
 
@@ -137,6 +138,8 @@ License
 
 [coveralls-badge]: https://img.shields.io/coveralls/github/dptole/laravel-survey/master
 [coveralls]: https://coveralls.io/github/dptole/laravel-survey
+[styleci-badge]: https://github.styleci.io/repos/88016589/shield?branch=dev&style=flat
+[style-ci]: https://github.styleci.io/repos/88016589
 [gh-issues]: https://github.com/dptole/laravel-survey/issues
 [gh-issues-badge]: https://img.shields.io/github/issues-raw/dptole/laravel-survey.svg
 [circle-ci]: https://circleci.com/gh/dptole/laravel-survey
