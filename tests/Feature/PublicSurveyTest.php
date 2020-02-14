@@ -9,24 +9,25 @@ use Tests\TestsHelper;
 
 class PublicSurveyTest extends TestCase
 {
-
     private function assertResponseMatchesSurvey(TestResponse $response, Surveys $survey_db)
     {
-        $dom = new \DOMDocument;
+        $dom = new \DOMDocument();
         @$dom->loadHTML($response->content());
 
         $survey_dom = null;
 
-        foreach($dom->getElementsByTagName('div') as $div):
-          $class = $div->attributes->getNamedItem('class');
+        foreach ($dom->getElementsByTagName('div') as $div) {
+            $class = $div->attributes->getNamedItem('class');
 
-          if(!$class) continue;
+            if (!$class) {
+                continue;
+            }
 
-          if(strpos($class->nodeValue, 'public-survey-content') !== false):
-            $survey_dom = $div;
-            break;
-          endif;
-        endforeach;
+            if (strpos($class->nodeValue, 'public-survey-content') !== false) {
+                $survey_dom = $div;
+                break;
+            }
+        }
 
         $this->assertInstanceof(\DOMElement::class, $survey_dom);
 
