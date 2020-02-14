@@ -44,26 +44,20 @@ class APIController extends Controller
      */
     public function saveSurveyAnswer(Request $request)
     {
-        list(
-      $session_id,
-      $survey_id,
-      $question_id,
-      $question_option_id,
-      $free_text,
-      $request_info,
-      $answers_session_id
-    ) = [
-        null,
-        $request->input('survey_id'),
-        $request->input('question_id'),
-        $request->input('question_option_id'),
-        $request->input('free_text'),
-        json_encode([
-            'headers' => $request->header(),
-            'ips'     => $request->ips(),
-        ]),
-        AnswersSessions::getIdByUuid($request->input('answers_session_id')),
-    ];
+        $answer_input = [
+            null,
+            $request->input('survey_id'),
+            $request->input('question_id'),
+            $request->input('question_option_id'),
+            $request->input('free_text'),
+            json_encode([
+                'headers' => $request->header(),
+                'ips'     => $request->ips(),
+            ]),
+            AnswersSessions::getIdByUuid($request->input('answers_session_id')),
+        ];
+
+        list($session_id, $survey_id, $question_id, $question_option_id, $free_text, $request_info, $answers_session_id) = $answer_input;
 
         $answer = new Answers();
         $answer->survey_id = $survey_id;
@@ -118,14 +112,13 @@ class APIController extends Controller
      */
     public function fetchCountryInfo(Request $request)
     {
-        $answers_session_id = $request->input('answers_session_uuid')
-      ? AnswersSessions::getIdByUuid($request->input('answers_session_uuid'))
-      : $request->input('answers_session_id');
+        if ($request->input('answers_session_uuid')) {
+            $answers_session_id = AnswersSessions::getIdByUuid($request->input('answers_session_uuid'));
+        } else {
+            $answers_session_id = $request->input('answers_session_id');
+        }
 
-        $country_info = AnswersSessions::updateCountryInfo(
-      $answers_session_id,
-      $request->input('ip')
-    );
+        $country_info = AnswersSessions::updateCountryInfo($answers_session_id, $request->input('ip'));
 
         if (!$country_info) {
             return response(new ApiErrors('INVALID_ANSWERS_SESSION', $request));

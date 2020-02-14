@@ -30,7 +30,10 @@ class PublicSurveyController extends Controller
         }
 
         $survey->all_questions = Questions::getAllBySurveyIdOrdered($survey->id);
-        if (!($survey->all_questions && count($survey->all_questions) > 0)) {
+
+        $are_there_questions = Helper::getTestEnvMockVar('PublicSurvey::areThereQuestions', $survey->all_questions && count($survey->all_questions) > 0);
+
+        if (!$are_there_questions) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" does not have questions.');
 
             return redirect()->route('home');
@@ -38,7 +41,10 @@ class PublicSurveyController extends Controller
 
         foreach ($survey->all_questions as &$question) {
             $question->answers = QuestionsOptions::getAllByQuestionId($question->id);
-            if (!($question->answers && count($question->answers) > 0)) {
+
+            $proper_question = Helper::getTestEnvMockVar('PublicSurvey::properQuestion', $question->answers && count($question->answers) > 0);
+
+            if (!$proper_question) {
                 $request->session()->flash('warning', 'There are some incomplete questions.');
 
                 return redirect()->route('dashboard');

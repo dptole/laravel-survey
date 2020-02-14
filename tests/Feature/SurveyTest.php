@@ -75,7 +75,7 @@ class SurveyTest extends TestCase
         $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
 
         $dom = new \DOMDocument();
-        @$dom->loadHtml($response->content());
+        @$dom->loadHTML($response->content());
 
         $tbodies = $dom->getElementsByTagName('tbody');
         $this->assertEquals(1, $tbodies->length);

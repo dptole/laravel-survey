@@ -451,7 +451,7 @@ class QuestionTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testSurveyUpdateAfterRunning()
+    public function testSurveyUpdateWhenRunning()
     {
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
@@ -547,6 +547,25 @@ class QuestionTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testSurveyPauseForcingAlreadyPaused()
+    {
+        $GLOBALS['Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED'] = true;
+
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+
+        $url = TestsHelper::getRoutePath('survey.pause', [$survey_db->uuid]);
+
+        $data = [];
+
+        $cookies = TestsHelper::getSessionCookies();
+
+        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
+
+        $response->assertStatus(200);
+
+        unset($GLOBALS['Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED']);
+    }
+
     public function testSurveyRunForcingSurveyNotFound()
     {
         $GLOBALS['Surveys::ERR_RUN_SURVEY_NOT_FOUND'] = true;
@@ -606,24 +625,5 @@ class QuestionTest extends TestCase
         unset($GLOBALS['Surveys::ERR_RUN_SURVEY_NOT_FOUND']);
         unset($GLOBALS['Surveys::ERR_RUN_SURVEY_INVALID_STATUS']);
         unset($GLOBALS['Surveys::ERR_RUN_SURVEY_ALREADY_RUNNING']);
-    }
-
-    public function testSurveyPauseForcingAlreadyPaused()
-    {
-        $GLOBALS['Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED'] = true;
-
-        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
-
-        $url = TestsHelper::getRoutePath('survey.pause', [$survey_db->uuid]);
-
-        $data = [];
-
-        $cookies = TestsHelper::getSessionCookies();
-
-        $response = $this->followingRedirects()->call('GET', $url, $data, $cookies);
-
-        $response->assertStatus(200);
-
-        unset($GLOBALS['Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED']);
     }
 }

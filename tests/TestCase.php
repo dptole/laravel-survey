@@ -65,7 +65,7 @@ abstract class TestCase extends BaseTestCase
 
             $content_header_wrapper = '<pre style="white-space:pre-wrap;word-break:break-all">'.$content_header.'</pre>';
 
-            $content = $content_header_wrapper.$content;
+            $content = preg_replace('/(<body[^>]*>)/', '$1'.$content_header_wrapper, $content);
 
             file_put_contents($pathname, $content);
         }
