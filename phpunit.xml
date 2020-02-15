@@ -8,7 +8,7 @@
          convertWarningsToExceptions="false"
          processIsolation="false"
          beStrictAboutTestsThatDoNotTestAnything="false"
-         stopOnFailure="false">
+         stopOnFailure="true">
     <testsuites>
         <testsuite name="Feature Tests">
             <file>./tests/Feature/HomeTest.php</file>
@@ -70,5 +70,6 @@
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
         <log type="coverage-html" target="build/logs/html"/>
+        <log type="testdox-html" target="build/logs/testdox.html"/>
     </logging>
 </phpunit>

@@ -270,15 +270,12 @@ class SurveyController extends Controller
                         $ip_key = 'MM_IP_'.$key;
                         $header_key = 'MM_HEADER_'.$key;
 
-                        if (
-              property_exists($answer_session->request_info->server, $header_key) &&
-              strlen($answer_session->request_info->server->$header_key) > 0
-            ) {
+                        $found_property_via_header = property_exists($answer_session->request_info->server, $header_key) && strlen($answer_session->request_info->server->$header_key) > 0;
+                        $found_property_via_ip = property_exists($answer_session->request_info->server, $ip_key) && strlen($answer_session->request_info->server->$ip_key) > 0;
+
+                        if ($found_property_via_header) {
                             $maxmind[$answer_session->id][$name] = $answer_session->request_info->server->$header_key;
-                        } elseif (
-              property_exists($answer_session->request_info->server, $ip_key) &&
-              strlen($answer_session->request_info->server->$ip_key) > 0
-            ) {
+                        } elseif ($found_property_via_ip) {
                             $maxmind[$answer_session->id][$name] = $answer_session->request_info->server->$ip_key;
                         }
                     }
@@ -291,81 +288,74 @@ class SurveyController extends Controller
 
             $total_answers_sessions = count($version['answers_sessions']);
             $total_answers = array_reduce(
-        $version['answers_sessions'],
-        function ($accumulator, $answer_session) use ($total_questions, &$global_answers, $questions, &$country_info) {
-            $fully_answered = count($answer_session['answers']) >= $total_questions;
-            $global_answers += $fully_answered;
+                $version['answers_sessions'],
+                function ($accumulator, $answer_session) use ($total_questions, &$global_answers, $questions, &$country_info) {
+                    $fully_answered = count($answer_session['answers']) >= $total_questions;
+                    $global_answers += $fully_answered;
 
-            if (property_exists($answer_session->request_info, 'db-ip')) {
-                if (!isset($country_info[$answer_session->version])) {
-                    $country_info[$answer_session->version] = [];
-                }
-                $country_info[$answer_session->version][$answer_session->session_uuid] = $answer_session->request_info->{'db-ip'};
-            }
+                    if (property_exists($answer_session->request_info, 'db-ip')) {
+                        if (!isset($country_info[$answer_session->version])) {
+                            $country_info[$answer_session->version] = [];
+                        }
+                        $country_info[$answer_session->version][$answer_session->session_uuid] = $answer_session->request_info->{'db-ip'};
+                    }
 
-            $total_answered = count($answer_session['answers']) / $total_questions * 100;
-            if ($total_answered > 100) {
-                $total_answered = 100;
-            }
-            $answer_session['total_answered_%'] = sprintf('%.2f', $total_answered).'%';
+                    $total_answered = count($answer_session['answers']) / $total_questions * 100;
+                    if ($total_answered >= 100) {
+                        $total_answered = 100;
+                    }
 
-            if (
-            property_exists($answer_session['request_info']->headers, 'user-agent') &&
-            is_array($answer_session['request_info']->headers->{'user-agent'}) &&
-            count($answer_session['request_info']->headers->{'user-agent'}) === 1 &&
-            is_string($answer_session['request_info']->headers->{'user-agent'}[0])
-          ) {
-                $agent = new Agent();
-                $agent->setUserAgent($answer_session['request_info']->headers->{'user-agent'}[0]);
-                $agent->setHttpHeaders($answer_session['request_info']->headers);
+                    $answer_session['total_answered_%'] = sprintf('%.2f', $total_answered).'%';
 
-                $answer_session['user_agent'] = [
-                    'browser'  => $agent->browser(),
-                    'platform' => $agent->platform(),
-                ];
-            } else {
-                $answer_session['user_agent'] = [
-                    'browser'  => 'Unknown',
-                    'platform' => 'Unknown',
-                ];
-            }
+                    $valid_headers_config =
+                        property_exists($answer_session['request_info']->headers, 'user-agent') &&
+                        is_array($answer_session['request_info']->headers->{'user-agent'}) &&
+                        count($answer_session['request_info']->headers->{'user-agent'}) === 1 &&
+                        is_string($answer_session['request_info']->headers->{'user-agent'}[0])
+                    ;
 
-            $answer_session['joined_questions_and_answers'] = AnswersSessions::joinQuestionsAndAnswers($answer_session['survey_id'], $answer_session['id']);
+                    $mocked_valid_headers_config = Helper::getTestEnvMockVar('validHeadersConfig', $valid_headers_config);
 
-            return $accumulator + $fully_answered;
-        },
-        0
-      );
+                    if ($mocked_valid_headers_config) {
+                        $agent = new Agent();
+                        $agent->setUserAgent($answer_session['request_info']->headers->{'user-agent'}[0]);
+                        $agent->setHttpHeaders($answer_session['request_info']->headers);
+
+                        $answer_session['user_agent'] = [
+                            'browser'  => $agent->browser(),
+                            'platform' => $agent->platform(),
+                        ];
+                    } else {
+                        $answer_session['user_agent'] = [
+                            'browser'  => 'Unknown',
+                            'platform' => 'Unknown',
+                        ];
+                    }
+
+                    $answer_session['joined_questions_and_answers'] = AnswersSessions::joinQuestionsAndAnswers($answer_session['survey_id'], $answer_session['id']);
+
+                    return $accumulator + $fully_answered;
+                },
+                0
+            );
 
             $version['fully_answered'] = $total_answers;
-            $version['fully_answered_%'] = (
-        $total_answers_sessions > 0
-          ? sprintf('%.2f', $version['fully_answered'] / $total_answers_sessions * 100)
-          : 0
-      ).'%';
+            $version['fully_answered_%'] = $total_answers_sessions > 0 ? sprintf('%.2f', $version['fully_answered'] / $total_answers_sessions * 100) : 0;
+            $version['fully_answered_%'] = $version['fully_answered_%'].'%';
 
             $version['not_fully_answered'] = $total_answers_sessions - $total_answers;
-            $version['not_fully_answered_%'] = (
-        $total_answers_sessions > 0
-          ? sprintf('%.2f', $version['not_fully_answered'] / $total_answers_sessions * 100)
-          : 0
-      ).'%';
+            $version['not_fully_answered_%'] = $total_answers_sessions > 0 ? sprintf('%.2f', $version['not_fully_answered'] / $total_answers_sessions * 100) : 0;
+            $version['not_fully_answered_%'] = $version['not_fully_answered_%'].'%';
         }
 
         $survey->versions = $versions;
         $survey->fully_answered = $global_answers;
-        $survey->{'fully_answered_%'} = (
-      $global_answers_sessions > 0
-        ? sprintf('%.2f', $survey->fully_answered / $global_answers_sessions * 100)
-        : 0
-     ).'%';
+        $survey->{'fully_answered_%'} = $global_answers_sessions > 0 ? sprintf('%.2f', $survey->fully_answered / $global_answers_sessions * 100) : 0;
+        $survey->{'fully_answered_%'} = $survey->{'fully_answered_%'}.'%';
 
         $survey->not_fully_answered = $global_answers_sessions - $global_answers;
-        $survey->{'not_fully_answered_%'} = (
-      $global_answers_sessions > 0
-        ? sprintf('%.2f', $survey->not_fully_answered / $global_answers_sessions * 100)
-        : 0
-    ).'%';
+        $survey->{'not_fully_answered_%'} = $global_answers_sessions > 0 ? sprintf('%.2f', $survey->not_fully_answered / $global_answers_sessions * 100) : 0;
+        $survey->{'not_fully_answered_%'} = $survey->{'not_fully_answered_%'}.'%';
 
         $d3_answers_data = Surveys::getD3AnswersDataFromSurveyVersions($survey->versions);
         $d3_dates_data = Surveys::getD3DatesDataFromSurveyVersions($survey->versions);

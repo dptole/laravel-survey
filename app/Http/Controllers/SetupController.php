@@ -71,10 +71,7 @@ class SetupController extends Controller
             $validator_params['rules']['url_prefix'] = 'setup_url_prefix';
         }
 
-        $validator = Validator::make(
-      $validator_params['inputs'],
-      $validator_params['rules']
-    );
+        $validator = Validator::make($validator_params['inputs'], $validator_params['rules']);
 
         if ($validator->fails()) {
             return redirect()->route('home')->withErrors($validator)->withInput();

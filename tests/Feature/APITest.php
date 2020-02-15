@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Answers;
+use App\Questions;
 use App\QuestionsOptions;
 use Tests\TestCase;
 use Tests\TestsHelper;
@@ -42,13 +43,40 @@ class APITest extends TestCase
         $this->assertEquals(400, $json->error->status);
     }
 
-    public function testGetSessionIdSurvey()
+    public function testGetSessionIdSurveyMaxmindViaHeader()
     {
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
         $url = TestsHelper::getRoutePath('api.get_session_id', [$survey_db->uuid]);
 
-        $response = $this->followingRedirects()->call('POST', $url, []);
+        $data = [
+            'battery' => [
+                'success' => true,
+                'result'  => [
+                    'charging'        => true,
+                    'dischargingTime' => 666,
+                    'level'           => 6.66,
+                ],
+            ],
+            'connection' => [
+                'effectiveType' => '666g',
+                'downlink'      => '666',
+                'rtt'           => '666',
+            ],
+            'date' => [
+                'timezone'    => 180,
+                'date_string' => '1970-01-01',
+                'time_string' => '00:00:00',
+            ],
+            'window' => [
+                'width'  => 666,
+                'height' => 666,
+            ],
+        ];
+
+        $_SERVER['MM_HEADER_EN_COUNTRY_NAME'] = 'Brazil';
+
+        $response = $this->followingRedirects()->call('POST', $url, $data);
 
         $json_string = $response->content();
 
@@ -57,51 +85,154 @@ class APITest extends TestCase
         TestsHelper::storeAnswerSessions($response);
 
         $response->assertStatus(200);
+
+        unset($_SERVER['MM_HEADER_EN_COUNTRY_NAME']);
     }
 
-    public function testSaveFirstSurveyQuestion()
+    public function testGetSessionIdSurveyMaxmindViaIp()
     {
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $question_db = TestsHelper::$shared_objects['question']['samples_db'][0];
+        $url = TestsHelper::getRoutePath('api.get_session_id', [$survey_db->uuid]);
+
+        $data = [
+            'battery' => [
+                'success' => true,
+                'result'  => [
+                    'charging'        => true,
+                    'dischargingTime' => 666,
+                    'level'           => 6.66,
+                ],
+            ],
+            'connection' => [
+                'effectiveType' => '666g',
+                'downlink'      => '666',
+                'rtt'           => '666',
+            ],
+            'date' => [
+                'timezone'    => 180,
+                'date_string' => '1970-01-01',
+                'time_string' => '00:00:00',
+            ],
+            'window' => [
+                'width'  => 666,
+                'height' => 666,
+            ],
+        ];
+
+        $_SERVER['MM_IP_EN_COUNTRY_NAME'] = 'Japan';
+
+        $response = $this->followingRedirects()->call('POST', $url, $data);
+
+        $json_string = $response->content();
+
+        $this->assertJson($json_string);
+
+        $response->assertStatus(200);
+
+        unset($_SERVER['MM_IP_EN_COUNTRY_NAME']);
+    }
+
+    public function testGetSessionIdSurveyInvalidHeaders()
+    {
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
+
+        $url = TestsHelper::getRoutePath('api.get_session_id', [$survey_db->uuid]);
+
+        $data = [
+            'battery' => [
+                'success' => true,
+                'result'  => [
+                    'charging'        => true,
+                    'dischargingTime' => 666,
+                    'level'           => 6.66,
+                ],
+            ],
+            'connection' => [
+                'effectiveType' => '666g',
+                'downlink'      => '666',
+                'rtt'           => '666',
+            ],
+            'date' => [
+                'timezone'    => 180,
+                'date_string' => '1970-01-01',
+                'time_string' => '00:00:00',
+            ],
+            'window' => [
+                'width'  => 666,
+                'height' => 666,
+            ],
+        ];
+
+        $response = $this->followingRedirects()->call('POST', $url, $data);
+
+        $json_string = $response->content();
+
+        $this->assertJson($json_string);
+
+        $response->assertStatus(200);
+    }
+
+    public function testSaveSurveyQuestions()
+    {
+        $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
         $answer_session = TestsHelper::$shared_objects['answer_sessions'][0];
 
-        $question_options = QuestionsOptions::where('question_id', '=', $question_db->id)->get();
+        $survey_id = TestsHelper::$shared_objects['question']['samples_db'][0]->survey_id;
+
+        $question_order = TestsHelper::$shared_objects['question']['samples_db'][0]->order;
+
+        $questions_last_version = Questions::where('survey_id', '=', $survey_id)->where('order', '=', $question_order)->where('version', '=', 4)->get();
+
+        $this->assertCount(1, $questions_last_version);
+
+        $question_last_version = $questions_last_version[0];
+
+        TestsHelper::$shared_objects['question']['samples_db'][] = $question_last_version;
+
+        $question_db = TestsHelper::$shared_objects['question']['samples_db'][2];
+
+        $questions_options_db = QuestionsOptions::where('question_id', '=', $question_db->id)->get();
+
+        $this->assertCount(2, $questions_options_db);
 
         $url = TestsHelper::getRoutePath('api.save_survey_answer');
 
         $data = [
             'survey_id'          => $survey_db->id,
             'question_id'        => $question_db->id,
-            'question_option_id' => $question_options[0]->id,
+            'question_option_id' => $questions_options_db[0]->id,
             'free_text'          => '.',
             'answers_session_id' => $answer_session->session_uuid,
         ];
 
         $response = $this->followingRedirects()->call('POST', $url, $data);
 
+        $json_string = $response->content();
+
+        $this->assertJson($json_string);
+
         $response->assertStatus(200);
     }
 
-    public function testFirstSavedSurveyQuestion()
+    public function testAfterSaveSurveyQuestions()
     {
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
-        $question_db = TestsHelper::$shared_objects['question']['samples_db'][0];
-
         $answer_session = TestsHelper::$shared_objects['answer_sessions'][0];
 
-        $question_options = QuestionsOptions::where('question_id', '=', $question_db->id)->get();
+        $question_db = TestsHelper::$shared_objects['question']['samples_db'][2];
 
-        $answer_session = TestsHelper::$shared_objects['answer_sessions'][0];
+        $answers = Answers::where('survey_id', '=', $survey_db->id)->where('question_id', '=', $question_db->id)->get();
 
-        $answers = Answers::where('answers_session_id', '=', $answer_session->id)->get();
+        $question_db = TestsHelper::$shared_objects['question']['samples_db'][2];
 
+        $questions_options_db = QuestionsOptions::where('question_id', '=', $question_db->id)->get();
+
+        $this->assertCount(2, $questions_options_db);
         $this->assertCount(1, $answers);
-        $this->assertEquals($survey_db->id, $answers[0]->survey_id);
-        $this->assertEquals($question_db->id, $answers[0]->question_id);
-        $this->assertEquals($question_options[0]->id, $answers[0]->question_option_id);
+        $this->assertEquals($questions_options_db[0]->id, $answers[0]->question_option_id);
         $this->assertEquals($answer_session->id, $answers[0]->answers_session_id);
     }
 

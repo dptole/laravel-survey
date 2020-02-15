@@ -29,7 +29,7 @@ class SetupCheck
             if (!in_array($route->getName(), $ok_routes, true)) {
                 $request->session()->flash('warning', 'The system can\'t function without the correct parameters.');
 
-                return redirect('home');
+                return redirect()->route('home');
             }
         }
 

@@ -27,13 +27,20 @@ class APIController extends Controller
             return response(new ApiErrors('INVALID_SURVEY', $s_uuid));
         }
 
+        $request_info = json_encode([
+            'js'      => $request->input(),
+            'headers' => $request->header(),
+            'server'  => $_SERVER,
+            'ips'     => $request->ips(),
+        ]);
+
+        $session_id = AnswersSessions::createSession(
+            $survey->id,
+            $request_info
+        );
+
         return response()->json([
-            'session_id' => AnswersSessions::createSession($survey->id, json_encode([
-                'js'      => $request->input(),
-                'headers' => $request->header(),
-                'server'  => $_SERVER,
-                'ips'     => $request->ips(),
-            ])),
+            'session_id' => $session_id,
         ]);
     }
 

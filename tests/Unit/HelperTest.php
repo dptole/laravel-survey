@@ -206,8 +206,6 @@ class HelperTest extends TestCase
 
     public function testLoadLSR()
     {
-        $this->assertNull(Helper::$lsr);
-
         Helper::loadLSR();
 
         $this->assertIsObject(Helper::$lsr);
@@ -245,8 +243,6 @@ class HelperTest extends TestCase
 
     public function testLoadTimezones()
     {
-        $this->assertNull(Helper::$tzs);
-
         Helper::loadTimezones();
 
         $this->assertIsObject(Helper::$tzs);
