@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Questions;
+use App\QuestionsOptions;
 use Tests\TestCase;
 use Tests\TestsHelper;
 
@@ -78,9 +79,17 @@ class QuestionTest extends TestCase
 
         $question = $questions[0];
 
-        TestsHelper::$shared_objects['question']['samples_db'][] = $question;
+        $questions_options = QuestionsOptions::where('question_id', '=', $question->id)->limit(1)->get();
+
+        $this->assertCount(1, $questions_options);
+
+        $question_option = $questions_options[0];
+
+        $this->assertEquals($data['questions_options'][0]['type'], $question_option->type);
 
         $this->assertEquals($data['description'], $question->description);
+
+        TestsHelper::$shared_objects['question']['samples_db'][] = $question;
     }
 
     public function testUpdateQuestion()
@@ -142,9 +151,22 @@ class QuestionTest extends TestCase
 
         $question = $questions[0];
 
-        TestsHelper::$shared_objects['question']['samples_db'][] = $question;
+        $questions_options = QuestionsOptions::where('question_id', '=', $question->id)->limit(2)->get();
+
+        $this->assertCount(2, $questions_options);
+
+        $question_option1 = $questions_options[0];
+        $question_option2 = $questions_options[1];
+
+        $this->assertEquals($data['questions_options'][0]['type'], $question_option1->type);
+        $this->assertEquals($data['questions_options'][0]['value'], $question_option1->description);
+
+        $this->assertEquals($data['questions_options'][1]['type'], $question_option2->type);
+        $this->assertEquals($data['questions_options'][1]['value'], $question_option2->description);
 
         $this->assertEquals($data['description'], $question->description);
+
+        TestsHelper::$shared_objects['question']['samples_db'][] = $question;
     }
 
     public function testShowChangeOrderPage()

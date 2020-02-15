@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use App\AnswersSessions;
 use App\Helper;
 use Illuminate\Foundation\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TestsHelper
 {
@@ -111,6 +113,8 @@ class TestsHelper
             ],
             'samples_db' => [],
         ],
+
+        'answer_sessions' => [],
     ];
 
     public static function getSessionCookies()
@@ -149,10 +153,31 @@ class TestsHelper
         return true;
     }
 
+    public static function storeAnswerSessions(TestResponse $response)
+    {
+        $json_string = $response->content();
+
+        $json = json_decode($json_string);
+
+        $answers_sessions = AnswersSessions::where('session_uuid', '=', $json->success->session_id)->get();
+
+        self::$shared_objects['answer_sessions'][] = $answers_sessions[0];
+
+        return true;
+    }
+
     public static function getRoutePath($route, array $route_arguments = [])
     {
-        return Helper::urlRemoveDomain(
-      route($route, $route_arguments)
-    );
+        $full_route = route($route, $route_arguments);
+        return Helper::urlRemoveDomain($full_route);
+    }
+
+    static function getTestResponseContent(TestResponse $response)
+    {
+        if ($response->baseResponse instanceof BinaryFileResponse) {
+            return "{$response->getFile()->openFile()}";
+        }
+
+        return $response->getContent();
     }
 }

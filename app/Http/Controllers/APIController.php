@@ -44,16 +44,18 @@ class APIController extends Controller
      */
     public function saveSurveyAnswer(Request $request)
     {
+        $request_info = json_encode([
+            'headers' => $request->header(),
+            'ips'     => $request->ips(),
+        ]);
+
         $answer_input = [
             null,
             $request->input('survey_id'),
             $request->input('question_id'),
             $request->input('question_option_id'),
             $request->input('free_text'),
-            json_encode([
-                'headers' => $request->header(),
-                'ips'     => $request->ips(),
-            ]),
+            $request_info,
             AnswersSessions::getIdByUuid($request->input('answers_session_id')),
         ];
 
