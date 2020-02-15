@@ -4,7 +4,6 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Tests\TestsHelper;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -75,9 +74,9 @@ abstract class TestCase extends BaseTestCase
         $content_header_wrapper = '<pre style="white-space:pre-wrap;word-break:break-all">'.$content_header.'</pre>';
 
         if ($response->baseResponse instanceof BinaryFileResponse || strpos($uri, '/api/') !== false) {
-          $content = $content_header_wrapper.PHP_EOL.PHP_EOL.'<pre style="white-space:pre-wrap;word-break:break-all">'.$content.'</pre>';
+            $content = $content_header_wrapper.PHP_EOL.PHP_EOL.'<pre style="white-space:pre-wrap;word-break:break-all">'.$content.'</pre>';
         } else {
-          $content = preg_replace('/(<body[^>]*>)/', '$1'.$content_header_wrapper, $content);
+            $content = preg_replace('/(<body[^>]*>)/', '$1'.$content_header_wrapper, $content);
         }
 
         file_put_contents($pathname, $content);

@@ -169,10 +169,11 @@ class TestsHelper
     public static function getRoutePath($route, array $route_arguments = [])
     {
         $full_route = route($route, $route_arguments);
+
         return Helper::urlRemoveDomain($full_route);
     }
 
-    static function getTestResponseContent(TestResponse $response)
+    public static function getTestResponseContent(TestResponse $response)
     {
         if ($response->baseResponse instanceof BinaryFileResponse) {
             return "{$response->getFile()->openFile()}";
