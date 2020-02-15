@@ -311,8 +311,7 @@ class SurveyController extends Controller
                         property_exists($answer_session['request_info']->headers, 'user-agent') &&
                         is_array($answer_session['request_info']->headers->{'user-agent'}) &&
                         count($answer_session['request_info']->headers->{'user-agent'}) === 1 &&
-                        is_string($answer_session['request_info']->headers->{'user-agent'}[0])
-                    ;
+                        is_string($answer_session['request_info']->headers->{'user-agent'}[0]);
 
                     $mocked_valid_headers_config = Helper::getTestEnvMockVar('validHeadersConfig', $valid_headers_config);
 

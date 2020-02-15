@@ -8,7 +8,7 @@ use Tests\TestsHelper;
 
 class SetupTest extends TestCase
 {
-    static $laravel_url_prefix = '';
+    public static $laravel_url_prefix = '';
 
     public function testShowMissingConfigs()
     {

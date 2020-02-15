@@ -49,6 +49,7 @@ class AnswersSessions extends Model
         return array_map(function ($answer_session) {
             $answer_session->answers = Answers::getByAnswersSessionId($answer_session->id);
             $answer_session->request_info = json_decode($answer_session->request_info);
+
             return $answer_session;
         }, $answer_sessions);
     }
@@ -63,8 +64,7 @@ class AnswersSessions extends Model
             ->where('answers.answers_session_id', '=', $answers_session_id)
             ->orderBy('order', 'asc')
             ->get()
-            ->all()
-        ;
+            ->all();
     }
 
     public static function updateCountryInfo($answer_session_id, $ip)
