@@ -42,9 +42,7 @@ class SetupController extends Controller
                 $field_value = $request->input($field_name);
 
                 if ($field_value !== null) {
-                    $fields_to_update[$field_name] = $is_checkbox
-            ? 'true' === $field_value
-            : $field_value;
+                    $fields_to_update[$field_name] = $is_checkbox ? 'true' === $field_value : $field_value;
                 }
             }
         }

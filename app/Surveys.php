@@ -159,13 +159,6 @@ class Surveys extends Model
 
     /************************************************/
 
-    public static function getIdByUuid($uuid, $user_id)
-    {
-        return ($survey = self::getByOwner($uuid, $user_id)) ? $survey->id : null;
-    }
-
-    /************************************************/
-
     public static function generateQuestionsNextVersion(self $survey)
     {
         // If survey exists last_version will always exist

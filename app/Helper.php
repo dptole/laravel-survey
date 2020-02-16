@@ -506,19 +506,7 @@ class Helper
 
         $envs = self::getDotEnvFile();
 
-        if (self::isPusherEnabled() && !(
-      isset($envs['PUSHER_APP_ID']) &&
-      !empty($envs['PUSHER_APP_ID']) &&
-
-      isset($envs['PUSHER_APP_KEY']) &&
-      !empty($envs['PUSHER_APP_KEY']) &&
-
-      isset($envs['PUSHER_APP_SECRET']) &&
-      !empty($envs['PUSHER_APP_SECRET']) &&
-
-      isset($envs['PUSHER_APP_CLUSTER']) &&
-      !empty($envs['PUSHER_APP_CLUSTER'])
-    )) {
+        if (!self::arePusherConfigsPresent($envs)) {
             $pending['Pusher'] = [
                 'Enabled?' => [
                     'type'        => 'checkbox',
@@ -553,13 +541,7 @@ class Helper
             ];
         }
 
-        if ($envs['GOOGLE_RECAPTCHA_ENABLED'] === 'true' && !(
-      isset($envs['GOOGLE_RECAPTCHA_SITE_SECRET']) &&
-      !empty($envs['GOOGLE_RECAPTCHA_SITE_SECRET']) &&
-
-      isset($envs['GOOGLE_RECAPTCHA_SITE_KEY']) &&
-      !empty($envs['GOOGLE_RECAPTCHA_SITE_KEY'])
-    )) {
+        if (!self::areGoogleReCaptchaConfigsPresent($envs)) {
             $pending['Google ReCaptcha'] = [
                 'Enabled?' => [
                     'type'        => 'checkbox',
@@ -605,6 +587,32 @@ class Helper
     public static function hasPendingDotEnvFileConfigs()
     {
         return count(self::getPendingDotEnvFileConfigs()) > 0;
+    }
+
+    public static function areGoogleReCaptchaConfigsPresent($dot_env_file_configs)
+    {
+        if ($dot_env_file_configs['GOOGLE_RECAPTCHA_ENABLED'] !== 'true') {
+            return true;
+        }
+
+        $is_site_secret_present = isset($dot_env_file_configs['GOOGLE_RECAPTCHA_SITE_SECRET']) && !empty($dot_env_file_configs['GOOGLE_RECAPTCHA_SITE_SECRET']);
+        $is_site_key = isset($dot_env_file_configs['GOOGLE_RECAPTCHA_SITE_KEY']) && !empty($dot_env_file_configs['GOOGLE_RECAPTCHA_SITE_KEY']);
+
+        return $is_site_secret_present && $is_site_key;
+    }
+
+    public static function arePusherConfigsPresent($dot_env_file_configs)
+    {
+        if ($dot_env_file_configs['PUSHER_ENABLED'] !== 'true') {
+            return true;
+        }
+
+        $is_app_id_present = isset($dot_env_file_configs['PUSHER_APP_ID']) && !empty($dot_env_file_configs['PUSHER_APP_ID']);
+        $is_app_key_present = isset($dot_env_file_configs['PUSHER_APP_KEY']) && !empty($dot_env_file_configs['PUSHER_APP_KEY']);
+        $is_app_secret_present = isset($dot_env_file_configs['PUSHER_APP_SECRET']) && !empty($dot_env_file_configs['PUSHER_APP_SECRET']);
+        $is_app_cluster_present = isset($dot_env_file_configs['PUSHER_APP_CLUSTER']) && !empty($dot_env_file_configs['PUSHER_APP_CLUSTER']);
+
+        return $is_app_id_present && $is_app_key_present && $is_app_secret_present && $is_app_cluster_present;
     }
 
     public static function arePusherConfigsValid($auth_key, $app_id, $cluster, $secret)

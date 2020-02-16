@@ -1,0 +1,12 @@
+risky: false
+
+finder:
+  exclude:
+    - storage
+    - bootstrap
+    - docker
+    - public
+    - resources
+  name: "*.php"
+  not-name:
+    - "server.php"
