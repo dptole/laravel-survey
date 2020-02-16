@@ -32,6 +32,7 @@ class User extends Authenticatable
      * Auto generates the `uuid` field for the new User.
      *
      * @param options List of options. https://laravel.com/api/6.x/Illuminate/Database/Eloquent/Model.html#method_save
+     *
      * @return User
      */
     public function save(array $options = [])
