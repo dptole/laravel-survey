@@ -276,6 +276,7 @@ export LARAVEL_WORKDIR=$LARAVEL_WORKDIR
 export LARAVEL_MAXMIND_COUNTRY_MMDB=$LARAVEL_MAXMIND_COUNTRY_MMDB
 export LARAVEL_MAXMIND_ASN_MMDB=$LARAVEL_MAXMIND_ASN_MMDB
 export LARAVEL_MAXMIND_CITY_MMDB=$LARAVEL_MAXMIND_CITY_MMDB
+export LARAVEL_DOXYGEN_ENABLED=$LARAVEL_DOXYGEN_ENABLED
 
 export LARAVEL_PUBLIC_PATH=$LARAVEL_WORKDIR/public
 
@@ -454,12 +455,12 @@ chown -R nginx.nginx /var/log/nginx/
 chown -R nginx.nginx /var/cache/nginx/
 chown -R nginx.nginx /usr/lib/nginx/
 
-git clone --recursive https://github.com/google/ngx_brotli.git /usr/lib/nginx/git-modules/ngx_brotli
+git clone --recursive https://github.com/google/ngx_brotli.git /usr/lib/nginx/git-modules/ngx_brotli --depth 1
 cd /usr/lib/nginx/git-modules/ngx_brotli
 # Try to make it stable
 git reset --hard e505dce68acc190cc5a1e780a3b0275e39f160ca
 
-git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git /usr/lib/nginx/git-modules/ngx_geoip2
+git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git /usr/lib/nginx/git-modules/ngx_geoip2 --depth 1
 cd /usr/lib/nginx/git-modules/ngx_geoip2
 # Try to make it stable
 git reset --hard 1cabd8a1f68ea3998f94e9f3504431970f848fbf
@@ -899,6 +900,30 @@ EOF
 # Allow the service to be executed
 chmod +x /etc/init.d/nginx
 
+# Install and enable Xdebug for code coverage with coveralls
+pecl install xdebug
+docker-php-ext-enable xdebug
+
+if [ "$LARAVEL_DOXYGEN_ENABLED" == "true" ]
+then
+  # Generates documentation
+  # http://www.doxygen.nl/download.html
+  apk add flex-dev bison python3
+  cd /root/
+  git clone https://github.com/doxygen/doxygen.git --depth 1
+  cd doxygen
+  # Try to make it stable
+  git reset --hard 77d5346f4866429b240b96a146381e770e5e0788
+  mkdir build
+  cd build
+  cmake -G "Unix Makefiles" ..
+  make
+  make install
+  ln -sf $(pwd)/bin/doxygen /usr/local/bin/doxygen
+  cd $LARAVEL_WORKDIR
+  doxygen Doxyfile
+fi
+
 if [ "$LARAVEL_SERVER_ENV" == "dev" ]
 then
   # http://manpages.org/openrc-run/8
@@ -969,10 +994,6 @@ rc-service nginx start
 # Set these services to the default runlevel
 rc-update add php-fpm7 default
 rc-update add nginx default
-
-# Install and enable Xdebug for code coverage with coveralls
-pecl install xdebug
-docker-php-ext-enable xdebug
 
 # Don't stop the container on server crash
 set +x

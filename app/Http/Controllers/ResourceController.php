@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 class ResourceController extends Controller
 {
-    private function fromPublicPath($file_path, $headers = [])
+    public static function guessHeaders($file_path)
     {
+        $headers = [];
+
         // https://bugs.php.net/bug.php?id=53035
         if (substr($file_path, -3) === '.js') {
             $headers['content-type'] = 'application/javascript';
@@ -13,12 +15,19 @@ class ResourceController extends Controller
             $headers['content-type'] = 'text/css';
         }
 
+        return $headers;
+    }
+
+    public static function fromPublicPath($file_path, $headers = [])
+    {
+        $headers = self::guessHeaders($file_path);
+
         return response()->file(public_path().$file_path, $headers);
     }
 
     public function questions()
     {
-        return $this->fromPublicPath('/js/questions.js');
+        return self::fromPublicPath('/js/questions.js');
     }
 
     public function startSurvey()
@@ -58,5 +67,22 @@ class ResourceController extends Controller
         return $this->fromPublicPath('/images/'.$image_file, [
             'content-type' => 'image/jpg',
         ]);
+    }
+
+    /** @codeCoverageIgnore */
+    public function doxygen($path = '')
+    {
+        $path = $path === '' ? 'index.html' : $path;
+        $dox_dir = 'doxygen/html';
+        $full_path = $dox_dir.'/'.$path;
+        $real_path = realpath($full_path);
+
+        if (!$real_path) {
+            return redirect()->route('home');
+        }
+
+        $headers = self::guessHeaders($real_path);
+
+        return response()->file($real_path, $headers);
     }
 }

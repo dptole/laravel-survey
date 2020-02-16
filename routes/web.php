@@ -38,6 +38,10 @@ Route::group(['prefix' => '/', 'middleware' => ['setup']], function () {
 
         Route::post('/logout', ['uses' => '\App\Http\Controllers\Auth\LoginController@logout', 'as' => 'logout']);
 
+        Route::group(['prefix' => 'doxygen'], function () {
+            Route::any('{path?}', ['uses' => 'ResourceController@doxygen', 'as' => 'doxygen'])->where('path', '.*');
+        });
+
         Route::group(['prefix' => 'fonts'], function () {
             Route::get('/{font_file}', ['uses' => 'ResourceController@fonts', 'as' => 'fonts']);
         });

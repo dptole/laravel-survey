@@ -128,7 +128,7 @@ class ResourceTest extends TestCase
 
         $this->assertInstanceOf(BinaryFileResponse::class, $response->baseResponse);
 
-        $response->assertHeader('content-type', 'image/jpg');
+        $response->assertHeader('content-type', 'image/jpeg');
 
         $this->assertStringEndsWith('public/images/world-map.jpg', $response->getFile()->getPathname());
     }

@@ -5,6 +5,7 @@
 /public/mix-manifest.json
 /public/css/*.css
 /public/js/*.js
+/public/doxygen/*
 /storage/*.key
 /vendor
 /.idea
