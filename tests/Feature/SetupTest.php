@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\ApiErrors;
 use App\Helper;
+use App\Questions;
+use App\QuestionsOptions;
+use App\Surveys;
 use Tests\TestCase;
 use Tests\TestsHelper;
 
@@ -122,5 +126,129 @@ class SetupTest extends TestCase
         $alert = $alerts->item(0);
 
         $this->assertEquals('Success: Configurations updated successfully.', trim($alert->textContent));
+    }
+
+    public function testInvalidApiErrorType()
+    {
+        $this->assertFalse(ApiErrors::getErrorType('testing'));
+    }
+
+    public function testDeleteByOwnerInvalidQuestion()
+    {
+        $this->assertFalse(Questions::deleteByOwner('survey-uuid', 'question-uuid', 'user-id'));
+    }
+
+    public function testDeleteByOwnerAlreadyDeletedQuestion()
+    {
+        $questions = Questions::where('active', '=', 0)->limit(1)->get();
+
+        $this->assertCount(1, $questions);
+
+        $question = $questions[0];
+
+        $surveys = Surveys::where('id', '=', $question->survey_id)->limit(1)->get();
+
+        $this->assertCount(1, $surveys);
+
+        $survey = $surveys[0];
+
+        $survey_uuid = $survey->uuid;
+
+        $question_uuid = $question->uuid;
+
+        $user_id = $survey->user_id;
+
+        $this->assertFalse(Questions::deleteByOwner($survey_uuid, $question_uuid, $user_id));
+    }
+
+    public function testDeleteByOwnerErrorUpdatingQuestion()
+    {
+        $GLOBALS['Questions::update_active_return'] = false;
+
+        $surveys = Surveys::where([
+            'status' => 'ready',
+        ])->limit(1)->get();
+
+        $this->assertCount(1, $surveys);
+
+        $survey = $surveys[0];
+
+        $questions = Questions::where([
+            'active'    => 1,
+            'survey_id' => $survey->id,
+        ])->orderBy('version', 'DESC')->limit(1)->get();
+
+        $this->assertCount(1, $questions);
+
+        $question = $questions[0];
+
+        $survey_uuid = $survey->uuid;
+
+        $question_uuid = $question->uuid;
+
+        $user_id = $survey->user_id;
+
+        $this->assertFalse(Questions::deleteByOwner($survey_uuid, $question_uuid, $user_id));
+
+        unset($GLOBALS['Questions::update_active_return']);
+    }
+
+    public function testUpdateOrderInvalidQuestion()
+    {
+        $this->assertFalse(Questions::updateOrder(-1, 1));
+    }
+
+    public function testGetZeroQuestionsOptions()
+    {
+        $questions_options = QuestionsOptions::getAllByQuestionId(-1);
+
+        $this->assertIsArray($questions_options);
+
+        $this->assertEmpty($questions_options);
+    }
+
+    public function testSaveArrayInvalidArguments()
+    {
+        $this->assertFalse(QuestionsOptions::saveArray([], 1));
+    }
+
+    public function testRunInvalidSurvey()
+    {
+        $this->assertEquals(Surveys::ERR_RUN_SURVEY_NOT_FOUND, Surveys::run('survey-uuid', 'user-id'));
+    }
+
+    public function testRunSurveyInvalidStatus()
+    {
+        $GLOBALS['Surveys::ERR_RUN_SURVEY_INVALID_STATUS'] = true;
+
+        $surveys = Surveys::where('status', '=', 'draft')->limit(1)->get();
+
+        $this->assertCount(1, $surveys);
+
+        $survey = $surveys[0];
+
+        $this->assertEquals(Surveys::ERR_RUN_SURVEY_INVALID_STATUS, Surveys::run($survey->uuid, $survey->user_id));
+
+        unset($GLOBALS['Surveys::ERR_RUN_SURVEY_INVALID_STATUS']);
+    }
+
+    public function testPauseInvalidSurvey()
+    {
+        $this->assertEquals(Surveys::ERR_PAUSE_SURVEY_NOT_FOUND, Surveys::pause('survey-uuid', 'user-id'));
+    }
+
+    public function testPauseSurveyInvalidStatus()
+    {
+        $GLOBALS['Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS'] = true;
+
+        $surveys = Surveys::where('status', '=', 'ready')->limit(1)->get();
+
+        $this->assertCount(1, $surveys);
+
+        $survey = $surveys[0];
+
+        $this->assertEquals(Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS, Surveys::pause($survey->uuid, $survey->user_id));
+
+        unset($GLOBALS['Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS']);
     }
 }

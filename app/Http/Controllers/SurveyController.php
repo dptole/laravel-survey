@@ -201,13 +201,13 @@ class SurveyController extends Controller
 
         $status = Surveys::pause($uuid, $request->user()->id);
 
-        $mocked_survey_already_paused = Helper::getTestEnvMockVar('Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED', $status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED);
+        $mocked_survey_invalid_status = Helper::getTestEnvMockVar('Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS', $status === Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS);
 
-        if ($status === Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS) {
+        if ($mocked_survey_invalid_status) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" invalid status, it should be "ready".');
 
             return redirect()->route('survey.edit', $uuid);
-        } elseif ($mocked_survey_already_paused) {
+        } elseif ($status === Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED) {
             $request->session()->flash('warning', 'Survey "'.$uuid.'" is already paused.');
 
             return redirect()->route('survey.edit', $uuid);

@@ -76,10 +76,16 @@ class Surveys extends Model
 
         if (!$survey) {
             return self::ERR_RUN_SURVEY_NOT_FOUND;
-        } elseif ($survey->status !== 'draft') {
-            return self::ERR_RUN_SURVEY_INVALID_STATUS;
-        } elseif ($survey->status === 'ready') {
+        }
+
+        if ($survey->status === 'ready') {
             return self::ERR_RUN_SURVEY_ALREADY_RUNNING;
+        }
+
+        $mocked_invalid_status = Helper::getTestEnvMockVar('Surveys::ERR_RUN_SURVEY_INVALID_STATUS', $survey->status !== 'draft');
+
+        if ($mocked_invalid_status) {
+            return self::ERR_RUN_SURVEY_INVALID_STATUS;
         }
 
         $survey->status = 'ready';
@@ -101,10 +107,16 @@ class Surveys extends Model
 
         if (!$survey) {
             return self::ERR_PAUSE_SURVEY_NOT_FOUND;
-        } elseif ($survey->status !== 'ready') {
-            return self::ERR_PAUSE_SURVEY_INVALID_STATUS;
-        } elseif ($survey->status === 'draft') {
+        }
+
+        if ($survey->status === 'draft') {
             return self::ERR_PAUSE_SURVEY_ALREADY_PAUSED;
+        }
+
+        $mocked_invalid_status = Helper::getTestEnvMockVar('Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS', $survey->status !== 'ready');
+
+        if ($mocked_invalid_status) {
+            return self::ERR_PAUSE_SURVEY_INVALID_STATUS;
         }
 
         $survey->status = 'draft';
@@ -118,10 +130,10 @@ class Surveys extends Model
     public static function getAvailables()
     {
         return DB::table('surveys')
-      ->select('surveys.*', 'users.name as author_name')
-      ->join('users', 'users.id', '=', 'surveys.user_id')
-      ->where('surveys.status', '=', 'ready')
-      ->get();
+            ->select('surveys.*', 'users.name as author_name')
+            ->join('users', 'users.id', '=', 'surveys.user_id')
+            ->where('surveys.status', '=', 'ready')
+            ->get();
     }
 
     /************************************************/
@@ -138,23 +150,18 @@ class Surveys extends Model
             return self::ERR_IS_RUNNING_SURVEY_NOT_FOUND;
         }
 
-        return $survey->status === 'ready'
-      ? self::ERR_IS_RUNNING_SURVEY_OK
-      : self::ERR_IS_RUNNING_SURVEY_NOT_RUNNING;
+        return $survey->status === 'ready' ? self::ERR_IS_RUNNING_SURVEY_OK : self::ERR_IS_RUNNING_SURVEY_NOT_RUNNING;
     }
 
     /************************************************/
 
     public static function getByUuid($uuid)
     {
-        return (
-      $surveys = self::where('uuid', '=', $uuid)
-        ->limit(1)
-        ->get()
-      ) &&
-        count($surveys) === 1
-      ? $surveys[0]
-      : null;
+        $surveys = self::where('uuid', '=', $uuid)
+            ->limit(1)
+            ->get();
+
+        return $surveys && count($surveys) === 1 ? $surveys[0] : null;
     }
 
     /************************************************/

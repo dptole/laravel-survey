@@ -21,17 +21,16 @@ class Questions extends Model
 
     public static function getBySurvey($q_uuid, $s_id)
     {
-        return (
         $questions = self::where([
             'uuid'      => $q_uuid,
             'survey_id' => $s_id,
             'active'    => '1',
             'version'   => self::getLastVersion($s_id),
-        ])->get()
-      ) &&
-        count($questions) === 1
-      ? $questions[0]
-      : null;
+        ])->get();
+
+        $is_valid_question = $questions && count($questions) === 1;
+
+        return $is_valid_question ? $questions[0] : null;
     }
 
     public static function getAllBySurveyIdPaginated($s_id)
@@ -40,9 +39,7 @@ class Questions extends Model
             'survey_id' => $s_id,
             'active'    => '1',
             'version'   => self::getLastVersion($s_id),
-        ])
-      ->orderBy('updated_at', 'desc')
-      ->paginate(5);
+        ])->orderBy('updated_at', 'desc')->paginate(5);
     }
 
     public static function getAllBySurveyIdUnpaginated($s_id)
@@ -51,7 +48,10 @@ class Questions extends Model
             'survey_id' => $s_id,
             'active'    => '1',
             'version'   => self::getLastVersion($s_id),
-        ])->orderBy('order', 'asc')->get()->all();
+        ])
+            ->orderBy('order', 'asc')
+            ->get()
+            ->all();
     }
 
     public static function getAllBySurveyId($s_id, $start_from = 0)
@@ -61,8 +61,8 @@ class Questions extends Model
             'active'    => '1',
             'version'   => self::getLastVersion($s_id),
         ])
-      ->orderBy('id', 'asc')
-      ->get();
+            ->orderBy('id', 'asc')
+            ->get();
     }
 
     public static function getAllBySurveyIdOrdered($s_id, $start_from = 0)
@@ -72,8 +72,8 @@ class Questions extends Model
             'active'    => '1',
             'version'   => self::getLastVersion($s_id),
         ])
-      ->orderBy('order', 'asc')
-      ->get();
+            ->orderBy('order', 'asc')
+            ->get();
     }
 
     public static function deleteByOwner($s_uuid, $q_uuid, $user_id)
@@ -100,7 +100,9 @@ class Questions extends Model
             'active' => '0',
         ]);
 
-        if (!$update_active) {
+        $mocked_update_active = Helper::getTestEnvMockVar('Questions::update_active_return', $update_active);
+
+        if (!$mocked_update_active) {
             return false;
         }
 
@@ -108,45 +110,28 @@ class Questions extends Model
             'survey_id' => $survey->id,
             'active'    => '1',
             'version'   => $version,
-        ])->where(
-      'order', '>', $questions[0]->order
-    )->decrement(
-      'order', $questions[0]->order - 1
-    );
+        ])
+            ->where('order', '>', $questions[0]->order)
+            ->decrement('order', $questions[0]->order - 1);
 
         return true;
     }
 
-    public static function getByUuid($uuid)
-    {
-        return (
-      $questions = self::where([
-          'uuid'   => $uuid,
-          'active' => '1',
-      ])->get()
-    ) &&
-      count($questions) === 1
-      ? $questions[0]
-      : null;
-    }
-
     public static function getNextInOrder($s_id)
     {
-        return (
-      $question = self::where([
-          'survey_id' => $s_id,
-          'active'    => '1',
-          'version'   => self::getLastVersion($s_id),
-      ])
-      ->orderBy('order', 'desc')
-      ->limit(1)
-      ->get()
-      ->all()
-    ) &&
-      is_array($question) &&
-      count($question) === 1
-      ? $question[0]->order + 1
-      : 1;
+        $question = self::where([
+            'survey_id' => $s_id,
+            'active'    => '1',
+            'version'   => self::getLastVersion($s_id),
+        ])
+            ->orderBy('order', 'desc')
+            ->limit(1)
+            ->get()
+            ->all();
+
+        $is_valid_question = $question && is_array($question) && count($question) === 1;
+
+        return $is_valid_question ? $question[0]->order + 1 : 1;
     }
 
     public static function updateOrder($id, $order)
@@ -194,6 +179,12 @@ class Questions extends Model
 
     public static function getAllByVersion($survey_id, $version)
     {
+        $questions = self::where([
+            'version'   => $version,
+            'survey_id' => $survey_id,
+            'active'    => '1',
+        ])->orderBy('order')->get()->all();
+
         return array_map(function ($question) {
             $question->answers = array_map(function ($questions_answers_version) use ($question) {
                 return [
@@ -203,10 +194,6 @@ class Questions extends Model
             }, range(1, QuestionsOptionsView::getById($question->id)->last_version));
 
             return $question;
-        }, self::where([
-            'version'   => $version,
-            'survey_id' => $survey_id,
-            'active'    => '1',
-        ])->orderBy('order')->get()->all());
+        }, $questions);
     }
 }

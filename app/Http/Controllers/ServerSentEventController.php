@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper;
 use App\Sse;
 use Closure;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ServerSentEventController extends Controller
 {
     const CHUNK_SEPARATOR = "\n\n";
+    const LINES_SEPARATOR = "\n";
+    const KV_ASSIGNER = ': ';
 
     private function parsePayload($payload)
     {
@@ -21,10 +24,10 @@ class ServerSentEventController extends Controller
             $lines = [];
 
             foreach ($payload as $key => $value) {
-                $lines[] = "$key: $value";
+                $lines[] = $key.self::KV_ASSIGNER.$value;
             }
 
-            $parsed_payload = implode("\n", $lines);
+            $parsed_payload = implode(self::LINES_SEPARATOR, $lines);
         }
 
         return $parsed_payload.self::CHUNK_SEPARATOR;
@@ -51,9 +54,11 @@ class ServerSentEventController extends Controller
             $id = 0;
 
             while (1) {
+                // @codeCoverageIgnoreStart
                 if (connection_aborted()) {
                     break;
                 }
+                // @codeCoverageIgnoreEnd
 
                 $payload = $main_loop($id);
 
@@ -65,6 +70,15 @@ class ServerSentEventController extends Controller
                     $this->sendPayload($payload);
                 }
 
+                if (Helper::isTestingEnv()) {
+                    // You can't put this line of code after ob_get_level()
+                    // because then PHPUnit starts running it calls ob_start()
+                    // and that messes up the expectations
+                    flush();
+                    break;
+                }
+
+                // @codeCoverageIgnoreStart
                 if (ob_get_level() > 0) {
                     ob_flush();
                     ob_end_flush();
@@ -74,6 +88,7 @@ class ServerSentEventController extends Controller
 
                 sleep($timeout_seconds);
                 $id++;
+                // @codeCoverageIgnoreEnd
             }
         });
 
@@ -87,9 +102,17 @@ class ServerSentEventController extends Controller
 
     public function channel(Request $request, $channel)
     {
-        $listener = Sse::listen($channel);
+        $mocked_last_event = Helper::getTestEnvMockVar('Sse::last_event', null);
+
+        $listener = Sse::listen($channel, $mocked_last_event);
 
         return $this->mainLoop($request, function ($id) use ($listener) {
+            $mocked_content = Helper::getTestEnvMockVar('Sse::mocked_content', null);
+
+            if ($mocked_content !== null) {
+                return $mocked_content;
+            }
+
             $event = $listener();
 
             if (!$event) {

@@ -569,9 +569,9 @@ class QuestionTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testSurveyPauseForcingAlreadyPaused()
+    public function testSurveyPauseForcingInvalidStatus()
     {
-        $GLOBALS['Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED'] = true;
+        $GLOBALS['Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS'] = true;
 
         $survey_db = TestsHelper::$shared_objects['survey']['samples_db'][1];
 
@@ -585,7 +585,7 @@ class QuestionTest extends TestCase
 
         $response->assertStatus(200);
 
-        unset($GLOBALS['Surveys::ERR_PAUSE_SURVEY_ALREADY_PAUSED']);
+        unset($GLOBALS['Surveys::ERR_PAUSE_SURVEY_INVALID_STATUS']);
     }
 
     public function testSurveyRunForcingSurveyNotFound()

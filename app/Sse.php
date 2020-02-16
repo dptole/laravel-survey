@@ -14,10 +14,10 @@ class Sse extends Model
 
         return function () use ($channel, &$last_event, $limit) {
             $events = self::where('created_at', '>', $last_event)
-        ->where('channel', '=', $channel)
-        ->limit($limit)
-        ->get()
-        ->all();
+                ->where('channel', '=', $channel)
+                ->limit($limit)
+                ->get()
+                ->all();
 
             if (count($events) === 0) {
                 return null;

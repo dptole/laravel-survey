@@ -279,9 +279,14 @@ class Helper
         return false;
     }
 
+    public static function isTestingEnv()
+    {
+        return env('APP_ENV') === 'testing';
+    }
+
     public static function getTestEnvMockVar($var_name, $fallback)
     {
-        if (env('APP_ENV') === 'testing' && isset($GLOBALS[$var_name])) {
+        if (self::isTestingEnv() && isset($GLOBALS[$var_name])) {
             return $GLOBALS[$var_name];
         }
 
