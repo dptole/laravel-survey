@@ -59,17 +59,17 @@ class SetupTest extends TestCase
         $url = TestsHelper::getRoutePath('setup-update-missing-configs');
 
         $data = [
-            'PUSHER_ENABLED' => 'true',
-            'PUSHER_APP_ID' => 'testing',
-            'PUSHER_APP_KEY' => 'testing',
-            'PUSHER_APP_SECRET' => 'testing',
+            'PUSHER_ENABLED'     => 'true',
+            'PUSHER_APP_ID'      => 'testing',
+            'PUSHER_APP_KEY'     => 'testing',
+            'PUSHER_APP_SECRET'  => 'testing',
             'PUSHER_APP_CLUSTER' => 'testing',
 
-            'GOOGLE_RECAPTCHA_ENABLED' => 'true',
+            'GOOGLE_RECAPTCHA_ENABLED'     => 'true',
             'GOOGLE_RECAPTCHA_SITE_SECRET' => 'testing',
-            'GOOGLE_RECAPTCHA_SITE_KEY' => 'testing',
+            'GOOGLE_RECAPTCHA_SITE_KEY'    => 'testing',
 
-            'LARAVEL_SURVEY_PREFIX_URL' => 'testing'
+            'LARAVEL_SURVEY_PREFIX_URL' => 'testing',
         ];
 
         $response = $this->call('POST', $url, $data);
@@ -84,15 +84,15 @@ class SetupTest extends TestCase
         $url = TestsHelper::getRoutePath('setup-update-missing-configs');
 
         $data = [
-            'PUSHER_ENABLED' => 'false',
-            'PUSHER_APP_ID' => '',
-            'PUSHER_APP_KEY' => '',
-            'PUSHER_APP_SECRET' => '',
+            'PUSHER_ENABLED'     => 'false',
+            'PUSHER_APP_ID'      => '',
+            'PUSHER_APP_KEY'     => '',
+            'PUSHER_APP_SECRET'  => '',
             'PUSHER_APP_CLUSTER' => '',
 
-            'GOOGLE_RECAPTCHA_ENABLED' => 'false',
+            'GOOGLE_RECAPTCHA_ENABLED'     => 'false',
             'GOOGLE_RECAPTCHA_SITE_SECRET' => '',
-            'GOOGLE_RECAPTCHA_SITE_KEY' => '',
+            'GOOGLE_RECAPTCHA_SITE_KEY'    => '',
 
             'LARAVEL_SURVEY_PREFIX_URL' => self::$laravel_url_prefix,
         ];
