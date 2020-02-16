@@ -62,7 +62,7 @@ class ServerSentEventTest extends TestCase
         $GLOBALS['Sse::last_event'] = date('Y-m-d 00:00:00');
 
         $sse_message = [
-            'message' => 'sse testing'
+            'message' => 'sse testing',
         ];
 
         Sse::trigger('channel', 'event', $sse_message);
@@ -94,7 +94,7 @@ class ServerSentEventTest extends TestCase
         $GLOBALS['Sse::mocked_content'] = self::serializeSseMessage([
             'id'      => '0',
             'event'   => 'event',
-            'message' => '{}'
+            'message' => '{}',
         ]);
 
         $url = TestsHelper::getRoutePath('sse-channel', ['channel']);
