@@ -133,6 +133,7 @@ class Surveys extends Model
             ->select('surveys.*', 'users.name as author_name')
             ->join('users', 'users.id', '=', 'surveys.user_id')
             ->where('surveys.status', '=', 'ready')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 

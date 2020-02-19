@@ -143,6 +143,18 @@ body {
   animation-duration: 1s;
 }
 
+.italics {
+  font-style: italic;
+}
+
+@media (max-width: 632px) {
+  .mdash {
+    display: block;
+    visibility: hidden;
+    height: 0;
+  }
+}
+
 @media (max-width: 399px) {
   html:after {
     content: "The device must be at least 400px wide.";
