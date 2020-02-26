@@ -133,6 +133,12 @@ GOOGLE_RECAPTCHA_SITE_SECRET=
 GOOGLE_RECAPTCHA_SITE_KEY=
 ```
 
+Community
+=========
+
+- [Code of conduct][CODE_OF_CONDUCT]
+- [Contributing][CONTRIBUTING]
+
 License
 =======
 
@@ -157,3 +163,5 @@ License
 [prestissimo-url]: https://packagist.org/packages/hirak/prestissimo
 [composer-parallel-downloads-url]: https://github.com/composer/composer/pull/7904
 [LICENSE]: https://github.com/dptole/laravel-survey/blob/master/LICENSE
+[CONTRIBUTING]: https://github.com/dptole/laravel-survey/blob/master/CONTRIBUTING.md
+[CODE_OF_CONDUCT]: https://github.com/dptole/laravel-survey/blob/master/CODE_OF_CONDUCT.md
