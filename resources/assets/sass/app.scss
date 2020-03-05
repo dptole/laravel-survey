@@ -155,9 +155,9 @@ body {
   }
 }
 
-@media (max-width: 399px) {
+@media (max-width: 359px) {
   html:after {
-    content: "The device must be at least 400px wide.";
+    content: "The device must be at least 360px wide.";
     font-size: 24px;
     display: flex;
     align-items: center;

@@ -455,12 +455,12 @@ chown -R nginx.nginx /var/log/nginx/
 chown -R nginx.nginx /var/cache/nginx/
 chown -R nginx.nginx /usr/lib/nginx/
 
-git clone --recursive https://github.com/google/ngx_brotli.git /usr/lib/nginx/git-modules/ngx_brotli --depth 1
+git clone --recursive https://github.com/google/ngx_brotli.git /usr/lib/nginx/git-modules/ngx_brotli
 cd /usr/lib/nginx/git-modules/ngx_brotli
 # Try to make it stable
 git reset --hard e505dce68acc190cc5a1e780a3b0275e39f160ca
 
-git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git /usr/lib/nginx/git-modules/ngx_geoip2 --depth 1
+git clone --recursive https://github.com/leev/ngx_http_geoip2_module.git /usr/lib/nginx/git-modules/ngx_geoip2
 cd /usr/lib/nginx/git-modules/ngx_geoip2
 # Try to make it stable
 git reset --hard 1cabd8a1f68ea3998f94e9f3504431970f848fbf
@@ -531,90 +531,6 @@ make -j$(getconf _NPROCESSORS_ONLN) &>/dev/null
 make install &>/dev/null
 
 cd $LARAVEL_WORKDIR
-
-cat <<'EOF' -> $NGINX_DEFAULT_CONF
-# /etc/nginx/nginx.conf
-
-user nginx;
-
-# Set number of worker processes automatically based on number of CPU cores.
-worker_processes auto;
-
-# Enables the use of JIT for regular expressions to speed-up their processing.
-pcre_jit on;
-
-# Includes files with directives to load dynamic modules.
-include /etc/nginx/modules/*.conf;
-
-events {
-  # The maximum number of simultaneous connections that can be opened by
-  # a worker process.
-  worker_connections 1024;
-}
-
-http {
-  # Includes mapping of file name extensions to MIME types of responses
-  # and defines the default type.
-  include /etc/nginx/mime.types;
-  default_type application/octet-stream;
-
-  # Name servers used to resolve names of upstream servers into addresses.
-  # It's also needed when using tcpsocket and udpsocket in Lua modules.
-  #resolver 208.67.222.222 208.67.220.220;
-
-  # Don't tell nginx version to clients.
-  server_tokens off;
-
-  # Specifies the maximum accepted body size of a client request, as
-  # indicated by the request header Content-Length. If the stated content
-  # length is greater than this size, then the client receives the HTTP
-  # error code 413. Set to 0 to disable.
-  client_max_body_size 1m;
-
-  # Timeout for keep-alive connections. Server will close connections after
-  # this time.
-  keepalive_timeout 65;
-
-  # Sendfile copies data between one FD and other from within the kernel,
-  # which is more efficient than read() + write().
-  sendfile on;
-
-  # Don't buffer data-sends (disable Nagle algorithm).
-  # Good for sending frequent small bursts of data in real time.
-  tcp_nodelay on;
-
-  # Causes nginx to attempt to send its HTTP response head in one packet,
-  # instead of using partial frames.
-  #tcp_nopush on;
-
-  # Path of the file with Diffie-Hellman parameters for EDH ciphers.
-  #ssl_dhparam /etc/ssl/nginx/dh2048.pem;
-
-  # Specifies that our cipher suits should be preferred over client ciphers.
-  ssl_prefer_server_ciphers on;
-
-  # Enables a shared SSL cache with size that can hold around 8000 sessions.
-  ssl_session_cache shared:SSL:2m;
-
-  # Enable gzipping of responses.
-  gzip on;
-
-  # Set the Vary HTTP header as defined in the RFC 2616.
-  gzip_vary on;
-
-  # Specifies the main log format.
-  log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-  		'$status $body_bytes_sent "$http_referer" '
-  		'"$http_user_agent" "$http_x_forwarded_for"';
-
-  # Sets the path, format, and configuration for a buffered log write.
-  access_log /var/log/nginx/access.log main;
-
-  # Includes virtual hosts configs.
-  include /etc/nginx/conf.d/*.conf;
-}
-EOF
-
 
 # Create nginx default configuration file
 cat <<'EOF' -> $NGINX_DEFAULT_VIRTUAL_HOST
@@ -910,7 +826,7 @@ then
   # http://www.doxygen.nl/download.html
   apk add flex-dev bison python3
   cd /root/
-  git clone https://github.com/doxygen/doxygen.git --depth 1
+  git clone https://github.com/doxygen/doxygen.git
   cd doxygen
   # Try to make it stable
   git reset --hard 77d5346f4866429b240b96a146381e770e5e0788
