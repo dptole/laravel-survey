@@ -227,6 +227,12 @@ get_maxmind_db() {
   fi
 }
 
+# Setup Alpine repositories
+cat <<EOF -> /etc/apk/repositories
+https://dl-cdn.alpinelinux.org/alpine/v3.11/main
+https://dl-cdn.alpinelinux.org/alpine/v3.11/community
+EOF
+
 # Cleanup
 # By removing this command the installation process will be faster but
 # changes in the composer or npm files will be ignored
@@ -244,8 +250,9 @@ apk add curl bash vim nodejs npm mariadb mariadb-client openrc
 
 # Install alpine PHP packages from a specific repository
 # https://github.com/codecasts/php-alpine
+# https://stackoverflow.com/q/36915752
 curl 'https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub' -o /etc/apk/keys/php-alpine.rsa.pub
-apk add php7-curl php7-dom php7-fpm php7-json php7-session php7-openssl php7-pdo_mysql php7-pdo php7-fileinfo --repository https://dl.bintray.com/php-alpine/v3.10/php-7.4
+apk add php7-curl php7-dom php7-fpm php7-json php7-session php7-openssl php7-pdo_mysql php7-pdo php7-fileinfo php7-tokenizer --repository https://dl.bintray.com/php-alpine/v3.10/php-7.4
 
 # Config ~/.vimrc file
 cat <<EOF -> ~/.vimrc
@@ -466,8 +473,10 @@ cd /usr/lib/nginx/git-modules/ngx_geoip2
 git reset --hard 1cabd8a1f68ea3998f94e9f3504431970f848fbf
 
 # Download nginx binary and compile its source code
+# Use HTTP protocol to avoid TLS error
+# Error relocating /usr/lib/libtls.so.2: reallocarray: symbol not found
 cd $HOME
-wget https://nginx.org/download/nginx-1.16.1.tar.gz
+curl https://nginx.org/download/nginx-1.16.1.tar.gz -o nginx-1.16.1.tar.gz
 tar xzf nginx-1.16.1.tar.gz
 rm nginx-1.16.1.tar.gz
 cd nginx-1.16.1
